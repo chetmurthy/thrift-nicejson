@@ -4,7 +4,9 @@ THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/thrift
 
 all: gen-files thrift-gen-wirejson
 
-test: test1
+test: test1 jsontest
+	./test1
+	./jsontest
 
 gen-files:: *.thrift gen-cpp gen-json
 
@@ -29,6 +31,9 @@ ThriftThrift: Thrift.o $(GENCPPOBJ)
 
 test1: test1.o NiceJSON.o $(GENCPPOBJ)
 	g++  $(CPPFLAGS) -o test1 $^ -lthriftc $(LINKFLAGS)
+
+jsontest: jsontest.o NiceJSON.o $(GENCPPOBJ)
+	g++  $(CPPFLAGS) -o jsontest $^ -lthriftc $(LINKFLAGS)
 
 thrift-gen-wirejson: wirejson_plugin.o $(GENCPPOBJ)
 	g++ $(CPPFLAGS) -o thrift-gen-wirejson $^ -lthriftc $(LINKFLAGS)

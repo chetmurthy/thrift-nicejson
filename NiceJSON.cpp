@@ -84,3 +84,10 @@ t_type_kind t_type_case(const t_type& tt) {
   throw apache::thrift::plugin::ThriftPluginError("Unknown t_type type");
   
 }
+
+void NiceJSON::json2binary(
+			   const t_type_id id,
+			   const json& jser,
+			   ::apache::thrift::protocol::TProtocol* iprot) {
+
+}

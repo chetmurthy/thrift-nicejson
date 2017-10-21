@@ -53,7 +53,6 @@ enum t_type_kind {
 
 t_type_kind t_type_case(const t_type& tt) ;
 
-template<class T>
 class NiceJSON {
 public:
   NiceJSON(const std::string& idl) {
@@ -90,11 +89,25 @@ public:
     }
   }
 
-  const T& it() { return x_ ; }
-  const t_type& lookup_type(const t_type_id id) { return it().type_registry.types[id] ; }
+  void json2binary(const t_type_id id, const json& jser, ::apache::thrift::protocol::TProtocol* iprot) ;
+
+  template <typename DST>
+    void demarshal(const t_type_id id, const json& jser, DST *out) {
+    boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
+    TBinaryProtocol protocol(trans);
+    json2binary(id, jser, &protocol) ;
+    out->read(&protocol) ;
+  }
+
+  const apache::thrift::plugin::GeneratorInput& it() const { return x_ ; }
+  const t_type& lookup_type(const t_type_id id) const {
+    const map<t_type_id, t_type>& types = it().type_registry.types ;
+    const map<t_type_id, t_type>::const_iterator ii = types.find(id);
+    return ii->second ;
+  }
 
 private:
-  T x_;
+  apache::thrift::plugin::GeneratorInput x_;
   map<string, t_struct_fields> struct2type ;
 } ;
 

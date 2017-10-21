@@ -3,7 +3,7 @@
 #include <streambuf>
 #include <iostream>
 
-#define BOOST_TEST_MODULE MyTest
+#define BOOST_TEST_MODULE NiceJSONTest
 #include <boost/test/included/unit_test.hpp>
 #include <boost/smart_ptr.hpp>
 
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE( Bar )
 BOOST_AUTO_TEST_CASE( IO1 )
 {
   std::string ss = file_contents("test.wirejson") ;
-  NiceJSON<apache::thrift::plugin::GeneratorInput> tt(ss) ;
+  NiceJSON tt(ss) ;
     {
       std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
       cout << serialized << std::endl ;
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE( IO1 )
 BOOST_AUTO_TEST_CASE( Bar1 )
 {
   std::string ss = file_contents("test.wirejson") ;
-  NiceJSON<apache::thrift::plugin::GeneratorInput> tt(ss) ;
+  NiceJSON tt(ss) ;
     {
       std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
       cout << serialized << std::endl ;
@@ -131,4 +131,24 @@ BOOST_AUTO_TEST_CASE( Bar1 )
 
     json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
     std::cout << bar_json << std::endl ;
+
+    boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
+    TBinaryProtocol protocol(trans);
+    {
+      protocol.writeStructBegin("Bar");
+
+      protocol.writeFieldBegin("a", ::apache::thrift::protocol::T_I32, 4);
+      protocol.writeI32(1);
+      protocol.writeFieldEnd();
+
+      protocol.writeFieldBegin("b", ::apache::thrift::protocol::T_STRING, 5);
+      protocol.writeString(std::string("ugh"));
+      protocol.writeFieldEnd();
+
+      protocol.writeFieldStop();
+      protocol.writeStructEnd();
+    }
+    thrift_test::Bar bar ;
+    bar.read(&protocol) ;
+    cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
 }
