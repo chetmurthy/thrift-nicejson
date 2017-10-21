@@ -74,9 +74,8 @@ public:
       const t_type& ty = ii->second ;
 
       if (ty.__isset.struct_val) {
-	const t_struct &st = ty.struct_val ;
-	struct2type[st.metadata.name] = t_struct_fields() ;
-	t_struct_fields& p = struct2type[st.metadata.name] ;
+	struct2type[id] = t_struct_fields() ;
+	t_struct_fields& p = struct2type[id] ;
 
 	p.type_id = id ;
 	p.st = ty.struct_val ;
@@ -89,13 +88,13 @@ public:
     }
   }
 
-  void json2binary(const t_type_id id, const json& jser, ::apache::thrift::protocol::TProtocol* iprot) ;
+  void json2protocol(const t_type_id id, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) ;
 
   template <typename DST>
     void demarshal(const t_type_id id, const json& jser, DST *out) {
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
     TBinaryProtocol protocol(trans);
-    json2binary(id, jser, &protocol) ;
+    json2protocol(id, jser, &protocol) ;
     out->read(&protocol) ;
   }
 
@@ -103,12 +102,19 @@ public:
   const t_type& lookup_type(const t_type_id id) const {
     const map<t_type_id, t_type>& types = it().type_registry.types ;
     const map<t_type_id, t_type>::const_iterator ii = types.find(id);
+    assert(ii != types.end()) ;
+    return ii->second ;
+  }
+
+  const t_struct_fields& lookup_struct(const t_type_id id) const {
+    const map<t_type_id, t_struct_fields>::const_iterator ii = struct2type.find(id);
+    assert(ii != struct2type.end()) ;
     return ii->second ;
   }
 
 private:
   apache::thrift::plugin::GeneratorInput x_;
-  map<string, t_struct_fields> struct2type ;
+  map<t_type_id, t_struct_fields> struct2type ;
 } ;
 
 std::string file_contents(const std::string fname) ;

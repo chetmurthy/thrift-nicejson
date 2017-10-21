@@ -85,9 +85,84 @@ t_type_kind t_type_case(const t_type& tt) {
   
 }
 
-void NiceJSON::json2binary(
+TType t_base2ttype(const t_base::type& bt) {
+  switch(bt) {
+  case t_base::TYPE_VOID:
+    return T_VOID ;
+
+  case t_base::TYPE_STRING:
+    return T_STRING ;
+    
+  case t_base::TYPE_BOOL:
+    return T_BOOL ;
+    
+  case t_base::TYPE_I8:
+    return T_I08 ;
+    
+  case t_base::TYPE_I16:
+    return T_I16 ;
+    
+  case t_base::TYPE_I32:
+    return T_I32 ;
+    
+  case t_base::TYPE_I64:
+    return T_I64 ;
+    
+  case t_base::TYPE_DOUBLE:
+    return T_DOUBLE ;
+    
+  case t_base::TYPE_BINARY:
+    throw apache::thrift::plugin::ThriftPluginError("t_base2ttype: unhandled case TYPE_BINARY");
+  default:
+    throw apache::thrift::plugin::ThriftPluginError("t_base2ttype: Unknown base_type type");
+  }
+}
+
+TType t_type2ttype(const t_type& tt) {
+  switch(t_type_case(tt)) {
+  case base_type_val:
+    return t_base2ttype(tt.base_type_val.value) ;
+  default:
+    throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
+  }
+}
+
+void NiceJSON::json2protocol(
 			   const t_type_id id,
 			   const json& jser,
-			   ::apache::thrift::protocol::TProtocol* iprot) {
+			   ::apache::thrift::protocol::TProtocol* oprot) {
+  const t_type& tt = lookup_type(id) ;
+  switch (t_type_case(tt)) {
+  case struct_val: {
+    /*
+     * (1) lookup struct info
+     * (2) check that the JSON is an object
+     * (3) begin struct
+     * (4) for each member of JSON object, look up field, and if it's there,
+     *     begin field/ recurse / end field
+     * (5) end struct
+     */
+    const t_struct_fields& fdata = lookup_struct(id) ;
+    if (!jser.is_object()) 
+      throw apache::thrift::plugin::ThriftPluginError("cannot deser struct from non-object JSON");
+    oprot->writeStructBegin(fdata.st.metadata.name.data()) ;
+    for(json::const_iterator fii = jser.begin() ; fii != jser.end() ; ++fii) {
+      const string& fname = fii.key() ;
+      const json& fvalue = fii.value() ;
+      map<string, t_field>::const_iterator sfii = fdata.byname.find(fname) ;
+      if (sfii == fdata.byname.end()) continue ;
+      const t_field& f = sfii->second ;
+      const t_type& ftype = lookup_type(f.type) ;
+      const TType ttype = t_type2ttype(ftype) ;
+      oprot->writeFieldBegin(f.name.data(), ttype, f.key) ;
+      json2protocol(f.type, fvalue, oprot) ;
+      oprot->writeFieldEnd() ;
+    }
+    oprot->writeStructEnd() ;
+    break ;
+  }
 
+  default:
+    throw apache::thrift::plugin::ThriftPluginError("unhandled t_type");
+  }
 }

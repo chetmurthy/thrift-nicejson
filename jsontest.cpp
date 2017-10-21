@@ -26,3 +26,11 @@ BOOST_AUTO_TEST_CASE( JSON1 )
   BOOST_CHECK( !j.is_null() );
   BOOST_CHECK( j.is_object() );
 }
+
+BOOST_AUTO_TEST_CASE( JSON2 )
+{
+  json j;
+  BOOST_CHECK( j.empty() );
+  BOOST_CHECK( j.is_null() );
+  BOOST_CHECK( !j.is_object() );
+}
