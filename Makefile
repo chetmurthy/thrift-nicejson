@@ -43,7 +43,7 @@ gen-cpp/%.o: gen-cpp/%.cpp
 	g++ $(CPPFLAGS) -c $< -o $@
 
 clean:
-	rm -rf */*.o *.o ThriftThrift test1 thrift-gen-wirejson
+	rm -rf */*.o *.o ThriftThrift test1 thrift-gen-wirejson *.wirejson
 
 realclean:: clean
 	rm -rf gen-*
