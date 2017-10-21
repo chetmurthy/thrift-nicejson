@@ -1,0 +1,4 @@
+gen-*
+ThriftThrift
+thrift-gen-myjson
+*.o
