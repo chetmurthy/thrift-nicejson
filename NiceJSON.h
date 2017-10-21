@@ -26,6 +26,7 @@ using std::map;
 using std::list;
 using std::set;
 using std::vector;
+using nlohmann::json;
 using namespace apache::thrift;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;

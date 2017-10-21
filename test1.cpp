@@ -78,8 +78,6 @@ BOOST_AUTO_TEST_CASE( Foo1 )
   }
 }
 
-#include "json.hpp"
-
 BOOST_AUTO_TEST_CASE( Bar )
 {
   {
@@ -120,4 +118,17 @@ BOOST_AUTO_TEST_CASE( IO1 )
       std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
       cout << serialized << std::endl ;
     }
+}
+
+BOOST_AUTO_TEST_CASE( Bar1 )
+{
+  std::string ss = file_contents("test.wirejson") ;
+  NiceJSON<apache::thrift::plugin::GeneratorInput> tt(ss) ;
+    {
+      std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
+      cout << serialized << std::endl ;
+    }
+
+    json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
+    std::cout << bar_json << std::endl ;
 }
