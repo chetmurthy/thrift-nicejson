@@ -1,13 +1,6 @@
 
 #include "NiceJSON.h"
 
-std::string file_contents(const std::string fname) {
-  std::ifstream t(fname);
-  std::stringstream buffer;
-  buffer << t.rdbuf();
-  return buffer.str() ;
-}
-
 namespace apache {
 namespace thrift {
 namespace plugin {
@@ -69,4 +62,25 @@ bool t_const_value::operator<(const t_const_value& that) const {
 }
 }
 }
+}
+
+std::string file_contents(const std::string fname) {
+  std::ifstream t(fname);
+  std::stringstream buffer;
+  buffer << t.rdbuf();
+  return buffer.str() ;
+}
+
+t_type_kind t_type_case(const t_type& tt) {
+  if (tt.__isset.base_type_val) return base_type_val ;
+  if (tt.__isset.typedef_val) return typedef_val ;
+  if (tt.__isset.enum_val) return enum_val ;
+  if (tt.__isset.struct_val) return struct_val ;
+  if (tt.__isset.xception_val) return xception_val ;
+  if (tt.__isset.list_val) return list_val ;
+  if (tt.__isset.set_val) return set_val ;
+  if (tt.__isset.map_val) return map_val ;
+  if (tt.__isset.service_val) return service_val ;
+  throw apache::thrift::plugin::ThriftPluginError("Unknown t_type type");
+  
 }

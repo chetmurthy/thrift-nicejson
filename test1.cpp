@@ -32,29 +32,6 @@ using namespace apache::thrift;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
-int add( int i, int j ) { return i+j; }
-
-BOOST_AUTO_TEST_CASE( my_test )
-{
-    // seven ways to detect and report the same error:
-    BOOST_CHECK( add( 2,2 ) == 4 );        // #1 continues on error
-
-    BOOST_REQUIRE( add( 2,2 ) == 4 );      // #2 throws on error
-
-    if( add( 2,2 ) != 4 )
-      BOOST_ERROR( "Ouch..." );            // #3 continues on error
-
-    if( add( 2,2 ) != 4 )
-      BOOST_FAIL( "Ouch..." );             // #4 throws on error
-
-    if( add( 2,2 ) != 4 ) throw "Ouch..."; // #5 throws on error
-
-    BOOST_CHECK_MESSAGE( add( 2,2 ) == 4,  // #6 continues on error
-                         "add(..) result: " << add( 2,2 ) );
-
-    BOOST_CHECK_EQUAL( add( 2,2 ), 4 );	  // #7 continues on error
-}
-
 BOOST_AUTO_TEST_CASE( Foo1 )
 {
   using namespace thrift_test;
@@ -95,11 +72,8 @@ BOOST_AUTO_TEST_CASE( Foo1 )
     assert(a == a2) ;
 
     {
-      shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-      shared_ptr<TDebugProtocol> p(new TDebugProtocol(buf)); 
-    
-      a.write(p.get()) ;
-      cout << buf->getBufferAsString() << std::endl ;
+      std::string serialized = apache::thrift::ThriftDebugString(a) ;
+      cout << serialized << std::endl ;
     }
   }
 }
@@ -132,46 +106,8 @@ BOOST_AUTO_TEST_CASE( Bar )
     assert(bar == bar2) ;
 
     {
-      shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-      shared_ptr<TDebugProtocol> p(new TDebugProtocol(buf)); 
-
-      bar.write(p.get()) ;
-      cout << buf->getBufferAsString() << std::endl ;
-    }
-  }
-}
-
-BOOST_AUTO_TEST_CASE( BarIDL )
-{
-  {
-    thrift_test::Bar bar ;
-    bar.__set_a(1) ;
-    bar.__set_b("ugh") ;
-
-    std::string serialized ;
-    {
-      serialized = apache::thrift::ThriftJSONString(bar) ;
+      std::string serialized = apache::thrift::ThriftDebugString(bar) ;
       cout << serialized << std::endl ;
-    }
-
-    thrift_test::Bar bar2 ;
-    {
-      shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-      buf->resetBuffer((uint8_t*)serialized.data(), static_cast<uint32_t>(serialized.length()));
-
-      NiceJSON<thrift_test::Bar> tt(buf) ;
-    
-      bar2 = tt.it() ;
-    }
-
-    assert(bar == bar2) ;
-
-    {
-      shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-      shared_ptr<TDebugProtocol> p(new TDebugProtocol(buf)); 
-
-      bar.write(p.get()) ;
-      cout << buf->getBufferAsString() << std::endl ;
     }
   }
 }
@@ -181,10 +117,7 @@ BOOST_AUTO_TEST_CASE( IO1 )
   std::string ss = file_contents("test.wirejson") ;
   NiceJSON<apache::thrift::plugin::GeneratorInput> tt(ss) ;
     {
-      shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-      shared_ptr<TDebugProtocol> p(new TDebugProtocol(buf)); 
-
-      tt.it().write(p.get()) ;
-      cout << buf->getBufferAsString() << std::endl ;
+      std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
+      cout << serialized << std::endl ;
     }
 }

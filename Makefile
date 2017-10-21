@@ -48,3 +48,4 @@ clean:
 realclean:: clean
 	rm -rf gen-*
 
+NiceJSON.o: NiceJSON.h
