@@ -131,7 +131,7 @@ TType t_type2ttype(const t_type& tt) {
   case map_val:
     return T_MAP ;
   default:
-    std::cerr << boost::format{"t_type2ttype: Unknown t_type type %d"} % t_type_case(tt) << endl ;
+    std::cerr << boost::format{"t_type2ttype: Unknown t_type type %d, %s"} % t_type_case(tt) % apache::thrift::ThriftDebugString(tt) << endl ;
     throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
   }
 }
@@ -334,6 +334,7 @@ json NiceJSON::protocol2json(const t_type_id id,
       return rv ;
     }
     default:
+      std::cerr << boost::format{"protocol2json: unhandled t_base %s"} % apache::thrift::ThriftDebugString(tt.base_type_val) << std::endl ;
       throw apache::thrift::plugin::ThriftPluginError("protocol2json: unhandled t_base");
     }
   }

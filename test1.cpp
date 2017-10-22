@@ -196,7 +196,6 @@ BOOST_AUTO_TEST_CASE( Boo3 )
   RoundTrip<thrift_test::Boo>("Boo", j) ;
 }
 
-#if 0
 BOOST_AUTO_TEST_CASE( Plugin1 )
 {
   std::string ss = file_contents("plugin.wirejson") ;
@@ -208,4 +207,3 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
   json j = tt.marshal("GeneratorInput", tt.it()) ;
   std::cout << j << std::endl ;
 }
-#endif

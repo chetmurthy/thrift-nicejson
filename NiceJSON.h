@@ -124,7 +124,11 @@ public:
     const map<t_type_id, t_type>& types = it().type_registry.types ;
     const map<t_type_id, t_type>::const_iterator ii = types.find(id);
     assert(ii != types.end()) ;
-    return ii->second ;
+    if (ii->second.__isset.typedef_val) {
+      return lookup_type(ii->second.typedef_val.type) ;
+    } else {
+      return ii->second ;
+    }
   }
 
   const t_type_id lookup_type_id(const string& name) const {
