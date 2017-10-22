@@ -137,10 +137,10 @@ TType t_type2ttype(const t_type& tt) {
 }
 
 void NiceJSON::json2protocol(
-			   const t_type_id id,
-			   const json& jser,
-			   ::apache::thrift::protocol::TProtocol* oprot) {
-  const t_type& tt = lookup_type(id) ;
+			     const t_type_id id,
+			     const t_type& tt,
+			     const json& jser,
+			     ::apache::thrift::protocol::TProtocol* oprot) {
   switch (t_type_case(tt)) {
   case struct_val: {
     /*
@@ -164,7 +164,7 @@ void NiceJSON::json2protocol(
       const t_type& ftype = lookup_type(f.type) ;
       const TType ttype = t_type2ttype(ftype) ;
       oprot->writeFieldBegin(f.name.data(), ttype, f.key) ;
-      json2protocol(f.type, fvalue, oprot) ;
+      json2protocol(f.type, ftype, fvalue, oprot) ;
       oprot->writeFieldEnd() ;
     }
     oprot->writeFieldStop();
@@ -205,7 +205,7 @@ void NiceJSON::json2protocol(
     oprot->writeListBegin(elemTType, size) ;
     for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
       const json& elem = *aii ;
-      json2protocol(elem_type_id, elem, oprot) ;
+      json2protocol(elem_type_id, elem_type, elem, oprot) ;
     }
     oprot->writeListEnd() ;
     break ;
@@ -221,7 +221,7 @@ void NiceJSON::json2protocol(
     oprot->writeSetBegin(elemTType, size) ;
     for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
       const json& elem = *aii ;
-      json2protocol(elem_type_id, elem, oprot) ;
+      json2protocol(elem_type_id, elem_type, elem, oprot) ;
     }
     oprot->writeSetEnd() ;
     break ;
@@ -246,8 +246,8 @@ void NiceJSON::json2protocol(
 	const json& value = aii.value() ;
 	if (!key.is_string())
 	  throw apache::thrift::plugin::ThriftPluginError("json2protocol: key is not a string");
-	json2protocol(dom_type_id, key, oprot) ;
-	json2protocol(rng_type_id, value, oprot) ;
+	json2protocol(dom_type_id, dom_type, key, oprot) ;
+	json2protocol(rng_type_id, rng_type, value, oprot) ;
       }
     }
     else {
@@ -258,8 +258,8 @@ void NiceJSON::json2protocol(
       for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
 	const json& key = (*aii)[0] ;
 	const json& value = (*aii)[1] ;
-	json2protocol(dom_type_id, key, oprot) ;
-	json2protocol(rng_type_id, value, oprot) ;
+	json2protocol(dom_type_id, dom_type, key, oprot) ;
+	json2protocol(rng_type_id, rng_type, value, oprot) ;
       }
     }
     oprot->writeMapEnd() ;
@@ -271,8 +271,9 @@ void NiceJSON::json2protocol(
   }
 }
 
-json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TProtocol* iprot) {
-  const t_type& tt = lookup_type(id) ;
+json NiceJSON::protocol2json(const t_type_id id,
+			     const t_type& tt,
+			     ::apache::thrift::protocol::TProtocol* iprot) {
   switch (t_type_case(tt)) {
   case struct_val: {
     /*
@@ -307,7 +308,7 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
 	  iprot->skip(ftype) ;
 	}
 	else {
-	  json fvalue = protocol2json(f.type, iprot) ;
+	  json fvalue = protocol2json(f.type, f_type, iprot) ;
 	  rv[f.name] = fvalue ;
 	}
       }
@@ -342,9 +343,10 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
     uint32_t size ;
     ::apache::thrift::protocol::TType eTType ;
     const t_type_id elem_type_id = tt.list_val.elem_type ;
+    const t_type& elem_type = lookup_type(elem_type_id) ;
     iprot->readListBegin(eTType, size) ;
     for(uint32_t i = 0 ; i < size ; ++i) {
-      rv.push_back(protocol2json(elem_type_id, iprot)) ;
+      rv.push_back(protocol2json(elem_type_id, elem_type, iprot)) ;
     }
     iprot->readListEnd() ;
     return rv ;
@@ -355,9 +357,10 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
     uint32_t size ;
     ::apache::thrift::protocol::TType eTType ;
     const t_type_id elem_type_id = tt.set_val.elem_type ;
+    const t_type& elem_type = lookup_type(elem_type_id) ;
     iprot->readSetBegin(eTType, size) ;
     for(uint32_t i = 0 ; i < size ; ++i) {
-      rv.push_back(protocol2json(elem_type_id, iprot)) ;
+      rv.push_back(protocol2json(elem_type_id, elem_type, iprot)) ;
     }
     iprot->readSetEnd() ;
     return rv ;
@@ -369,21 +372,23 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
     ::apache::thrift::protocol::TType rngTType ;
     iprot->readMapBegin(domTType, rngTType, size) ;
     const t_type_id dom_type_id = tt.map_val.key_type ;
+    const t_type& dom_type = lookup_type(dom_type_id) ;
     const t_type_id rng_type_id = tt.map_val.val_type ;
+    const t_type& rng_type = lookup_type(rng_type_id) ;
     json rv ;
     if (domTType == T_STRING) {
       rv = "{}"_json ; // TODO: fix this to be more efficient maybe?
       for(uint32_t i = 0 ; i < size ; ++i) {
-	json key = protocol2json(dom_type_id, iprot) ;
-	json value = protocol2json(rng_type_id, iprot) ;
+	json key = protocol2json(dom_type_id, dom_type, iprot) ;
+	json value = protocol2json(rng_type_id, rng_type, iprot) ;
 	rv[key.get<string>()] = value ;
       }
     }
     else {
       rv = "[]"_json ;
       for(uint32_t i = 0 ; i < size ; ++i) {
-	json key = protocol2json(dom_type_id, iprot) ;
-	json value = protocol2json(rng_type_id, iprot) ;
+	json key = protocol2json(dom_type_id, dom_type, iprot) ;
+	json value = protocol2json(rng_type_id, rng_type, iprot) ;
 	rv.push_back({key, value}) ;
       }
     }

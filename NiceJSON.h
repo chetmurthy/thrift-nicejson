@@ -95,26 +95,28 @@ public:
     }
   }
 
-  void json2protocol(const t_type_id id, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) ;
+  void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) ;
 
   template <typename DST>
     void demarshal(const string name, const json& jser, DST *dst) {
     const t_type_id id = lookup_type_id(name) ;
+    const t_type& ty = lookup_type(id) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
     TBinaryProtocol protocol(trans);
-    json2protocol(id, jser, &protocol) ;
+    json2protocol(id, ty, jser, &protocol) ;
     dst->read(&protocol) ;
   }
 
-  json protocol2json(const t_type_id id, ::apache::thrift::protocol::TProtocol* iprot) ;
+  json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot) ;
 
   template <typename SRC>
     json marshal(const string name, const SRC& src) {
     const t_type_id id = lookup_type_id(name) ;
+    const t_type& ty = lookup_type(id) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
     TBinaryProtocol protocol(trans);
     src.write(&protocol) ;
-    return protocol2json(id, &protocol) ;
+    return protocol2json(id, ty, &protocol) ;
   }
 
   const apache::thrift::plugin::GeneratorInput& it() const { return x_ ; }
