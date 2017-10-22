@@ -81,3 +81,14 @@ BOOST_AUTO_TEST_CASE( JSON7 )
   json j = "{}"_json ;
   BOOST_CHECK_THROW ( j.get<string>() , std::exception ) ;
 }
+
+BOOST_AUTO_TEST_CASE( JSON8 )
+{
+  json j ;
+  j = std::numeric_limits<int32_t>::max() ;
+  BOOST_CHECK(j.get<int32_t>() == std::numeric_limits<int32_t>::max()) ;
+
+  j = 1ll + (int64_t)std::numeric_limits<int32_t>::max() ;
+  BOOST_CHECK(j.get<int64_t>() == 1ll + (int64_t)std::numeric_limits<int32_t>::max()) ;
+  BOOST_CHECK(j.get<int32_t>() != 1ll + (int64_t)std::numeric_limits<int32_t>::max()) ;
+}
