@@ -17,8 +17,13 @@ gen-cpp: test.thrift
 gen-json: test.thrift
 	$(THRIFT) --gen json -r test.thrift
 
-GENCPPSRC=$(wildcard gen-cpp/*.cpp)
-GENCPPOBJ=$(patsubst %.cpp,%.o,$(GENCPPSRC))
+TESTSRC=$(wildcard gen-cpp/test*.cpp)
+PLUGINSRC=$(wildcard gen-cpp/plugin*.cpp)
+
+TESTOBJ=$(patsubst %.cpp,%.o,$(TESTSRC))
+PLUGINOBJ=$(patsubst %.cpp,%.o,$(PLUGINSRC))
+GENCPPOBJ=$(TESTOBJ) $(PLUGINOBJ)
+
 
 LINKFLAGS=-L$(THRIFTROOT)/lib -lthrift -lssl -lcrypto -Wl,-rpath -Wl,/home/chet/Hack/thrift-0.10.0/lib
 
@@ -26,16 +31,13 @@ INCLUDES=-I$(THRIFTROOT)/include -I.  -Igen-cpp -I../json/src
 DEBUG=-g
 CPPFLAGS=$(INCLUDES)  -Wall -Wextra -pedantic $(DEBUG) -std=c++11
 
-ThriftThrift: Thrift.o $(GENCPPOBJ)
-	g++  $(CPPFLAGS) -o ThriftThrift $^ $(LINKFLAGS)
-
 test1: test1.o NiceJSON.o $(GENCPPOBJ)
 	g++  $(CPPFLAGS) -o test1 $^ -lthriftc $(LINKFLAGS)
 
-jsontest: jsontest.o NiceJSON.o $(GENCPPOBJ)
+jsontest: jsontest.o NiceJSON.o
 	g++  $(CPPFLAGS) -o jsontest $^ -lthriftc $(LINKFLAGS)
 
-thrift-gen-wirejson: wirejson_plugin.o $(GENCPPOBJ)
+thrift-gen-wirejson: wirejson_plugin.o $(PLUGINOBJ)
 	g++ $(CPPFLAGS) -o thrift-gen-wirejson $^ -lthriftc $(LINKFLAGS)
 
 test.wirejson: thrift-gen-wirejson test.thrift
@@ -48,7 +50,7 @@ gen-cpp/%.o: gen-cpp/%.cpp
 	g++ $(CPPFLAGS) -c $< -o $@
 
 clean:
-	rm -rf */*.o *.o ThriftThrift test1 thrift-gen-wirejson *.wirejson
+	rm -rf */*.o *.o ThriftThrift test1 thrift-gen-wirejson *.wirejson jsontest
 
 realclean:: clean
 	rm -rf gen-*

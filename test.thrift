@@ -17,6 +17,7 @@ struct Foo {
   9: optional list<set<i32>> i,
   10: optional map<string, set<i32>> j,
   11: optional map<string, i32> k,
+  12: optional map<Bar, Bar> l ,
 }
 
 struct Boo {

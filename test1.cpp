@@ -153,3 +153,9 @@ BOOST_AUTO_TEST_CASE( Foo )
 
   //  RoundTrip<thrift_test::Foo>("Foo", j) ;
 }
+
+bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
+  if (this->a != that.a) return this->a < that.a ;
+  if (this->b != that.b) return this->b < that.b ;
+  return false ;
+}
