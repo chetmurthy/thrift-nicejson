@@ -40,8 +40,8 @@ jsontest: jsontest.o NiceJSON.o
 thrift-gen-wirejson: wirejson_plugin.o $(PLUGINOBJ)
 	g++ $(CPPFLAGS) -o thrift-gen-wirejson $^ -lthriftc $(LINKFLAGS)
 
-test.wirejson: thrift-gen-wirejson test.thrift
-	PATH=.:${PATH} thrift -r -gen wirejson test.thrift > test.wirejson
+%.wirejson: %.thrift thrift-gen-wirejson
+	PATH=.:${PATH} thrift -r -gen wirejson $< > $@
 
 gen-cpp/%.o: gen-cpp/%.cpp
 	g++ $(CPPFLAGS) -c $< -o $@
