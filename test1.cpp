@@ -188,7 +188,8 @@ BOOST_AUTO_TEST_CASE( Boo3 )
 {
   json j = R"foo(
 { "l": [[[1, 2, 3]]],
-  "m": [ [ { "a": 1, "b": "ugh" }, { "a": 1, "b": "ugh" } ] ]
+  "m": [ [ { "a": 1, "b": "ugh" }, { "a": 1, "b": "ugh" } ] ],
+  "n": [ [ 1, "foo" ], [ 2, "bar" ] ]
 }
 )foo"_json ;
 

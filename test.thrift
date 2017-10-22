@@ -22,6 +22,7 @@ struct Foo {
 struct Boo {
   1: required list<list<list<i32>>> l ;
   2: optional map<Bar, Bar> m ,
+  3: optional map<i32, string> n,
 }
 
 struct Goo {
