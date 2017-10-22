@@ -174,6 +174,19 @@ void NiceJSON::json2protocol(
     break ;
   }
 
+  case enum_val: {
+    if (!jser.is_string())
+      throw apache::thrift::plugin::ThriftPluginError("json2protocol: not a string");
+
+    const t_enum_lookaside& ee = lookup_enum(id) ;
+    string s = jser.get<string>() ;
+    map<string, int32_t>::const_iterator ii = ee.byname.find(s) ;
+    if (ii == ee.byname.end())
+      throw apache::thrift::plugin::ThriftPluginError("json2protocol: unrecognized enum string");
+    oprot->writeI32(ii->second) ;
+    break ;
+  }
+
   case base_type_val: {
     switch (t_base2ttype(tt.base_type_val.value)) {
     case T_I32: {
@@ -337,13 +350,19 @@ json NiceJSON::protocol2json(const t_type_id id,
     iprot->readStructEnd() ;
     return rv ;
   }
-#if 0
+
   case enum_val: {
+    const t_enum_lookaside& ee = lookup_enum(id) ;
     int n;
     iprot->readI32(n) ;
-    break ;
+    map<int32_t, string>::const_iterator ii = ee.byi32.find(n) ;
+    if (ii == ee.byi32.end()) {
+      throw apache::thrift::plugin::ThriftPluginError("protocol2json: unrecognized enum value");
+    }
+    json rv = ii->second ;
+    return rv ;
   }
-#endif
+
   case base_type_val: {
     switch (t_base2ttype(tt.base_type_val.value)) {
     case T_I32: {

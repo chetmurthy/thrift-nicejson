@@ -41,6 +41,8 @@ struct t_struct_lookaside {
 } ;
 
 struct t_enum_lookaside {
+  t_type_id type_id ;
+  t_enum e ;
   map<string, int32_t> byname ;
   map<int32_t, string> byi32 ;
 } ;
@@ -86,8 +88,8 @@ public:
       if (ty.__isset.struct_val) {
 	structs_by_name[ty.struct_val.metadata.name] = id ;
 
-	struct2type[id] = t_struct_lookaside() ;
-	t_struct_lookaside& p = struct2type[id] ;
+	struct_lookaside[id] = t_struct_lookaside() ;
+	t_struct_lookaside& p = struct_lookaside[id] ;
 
 	p.type_id = id ;
 	p.st = ty.struct_val ;
@@ -95,6 +97,17 @@ public:
 	  const t_field& f = *jj ;
 	  p.byname[f.name] = f ;
 	  p.byid[f.key] = f ;
+	}
+      }
+      else if (ty.__isset.enum_val) {
+	enum_lookaside[id] = t_enum_lookaside() ;
+	t_enum_lookaside& p = enum_lookaside[id] ;
+
+	p.type_id = id ;
+	p.e = ty.enum_val ;
+	for(vector<t_enum_value>::const_iterator ii = p.e.constants.begin() ; ii != p.e.constants.end() ; ++ii) {
+	  p.byname[ii->name] = ii->value ;
+	  p.byi32[ii->value] = ii->name ;
 	}
       }
     }
@@ -159,14 +172,23 @@ public:
   const t_struct_lookaside& lookup_struct_fields(const t_type_id id) const {
     t_type_id real_id = real_type_id(id) ;
 
-    const map<t_type_id, t_struct_lookaside>::const_iterator ii = struct2type.find(real_id);
-    assert(ii != struct2type.end()) ;
+    const map<t_type_id, t_struct_lookaside>::const_iterator ii = struct_lookaside.find(real_id);
+    assert(ii != struct_lookaside.end()) ;
+    return ii->second ;
+  }
+
+  const t_enum_lookaside& lookup_enum(const t_type_id id) const {
+    t_type_id real_id = real_type_id(id) ;
+
+    const map<t_type_id, t_enum_lookaside>::const_iterator ii = enum_lookaside.find(real_id);
+    assert(ii != enum_lookaside.end()) ;
     return ii->second ;
   }
 
 private:
   apache::thrift::plugin::GeneratorInput x_;
-  map<t_type_id, t_struct_lookaside> struct2type ;
+  map<t_type_id, t_struct_lookaside> struct_lookaside ;
+  map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<string, t_type_id> structs_by_name ;
 } ;
 

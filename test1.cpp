@@ -77,17 +77,13 @@ BOOST_AUTO_TEST_CASE( Bar )
   }
 }
 
-#if 0
 BOOST_AUTO_TEST_CASE( Ha1 )
 {
   thrift_test::Ha ha ;
   ha.__set_e(thrift_test::E::C) ;
 
-  std::cout << apache::thrift::ThriftJSONString(ha) << std::endl ;
-
   RoundTrip2<thrift_test::Ha>("Ha", ha) ;
 }
-#endif
 
 BOOST_AUTO_TEST_CASE( IO1 )
 {
@@ -208,7 +204,6 @@ BOOST_AUTO_TEST_CASE( Boo3 )
   RoundTrip<thrift_test::Boo>("Boo", j) ;
 }
 
-#if 0
 BOOST_AUTO_TEST_CASE( Plugin1 )
 {
   std::string ss = file_contents("plugin.wirejson") ;
@@ -216,8 +211,8 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
 
   std::cout << apache::thrift::ThriftDebugString(tt.it()) << std::endl ;
 
-  apache::thrift::plugin::GeneratorInput x ;
   json j = tt.marshal("GeneratorInput", tt.it()) ;
-  std::cout << j << std::endl ;
+  apache::thrift::plugin::GeneratorInput x ;
+  tt.demarshal("GeneratorInput", j, &x) ;
+  BOOST_CHECK( tt.it() == x ) ;
 }
-#endif
