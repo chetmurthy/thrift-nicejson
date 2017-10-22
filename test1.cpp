@@ -105,6 +105,17 @@ void RoundTrip(const string& structname, const json& json1) {
     BOOST_CHECK( json1 == json2 );
 }
 
+template<typename T>
+void RoundTrip2(const string& structname, const T& arg) {
+  std::string ss = file_contents("test.wirejson") ;
+  NiceJSON tt(ss) ;
+
+    json j = tt.marshal(structname, arg) ;
+    T rv ;
+    tt.demarshal(structname, j, &rv) ;
+    BOOST_CHECK( rv == arg );
+}
+
 BOOST_AUTO_TEST_CASE( Bar2 )
 {
   RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" } }) ;
@@ -158,4 +169,28 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
   if (this->a != that.a) return this->a < that.a ;
   if (this->b != that.b) return this->b < that.b ;
   return false ;
+}
+
+BOOST_AUTO_TEST_CASE( Boo2 )
+{
+  thrift_test::Boo boo ;
+  boo.l = {} ;
+  thrift_test::Bar v;
+  v.a = 10 ;
+  v.b = "foo" ;
+  boo.m[v] = v ;
+  boo.__isset.m = true ;
+
+  RoundTrip2<thrift_test::Boo>("Boo", boo) ;
+}
+
+BOOST_AUTO_TEST_CASE( Boo3 )
+{
+  json j = R"foo(
+{ "l": [[[1, 2, 3]]],
+  "m": [ [ { "a": 1, "b": "ugh" }, { "a": 1, "b": "ugh" } ] ]
+}
+)foo"_json ;
+
+  RoundTrip<thrift_test::Boo>("Boo", j) ;
 }
