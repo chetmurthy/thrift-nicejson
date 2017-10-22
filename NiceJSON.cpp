@@ -138,6 +138,20 @@ TType t_type2ttype(const t_type& tt) {
   }
 }
 
+template <typename ITY>
+ITY get_exactly(const json& j) {
+  if (!j.is_number()) 
+    throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-numeric");
+  double d = j.get<double>() ;
+  int64_t rv = (ITY) d ;
+  double dd = (double) rv ;
+  if (dd != d)
+    throw apache::thrift::plugin::ThriftPluginError("json2protocol: numeric but inexact/non-integral");
+  if (rv < (int64_t)std::numeric_limits<ITY>::min() || (int64_t)std::numeric_limits<ITY>::max() < rv)
+    throw apache::thrift::plugin::ThriftPluginError("json2protocol: numeric but out-of-bounds");
+  return (ITY)rv ;
+}
+
 void NiceJSON::json2protocol(
 			     const t_type_id id,
 			     const t_type& tt,
@@ -189,11 +203,27 @@ void NiceJSON::json2protocol(
 
   case base_type_val: {
     switch (t_base2ttype(tt.base_type_val.value)) {
+    case T_I08: {
+      int8_t n = get_exactly<int8_t>(jser) ;
+      oprot->writeByte((int8_t)n) ;
+      break ;
+    }
+    case T_I16: {
+      int16_t n = get_exactly<int16_t>(jser) ;
+      oprot->writeI16(n) ;
+      break ;
+    }
     case T_I32: {
-      if (!jser.is_number())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-numeric member");
-      int n = jser.get<int>() ;
+      int32_t n = get_exactly<int32_t>(jser) ;
       oprot->writeI32(n) ;
+      break ;
+    }
+    case T_I64: {
+      if (!jser.is_string())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-string member");
+      string s = jser.get<string>() ;
+      int64_t n = std::stoll(s) ;
+      oprot->writeI64(n) ;
       break ;
     }
 
@@ -212,16 +242,9 @@ void NiceJSON::json2protocol(
       oprot->writeString(s) ;
       break ;
     }
-    case T_I64: {
-      if (!jser.is_string())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-string member");
-      string s = jser.get<string>() ;
-      int64_t n = std::stoll(s) ;
-      oprot->writeI64(n) ;
-      break ;
-    }
 
     default:
+      std::cerr << boost::format{"json2protocol: unhandled t_base %s"} % tt << std::endl ;
       throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_base");
     }
     break ;
@@ -365,10 +388,28 @@ json NiceJSON::protocol2json(const t_type_id id,
 
   case base_type_val: {
     switch (t_base2ttype(tt.base_type_val.value)) {
+    case T_I08: {
+      int8_t n;
+      iprot->readByte(n) ;
+      json rv = n ;
+      return rv ;
+    }
+    case T_I16: {
+      int16_t n;
+      iprot->readI16(n) ;
+      json rv = n ;
+      return rv ;
+    }
     case T_I32: {
       int n;
       iprot->readI32(n) ;
       json rv = n ;
+      return rv ;
+    }
+    case T_I64: {
+      int64_t n ;
+      iprot->readI64(n) ;
+      json rv = std::to_string(n) ;
       return rv ;
     }
       
@@ -383,12 +424,6 @@ json NiceJSON::protocol2json(const t_type_id id,
       string s ;
       iprot->readString(s) ;
       json rv = s ;
-      return rv ;
-    }
-    case T_I64: {
-      int64_t n ;
-      iprot->readI64(n) ;
-      json rv = std::to_string(n) ;
       return rv ;
     }
     default:

@@ -9,6 +9,9 @@ enum E {
 struct Bar {
   4: required i32 a ,
   5: required string b,
+  6: optional i8 f6,
+  7: optional i16 f7,
+  8: optional i64 f8,
 }
 
 struct Foo {
