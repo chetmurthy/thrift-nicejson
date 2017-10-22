@@ -195,3 +195,17 @@ BOOST_AUTO_TEST_CASE( Boo3 )
 
   RoundTrip<thrift_test::Boo>("Boo", j) ;
 }
+
+#if 0
+BOOST_AUTO_TEST_CASE( Plugin1 )
+{
+  std::string ss = file_contents("plugin.wirejson") ;
+  NiceJSON tt(ss) ;
+
+  std::cout << apache::thrift::ThriftDebugString(tt.it()) << std::endl ;
+
+  apache::thrift::plugin::GeneratorInput x ;
+  json j = tt.marshal("GeneratorInput", tt.it()) ;
+  std::cout << j << std::endl ;
+}
+#endif

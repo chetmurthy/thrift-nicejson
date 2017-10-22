@@ -131,6 +131,7 @@ TType t_type2ttype(const t_type& tt) {
   case map_val:
     return T_MAP ;
   default:
+    std::cerr << boost::format{"t_type2ttype: Unknown t_type type %d"} % t_type_case(tt) << endl ;
     throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
   }
 }

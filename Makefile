@@ -4,9 +4,12 @@ THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/thrift
 
 all: gen-files thrift-gen-wirejson
 
-test: test1 jsontest test.wirejson
+test: test1 jsontest test.wirejson plugin.wirejson
 	./test1
 	./jsontest
+
+plugin.wirejson: $(THRIFTROOT)/src/thrift/compiler/cpp/src/thrift/plugin/plugin.thrift thrift-gen-wirejson
+	PATH=.:${PATH} thrift -r -gen wirejson $< > $@
 
 gen-files:: *.thrift gen-cpp gen-json
 
