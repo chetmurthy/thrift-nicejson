@@ -161,3 +161,15 @@ BOOST_AUTO_TEST_CASE( Boo )
   BOOST_CHECK_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[1]"_json } }),
 		      std::exception ) ;
 }
+
+BOOST_AUTO_TEST_CASE( Goo )
+{
+  RoundTrip<thrift_test::Goo>("Goo", { { "l", "[]"_json } }) ;
+  RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[]]]"_json } }) ;
+  RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[1, 2]]]"_json } }) ;
+
+  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[[]]]]"_json } }),
+		      std::exception ) ;
+  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[1]"_json } }),
+		      std::exception ) ;
+}

@@ -124,6 +124,8 @@ TType t_type2ttype(const t_type& tt) {
     return t_base2ttype(tt.base_type_val.value) ;
   case list_val:
     return T_LIST ;
+  case set_val:
+    return T_SET ;
   default:
     throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
   }
@@ -203,6 +205,23 @@ void NiceJSON::json2protocol(
     oprot->writeListEnd() ;
     break ;
   }
+
+  case set_val: {
+    if (!jser.is_array())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: not an array");
+    const uint32_t size = jser.size() ;
+    const t_type_id elem_type_id = tt.set_val.elem_type ;
+    const t_type& elem_type = lookup_type(elem_type_id) ;
+    const TType elemTType = t_type2ttype(elem_type) ;
+    oprot->writeSetBegin(elemTType, size) ;
+    for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
+      const json& elem = *aii ;
+      json2protocol(elem_type_id, elem, oprot) ;
+    }
+    oprot->writeSetEnd() ;
+    break ;
+  }
+
   default:
     throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_type");
   }
@@ -284,6 +303,19 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
       rv.push_back(protocol2json(elem_type_id, iprot)) ;
     }
     iprot->readListEnd() ;
+    return rv ;
+  }
+
+  case set_val: {
+    json rv = "[]"_json ; // TODO: fix this to be more efficient maybe?
+    uint32_t size ;
+    ::apache::thrift::protocol::TType eTType ;
+    const t_type_id elem_type_id = tt.set_val.elem_type ;
+    iprot->readSetBegin(eTType, size) ;
+    for(uint32_t i = 0 ; i < size ; i++) {
+      rv.push_back(protocol2json(elem_type_id, iprot)) ;
+    }
+    iprot->readSetEnd() ;
     return rv ;
   }
 

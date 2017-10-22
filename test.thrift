@@ -21,3 +21,7 @@ struct Foo {
 struct Boo {
   1: required list<list<list<i32>>> l ;
 }
+
+struct Goo {
+  1: required set<set<set<i32>>> l ;
+}
