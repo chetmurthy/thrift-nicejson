@@ -33,6 +33,10 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::plugin ;
 
+namespace apache {
+namespace thrift {
+namespace nicejson {
+
 struct t_struct_lookaside {
   t_type_id type_id ;
   t_struct st ;
@@ -194,3 +198,6 @@ private:
 
 std::string file_contents(const std::string fname) ;
 
+}
+}
+}

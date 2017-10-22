@@ -1,13 +1,22 @@
 
 #include "NiceJSON.h"
 
+
+namespace apache {
+namespace thrift {
+namespace nicejson {
+
+struct NiceJSONError : public apache::thrift::TException {
+  NiceJSONError(const std::string& msg) : apache::thrift::TException(msg) {}
+};
+
+}
+}
+}
+
 namespace apache {
 namespace thrift {
 namespace plugin {
-
-struct ThriftPluginError : public apache::thrift::TException {
-  ThriftPluginError(const std::string& msg) : apache::thrift::TException(msg) {}
-};
 
 enum t_const_value_type { CV_INTEGER, CV_DOUBLE, CV_STRING, CV_MAP, CV_LIST, CV_IDENTIFIER };
 
@@ -26,7 +35,7 @@ t_const_value_type const_value_case(const t_const_value& v) {
     return CV_IDENTIFIER;
   if (v.__isset.enum_val)
     return CV_IDENTIFIER;
-  throw ThriftPluginError("Unknown const value type");
+  throw apache::thrift::nicejson::NiceJSONError("Unknown const value type");
 }
 
 bool t_const_value::operator<(const t_const_value& that) const {
@@ -58,11 +67,15 @@ bool t_const_value::operator<(const t_const_value& that) const {
   case CV_IDENTIFIER:
     return integer_val < that.integer_val;
   }
-  throw ThriftPluginError("Unknown const value type");
+  throw apache::thrift::nicejson::NiceJSONError("Unknown const value type");
 }
 }
 }
 }
+
+namespace apache {
+namespace thrift {
+namespace nicejson {
 
 std::string file_contents(const std::string fname) {
   std::ifstream t(fname);
@@ -81,7 +94,7 @@ t_type_kind t_type_case(const t_type& tt) {
   if (tt.__isset.set_val) return set_val ;
   if (tt.__isset.map_val) return map_val ;
   if (tt.__isset.service_val) return service_val ;
-  throw apache::thrift::plugin::ThriftPluginError("t_type_case: Unknown t_type type");
+  throw NiceJSONError("t_type_case: Unknown t_type type");
   
 }
 
@@ -112,9 +125,9 @@ TType t_base2ttype(const t_base::type& bt) {
     return T_DOUBLE ;
     
   case t_base::TYPE_BINARY:
-    throw apache::thrift::plugin::ThriftPluginError("t_base2ttype: unhandled case TYPE_BINARY");
+    throw NiceJSONError("t_base2ttype: unhandled case TYPE_BINARY");
   default:
-    throw apache::thrift::plugin::ThriftPluginError("t_base2ttype: Unknown base_type type");
+    throw NiceJSONError("t_base2ttype: Unknown base_type type");
   }
 }
 
@@ -134,21 +147,21 @@ TType t_type2ttype(const t_type& tt) {
     return T_I32 ;
   default:
     std::cerr << boost::format{"t_type2ttype: Unknown t_type type %d, %s"} % t_type_case(tt) % apache::thrift::ThriftDebugString(tt) << endl ;
-    throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
+    throw NiceJSONError("t_type2ttype: Unknown t_type type");
   }
 }
 
 template <typename ITY>
 ITY get_exactly(const json& j) {
   if (!j.is_number()) 
-    throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-numeric");
+    throw NiceJSONError("json2protocol: non-numeric");
   double d = j.get<double>() ;
   int64_t rv = (ITY) d ;
   double dd = (double) rv ;
   if (dd != d)
-    throw apache::thrift::plugin::ThriftPluginError("json2protocol: numeric but inexact/non-integral");
+    throw NiceJSONError("json2protocol: numeric but inexact/non-integral");
   if (rv < (int64_t)std::numeric_limits<ITY>::min() || (int64_t)std::numeric_limits<ITY>::max() < rv)
-    throw apache::thrift::plugin::ThriftPluginError("json2protocol: numeric but out-of-bounds");
+    throw NiceJSONError("json2protocol: numeric but out-of-bounds");
   return (ITY)rv ;
 }
 
@@ -169,7 +182,7 @@ void NiceJSON::json2protocol(
      */
     const t_struct_lookaside& fdata = lookup_struct_fields(id) ;
     if (!jser.is_object()) 
-      throw apache::thrift::plugin::ThriftPluginError("cannot deser struct from non-object JSON");
+      throw NiceJSONError("cannot deser struct from non-object JSON");
     oprot->writeStructBegin(fdata.st.metadata.name.data()) ;
     for(json::const_iterator fii = jser.begin() ; fii != jser.end() ; ++fii) {
       const string& fname = fii.key() ;
@@ -190,13 +203,13 @@ void NiceJSON::json2protocol(
 
   case enum_val: {
     if (!jser.is_string())
-      throw apache::thrift::plugin::ThriftPluginError("json2protocol: not a string");
+      throw NiceJSONError("json2protocol: not a string");
 
     const t_enum_lookaside& ee = lookup_enum(id) ;
     string s = jser.get<string>() ;
     map<string, int32_t>::const_iterator ii = ee.byname.find(s) ;
     if (ii == ee.byname.end())
-      throw apache::thrift::plugin::ThriftPluginError("json2protocol: unrecognized enum string");
+      throw NiceJSONError("json2protocol: unrecognized enum string");
     oprot->writeI32(ii->second) ;
     break ;
   }
@@ -220,7 +233,7 @@ void NiceJSON::json2protocol(
     }
     case T_I64: {
       if (!jser.is_string())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-string member");
+	throw NiceJSONError("json2protocol: non-string member");
       string s = jser.get<string>() ;
       int64_t n = std::stoll(s) ;
       oprot->writeI64(n) ;
@@ -229,7 +242,7 @@ void NiceJSON::json2protocol(
 
     case T_BOOL: {
       if (!jser.is_boolean())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-boolean member");
+	throw NiceJSONError("json2protocol: non-boolean member");
       bool b = jser.get<bool>() ;
       oprot->writeBool(b) ;
       break ;
@@ -237,7 +250,7 @@ void NiceJSON::json2protocol(
       
     case T_STRING: {
       if (!jser.is_string())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-string member");
+	throw NiceJSONError("json2protocol: non-string member");
       string s = jser.get<string>() ;
       oprot->writeString(s) ;
       break ;
@@ -245,14 +258,14 @@ void NiceJSON::json2protocol(
 
     default:
       std::cerr << boost::format{"json2protocol: unhandled t_base %s"} % tt << std::endl ;
-      throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_base");
+      throw NiceJSONError("json2protocol: unhandled t_base");
     }
     break ;
   }
 
   case list_val: {
     if (!jser.is_array())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: not an array");
+	throw NiceJSONError("json2protocol: not an array");
     const uint32_t size = jser.size() ;
     const t_type_id elem_type_id = tt.list_val.elem_type ;
     const t_type& elem_type = lookup_type(elem_type_id) ;
@@ -268,7 +281,7 @@ void NiceJSON::json2protocol(
 
   case set_val: {
     if (!jser.is_array())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: not an array");
+	throw NiceJSONError("json2protocol: not an array");
     const uint32_t size = jser.size() ;
     const t_type_id elem_type_id = tt.set_val.elem_type ;
     const t_type& elem_type = lookup_type(elem_type_id) ;
@@ -293,21 +306,21 @@ void NiceJSON::json2protocol(
 
     if (domTType == T_STRING) {
       if (!jser.is_object())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: not an object");
+	throw NiceJSONError("json2protocol: not an object");
       const uint32_t size = jser.size() ;
       oprot->writeMapBegin(domTType, rngTType, size) ;
       for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
 	const json& key = aii.key() ;
 	const json& value = aii.value() ;
 	if (!key.is_string())
-	  throw apache::thrift::plugin::ThriftPluginError("json2protocol: key is not a string");
+	  throw NiceJSONError("json2protocol: key is not a string");
 	json2protocol(dom_type_id, dom_type, key, oprot) ;
 	json2protocol(rng_type_id, rng_type, value, oprot) ;
       }
     }
     else {
       if (!jser.is_array())
-	throw apache::thrift::plugin::ThriftPluginError("json2protocol: not an array");
+	throw NiceJSONError("json2protocol: not an array");
       const uint32_t size = jser.size() ;
       oprot->writeMapBegin(domTType, rngTType, size) ;
       for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
@@ -323,7 +336,7 @@ void NiceJSON::json2protocol(
 
   default:
     std::cerr << boost::format{"json2protocol: unhandled t_type %s"} % tt << std::endl ;
-    throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_type");
+    throw NiceJSONError("json2protocol: unhandled t_type");
   }
 }
 
@@ -380,7 +393,7 @@ json NiceJSON::protocol2json(const t_type_id id,
     iprot->readI32(n) ;
     map<int32_t, string>::const_iterator ii = ee.byi32.find(n) ;
     if (ii == ee.byi32.end()) {
-      throw apache::thrift::plugin::ThriftPluginError("protocol2json: unrecognized enum value");
+      throw NiceJSONError("protocol2json: unrecognized enum value");
     }
     json rv = ii->second ;
     return rv ;
@@ -428,7 +441,7 @@ json NiceJSON::protocol2json(const t_type_id id,
     }
     default:
       std::cerr << boost::format{"protocol2json: unhandled t_base %s"} % apache::thrift::ThriftDebugString(tt.base_type_val) << std::endl ;
-      throw apache::thrift::plugin::ThriftPluginError("protocol2json: unhandled t_base");
+      throw NiceJSONError("protocol2json: unhandled t_base");
     }
   }
 
@@ -492,6 +505,9 @@ json NiceJSON::protocol2json(const t_type_id id,
 
   default:
     std::cerr << boost::format{"protocol2json: unhandled t_type %s"} % tt << std::endl ;
-    throw apache::thrift::plugin::ThriftPluginError("protocol2json: unhandled t_type");
+    throw NiceJSONError("protocol2json: unhandled t_type");
   }
+}
+}
+}
 }

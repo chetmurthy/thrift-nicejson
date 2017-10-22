@@ -31,6 +31,7 @@ using std::set;
 using namespace apache::thrift;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
+using namespace apache::thrift::nicejson;
 
 template<typename T>
 void RoundTrip(const string& structname, const json& json1) {
