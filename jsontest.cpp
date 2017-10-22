@@ -75,3 +75,9 @@ BOOST_AUTO_TEST_CASE( JSON6 )
 
   BOOST_CHECK( j.is_object()) ;
 }
+
+BOOST_AUTO_TEST_CASE( JSON7 )
+{
+  json j = "{}"_json ;
+  BOOST_CHECK_THROW ( j.get<string>() , std::exception ) ;
+}
