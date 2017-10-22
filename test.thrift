@@ -1,5 +1,11 @@
 namespace cpp thrift_test
 
+enum E {
+  A
+  B
+  C
+}
+
 struct Bar {
   4: required i32 a ,
   5: required string b,
@@ -27,4 +33,8 @@ struct Boo {
 
 struct Goo {
   1: required set<set<set<i32>>> l ;
+}
+
+struct Ha {
+  1: E e
 }

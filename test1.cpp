@@ -32,6 +32,28 @@ using namespace apache::thrift;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
+template<typename T>
+void RoundTrip(const string& structname, const json& json1) {
+  std::string ss = file_contents("test.wirejson") ;
+  NiceJSON tt(ss) ;
+
+    T obj ;
+    tt.demarshal(structname, json1, &obj) ;
+    json json2 = tt.marshal(structname, obj) ;
+    BOOST_CHECK( json1 == json2 );
+}
+
+template<typename T>
+void RoundTrip2(const string& structname, const T& arg) {
+  std::string ss = file_contents("test.wirejson") ;
+  NiceJSON tt(ss) ;
+
+    json j = tt.marshal(structname, arg) ;
+    T rv ;
+    tt.demarshal(structname, j, &rv) ;
+    BOOST_CHECK( rv == arg );
+}
+
 BOOST_AUTO_TEST_CASE( Bar )
 {
   {
@@ -54,6 +76,18 @@ BOOST_AUTO_TEST_CASE( Bar )
     BOOST_CHECK(bar == bar2) ;
   }
 }
+
+#if 0
+BOOST_AUTO_TEST_CASE( Ha1 )
+{
+  thrift_test::Ha ha ;
+  ha.__set_e(thrift_test::E::C) ;
+
+  std::cout << apache::thrift::ThriftJSONString(ha) << std::endl ;
+
+  RoundTrip2<thrift_test::Ha>("Ha", ha) ;
+}
+#endif
 
 BOOST_AUTO_TEST_CASE( IO1 )
 {
@@ -92,28 +126,6 @@ BOOST_AUTO_TEST_CASE( Bar1 )
   thrift_test::Bar bar ;
   bar.read(&protocol) ;
   cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
-}
-
-template<typename T>
-void RoundTrip(const string& structname, const json& json1) {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
-
-    T obj ;
-    tt.demarshal(structname, json1, &obj) ;
-    json json2 = tt.marshal(structname, obj) ;
-    BOOST_CHECK( json1 == json2 );
-}
-
-template<typename T>
-void RoundTrip2(const string& structname, const T& arg) {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
-
-    json j = tt.marshal(structname, arg) ;
-    T rv ;
-    tt.demarshal(structname, j, &rv) ;
-    BOOST_CHECK( rv == arg );
 }
 
 BOOST_AUTO_TEST_CASE( Bar2 )
@@ -196,6 +208,7 @@ BOOST_AUTO_TEST_CASE( Boo3 )
   RoundTrip<thrift_test::Boo>("Boo", j) ;
 }
 
+#if 0
 BOOST_AUTO_TEST_CASE( Plugin1 )
 {
   std::string ss = file_contents("plugin.wirejson") ;
@@ -207,3 +220,4 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
   json j = tt.marshal("GeneratorInput", tt.it()) ;
   std::cout << j << std::endl ;
 }
+#endif

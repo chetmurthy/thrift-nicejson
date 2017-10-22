@@ -33,11 +33,16 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::plugin ;
 
-struct t_struct_fields {
+struct t_struct_lookaside {
   t_type_id type_id ;
   t_struct st ;
   map<string, t_field> byname ;
   map<int32_t, t_field> byid ;
+} ;
+
+struct t_enum_lookaside {
+  map<string, int32_t> byname ;
+  map<int32_t, string> byi32 ;
 } ;
 
 enum t_type_kind {
@@ -81,8 +86,8 @@ public:
       if (ty.__isset.struct_val) {
 	structs_by_name[ty.struct_val.metadata.name] = id ;
 
-	struct2type[id] = t_struct_fields() ;
-	t_struct_fields& p = struct2type[id] ;
+	struct2type[id] = t_struct_lookaside() ;
+	t_struct_lookaside& p = struct2type[id] ;
 
 	p.type_id = id ;
 	p.st = ty.struct_val ;
@@ -120,9 +125,23 @@ public:
   }
 
   const apache::thrift::plugin::GeneratorInput& it() const { return x_ ; }
-  const t_type& lookup_type(const t_type_id id) const {
+
+  const t_type_id real_type_id(const t_type_id id) const {
     const map<t_type_id, t_type>& types = it().type_registry.types ;
     const map<t_type_id, t_type>::const_iterator ii = types.find(id);
+    assert(ii != types.end()) ;
+    if (ii->second.__isset.typedef_val) {
+      return real_type_id(ii->second.typedef_val.type) ;
+    } else {
+      return id ;
+    }
+  }
+
+  const t_type& lookup_type(const t_type_id id) const {
+    t_type_id real_id = real_type_id(id) ;
+
+    const map<t_type_id, t_type>& types = it().type_registry.types ;
+    const map<t_type_id, t_type>::const_iterator ii = types.find(real_id);
     assert(ii != types.end()) ;
     if (ii->second.__isset.typedef_val) {
       return lookup_type(ii->second.typedef_val.type) ;
@@ -137,15 +156,17 @@ public:
     return ii->second ;
   }
 
-  const t_struct_fields& lookup_struct_fields(const t_type_id id) const {
-    const map<t_type_id, t_struct_fields>::const_iterator ii = struct2type.find(id);
+  const t_struct_lookaside& lookup_struct_fields(const t_type_id id) const {
+    t_type_id real_id = real_type_id(id) ;
+
+    const map<t_type_id, t_struct_lookaside>::const_iterator ii = struct2type.find(real_id);
     assert(ii != struct2type.end()) ;
     return ii->second ;
   }
 
 private:
   apache::thrift::plugin::GeneratorInput x_;
-  map<t_type_id, t_struct_fields> struct2type ;
+  map<t_type_id, t_struct_lookaside> struct2type ;
   map<string, t_type_id> structs_by_name ;
 } ;
 

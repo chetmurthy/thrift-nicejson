@@ -130,6 +130,8 @@ TType t_type2ttype(const t_type& tt) {
     return T_STRUCT ;
   case map_val:
     return T_MAP ;
+  case enum_val:
+    return T_I32 ;
   default:
     std::cerr << boost::format{"t_type2ttype: Unknown t_type type %d, %s"} % t_type_case(tt) % apache::thrift::ThriftDebugString(tt) << endl ;
     throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
@@ -151,7 +153,7 @@ void NiceJSON::json2protocol(
      *     begin field/ recurse / end field
      * (5) end struct
      */
-    const t_struct_fields& fdata = lookup_struct_fields(id) ;
+    const t_struct_lookaside& fdata = lookup_struct_fields(id) ;
     if (!jser.is_object()) 
       throw apache::thrift::plugin::ThriftPluginError("cannot deser struct from non-object JSON");
     oprot->writeStructBegin(fdata.st.metadata.name.data()) ;
@@ -181,6 +183,14 @@ void NiceJSON::json2protocol(
       oprot->writeI32(n) ;
       break ;
     }
+
+    case T_BOOL: {
+      if (!jser.is_boolean())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-boolean member");
+      bool b = jser.get<bool>() ;
+      oprot->writeBool(b) ;
+      break ;
+    }
       
     case T_STRING: {
       if (!jser.is_string())
@@ -189,6 +199,15 @@ void NiceJSON::json2protocol(
       oprot->writeString(s) ;
       break ;
     }
+    case T_I64: {
+      if (!jser.is_string())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-string member");
+      string s = jser.get<string>() ;
+      int64_t n = std::stoll(s) ;
+      oprot->writeI64(n) ;
+      break ;
+    }
+
     default:
       throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_base");
     }
@@ -267,6 +286,7 @@ void NiceJSON::json2protocol(
   }
 
   default:
+    std::cerr << boost::format{"json2protocol: unhandled t_type %s"} % tt << std::endl ;
     throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_type");
   }
 }
@@ -285,7 +305,7 @@ json NiceJSON::protocol2json(const t_type_id id,
      */
     json rv ;
 
-    const t_struct_fields& fdata = lookup_struct_fields(id) ;
+    const t_struct_lookaside& fdata = lookup_struct_fields(id) ;
     string sname ;
     iprot->readStructBegin(sname) ;
     while (true) {
@@ -317,7 +337,13 @@ json NiceJSON::protocol2json(const t_type_id id,
     iprot->readStructEnd() ;
     return rv ;
   }
-
+#if 0
+  case enum_val: {
+    int n;
+    iprot->readI32(n) ;
+    break ;
+  }
+#endif
   case base_type_val: {
     switch (t_base2ttype(tt.base_type_val.value)) {
     case T_I32: {
@@ -327,10 +353,23 @@ json NiceJSON::protocol2json(const t_type_id id,
       return rv ;
     }
       
+    case T_BOOL: {
+      bool b;
+      iprot->readBool(b) ;
+      json rv = b ;
+      return rv ;
+    }
+      
     case T_STRING: {
       string s ;
       iprot->readString(s) ;
       json rv = s ;
+      return rv ;
+    }
+    case T_I64: {
+      int64_t n ;
+      iprot->readI64(n) ;
+      json rv = std::to_string(n) ;
       return rv ;
     }
     default:
@@ -398,6 +437,7 @@ json NiceJSON::protocol2json(const t_type_id id,
   }
 
   default:
+    std::cerr << boost::format{"protocol2json: unhandled t_type %s"} % tt << std::endl ;
     throw apache::thrift::plugin::ThriftPluginError("protocol2json: unhandled t_type");
   }
 }
