@@ -52,3 +52,15 @@ BOOST_AUTO_TEST_CASE( JSON4 )
   BOOST_CHECK( j.is_array() );
   BOOST_CHECK( j.size() == 0 );
 }
+
+BOOST_AUTO_TEST_CASE( JSON5 )
+{
+  json j = R"foo(
+{ "a": 10,
+  "b": "bar"
+}
+)foo"_json ;
+
+  json j2 = { { "a", 10 }, { "b", "bar" } } ;
+  BOOST_CHECK( j == j2) ;
+}
