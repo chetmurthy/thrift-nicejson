@@ -53,11 +53,7 @@ BOOST_AUTO_TEST_CASE( Foo1 )
 	{"bar", {4,5,6}},
       } ;
     }
-    std::string serialized ;
-    {
-      serialized = apache::thrift::ThriftJSONString(a) ;
-      cout << serialized << std::endl ;
-    }
+    std::string serialized = apache::thrift::ThriftJSONString(a) ;
 
     Foo a2 ;
     {
@@ -69,12 +65,7 @@ BOOST_AUTO_TEST_CASE( Foo1 )
 
     }
 
-    assert(a == a2) ;
-
-    {
-      std::string serialized = apache::thrift::ThriftDebugString(a) ;
-      cout << serialized << std::endl ;
-    }
+    BOOST_CHECK(a == a2) ;
   }
 }
 
@@ -85,11 +76,7 @@ BOOST_AUTO_TEST_CASE( Bar )
     bar.__set_a(1) ;
     bar.__set_b("ugh") ;
 
-    std::string serialized ;
-    {
-      serialized = apache::thrift::ThriftJSONString(bar) ;
-      cout << serialized << std::endl ;
-    }
+    std::string serialized  = apache::thrift::ThriftJSONString(bar) ;
 
     thrift_test::Bar bar2 ;
     {
@@ -101,12 +88,7 @@ BOOST_AUTO_TEST_CASE( Bar )
 
     }
 
-    assert(bar == bar2) ;
-
-    {
-      std::string serialized = apache::thrift::ThriftDebugString(bar) ;
-      cout << serialized << std::endl ;
-    }
+    BOOST_CHECK(bar == bar2) ;
   }
 }
 
@@ -124,70 +106,58 @@ BOOST_AUTO_TEST_CASE( Bar1 )
 {
   std::string ss = file_contents("test.wirejson") ;
   NiceJSON tt(ss) ;
-    {
-      std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
-      cout << serialized << std::endl ;
-    }
 
-    json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
-    std::cout << bar_json << std::endl ;
+  json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
+  std::cout << bar_json << std::endl ;
 
-    boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
-    TBinaryProtocol protocol(trans);
-    {
-      protocol.writeStructBegin("Bar");
+  boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
+  TBinaryProtocol protocol(trans);
+  {
+    protocol.writeStructBegin("Bar");
 
-      protocol.writeFieldBegin("a", ::apache::thrift::protocol::T_I32, 4);
-      protocol.writeI32(1);
-      protocol.writeFieldEnd();
+    protocol.writeFieldBegin("a", ::apache::thrift::protocol::T_I32, 4);
+    protocol.writeI32(1);
+    protocol.writeFieldEnd();
 
-      protocol.writeFieldBegin("b", ::apache::thrift::protocol::T_STRING, 5);
-      protocol.writeString(std::string("ugh"));
-      protocol.writeFieldEnd();
+    protocol.writeFieldBegin("b", ::apache::thrift::protocol::T_STRING, 5);
+    protocol.writeString(std::string("ugh"));
+    protocol.writeFieldEnd();
 
-      protocol.writeFieldStop();
-      protocol.writeStructEnd();
-    }
-    thrift_test::Bar bar ;
-    bar.read(&protocol) ;
-    cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
+    protocol.writeFieldStop();
+    protocol.writeStructEnd();
+  }
+  thrift_test::Bar bar ;
+  bar.read(&protocol) ;
+  cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
+}
+
+template<typename T>
+void RoundTrip(const string& structname, const json& json1) {
+  std::string ss = file_contents("test.wirejson") ;
+  NiceJSON tt(ss) ;
+
+    T obj ;
+    tt.demarshal(structname, json1, &obj) ;
+    json json2 = tt.marshal(structname, obj) ;
+    BOOST_CHECK( json1 == json2 );
 }
 
 BOOST_AUTO_TEST_CASE( Bar2 )
 {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
-    {
-      std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
-      cout << serialized << std::endl ;
-    }
-
-    json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
-    std::cout << bar_json << std::endl ;
-
-    thrift_test::Bar bar ;
-    tt.demarshal("Bar", bar_json, &bar) ;
-    cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
-    json bar_json2 = tt.marshal("Bar", bar) ;
-    BOOST_CHECK( bar_json == bar_json2 );
+  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" } }) ;
+  
+  BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 } }), std::exception );
+ ;
 }
 
-BOOST_AUTO_TEST_CASE( Boo1 )
+BOOST_AUTO_TEST_CASE( Boo )
 {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
-    {
-      std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
-      cout << serialized << std::endl ;
-    }
+  RoundTrip<thrift_test::Boo>("Boo", { { "l", "[]"_json } }) ;
+  RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[]]]"_json } }) ;
+  RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[1, 2]]]"_json } }) ;
 
-    json boo_json = { { "l", "[]"_json } } ;
-    std::cout << boo_json << std::endl ;
-
-    thrift_test::Boo boo ;
-    tt.demarshal("Boo", boo_json, &boo) ;
-    cout << apache::thrift::ThriftDebugString(boo) << std::endl ;
-    json boo_json2 = tt.marshal("Boo", boo) ;
-    std::cout << boo_json2 << std::endl ;
-    BOOST_CHECK( boo_json == boo_json2 );
+  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[[]]]]"_json } }),
+		      std::exception ) ;
+  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[1]"_json } }),
+		      std::exception ) ;
 }
