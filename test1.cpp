@@ -143,11 +143,13 @@ BOOST_AUTO_TEST_CASE( Foo )
 { "a": 10,
   "b": "bar",
   "c": { "a": 1, "b": "ugh" },
-  "d": [{ "a": 1, "b": "ugh" }, { "a": 1, "b": "ugh" }]
+  "d": [{ "a": 1, "b": "ugh" }, { "a": 1, "b": "ugh" }],
+  "k": { "a": 10, "b": 20 }
 }
 )foo"_json ;
+
   std::cout << j << std::endl ;
-  RoundTrip<thrift_test::Foo>("Foo", { { "a", 1 }, { "b", "ugh" } }) ;
+  RoundTrip<thrift_test::Foo>("Foo", j) ;
 
   //  RoundTrip<thrift_test::Foo>("Foo", j) ;
 }
