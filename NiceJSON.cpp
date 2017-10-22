@@ -142,7 +142,7 @@ void NiceJSON::json2protocol(
      *     begin field/ recurse / end field
      * (5) end struct
      */
-    const t_struct_fields& fdata = lookup_struct(id) ;
+    const t_struct_fields& fdata = lookup_struct_fields(id) ;
     if (!jser.is_object()) 
       throw apache::thrift::plugin::ThriftPluginError("cannot deser struct from non-object JSON");
     oprot->writeStructBegin(fdata.st.metadata.name.data()) ;
@@ -158,7 +158,31 @@ void NiceJSON::json2protocol(
       json2protocol(f.type, fvalue, oprot) ;
       oprot->writeFieldEnd() ;
     }
+    oprot->writeFieldStop();
     oprot->writeStructEnd() ;
+    break ;
+  }
+
+  case base_type_val: {
+    switch (t_base2ttype(tt.base_type_val.value)) {
+    case T_I32: {
+      if (!jser.is_number())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-numeric member");
+      int n = jser.get<int>() ;
+      oprot->writeI32(n) ;
+      break ;
+    }
+      
+    case T_STRING: {
+      if (!jser.is_string())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: non-string member");
+      string s = jser.get<string>() ;
+      oprot->writeString(s) ;
+      break ;
+    }
+    default:
+      throw apache::thrift::plugin::ThriftPluginError("unhandled t_base");
+    }
     break ;
   }
 

@@ -61,19 +61,25 @@ public:
     
     buf->resetBuffer((uint8_t*)idl.data(), static_cast<uint32_t>(idl.length()));
     x_.read(p.get());
+    initialize() ;
   }
 
   NiceJSON(boost::shared_ptr<TTransport> transport) {
     TJSONProtocol proto(transport);
 
     x_.read(&proto);
+    initialize() ;
+  }
 
+  void initialize() {
     auto alltypes = it().type_registry.types ;
     for(map<t_type_id, t_type>::const_iterator ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
       const t_type_id id = ii->first ;
       const t_type& ty = ii->second ;
 
       if (ty.__isset.struct_val) {
+	structs_by_name[ty.struct_val.metadata.name] = id ;
+
 	struct2type[id] = t_struct_fields() ;
 	t_struct_fields& p = struct2type[id] ;
 
@@ -91,7 +97,8 @@ public:
   void json2protocol(const t_type_id id, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) ;
 
   template <typename DST>
-    void demarshal(const t_type_id id, const json& jser, DST *out) {
+    void demarshal(const string name, const json& jser, DST *out) {
+    const t_type_id id = lookup_type_id(name) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
     TBinaryProtocol protocol(trans);
     json2protocol(id, jser, &protocol) ;
@@ -106,7 +113,13 @@ public:
     return ii->second ;
   }
 
-  const t_struct_fields& lookup_struct(const t_type_id id) const {
+  const t_type_id lookup_type_id(const string& name) const {
+    const map<string, t_type_id>::const_iterator ii = structs_by_name.find(name) ;
+    assert (ii != structs_by_name.end()) ;
+    return ii->second ;
+  }
+
+  const t_struct_fields& lookup_struct_fields(const t_type_id id) const {
     const map<t_type_id, t_struct_fields>::const_iterator ii = struct2type.find(id);
     assert(ii != struct2type.end()) ;
     return ii->second ;
@@ -115,6 +128,7 @@ public:
 private:
   apache::thrift::plugin::GeneratorInput x_;
   map<t_type_id, t_struct_fields> struct2type ;
+  map<string, t_type_id> structs_by_name ;
 } ;
 
 std::string file_contents(const std::string fname) ;

@@ -166,22 +166,6 @@ BOOST_AUTO_TEST_CASE( Bar2 )
     std::cout << bar_json << std::endl ;
 
     thrift_test::Bar bar ;
-    boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
-    TBinaryProtocol protocol(trans);
-    {
-      protocol.writeStructBegin("Bar");
-
-      protocol.writeFieldBegin("a", ::apache::thrift::protocol::T_I32, 4);
-      protocol.writeI32(1);
-      protocol.writeFieldEnd();
-
-      protocol.writeFieldBegin("b", ::apache::thrift::protocol::T_STRING, 5);
-      protocol.writeString(std::string("ugh"));
-      protocol.writeFieldEnd();
-
-      protocol.writeFieldStop();
-      protocol.writeStructEnd();
-    }
-    bar.read(&protocol) ;
+    tt.demarshal("Bar", bar_json, &bar) ;
     cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
 }
