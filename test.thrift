@@ -8,14 +8,14 @@ struct Bar {
 struct Foo {
   1: required i32 a ,
   2: required string b,
-  3: required Bar c,
-  4: required list<Bar> d,
-  5: required map<string, Bar> e,
-  6: required list<i32> f,
-  7: required set<i32> g,
-  8: required list<list<string>> h,
-  9: required list<set<i32>> i,
-  10: required map<string, set<i32>> j,
+  3: optional Bar c,
+  4: optional list<Bar> d,
+  5: optional map<string, Bar> e,
+  6: optional list<i32> f,
+  7: optional set<i32> g,
+  8: optional list<list<string>> h,
+  9: optional list<set<i32>> i,
+  10: optional map<string, set<i32>> j,
 }
 
 struct Boo {

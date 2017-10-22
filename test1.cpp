@@ -32,43 +32,6 @@ using namespace apache::thrift;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
-BOOST_AUTO_TEST_CASE( Foo1 )
-{
-  using namespace thrift_test;
-  {
-    Foo a ;
-    a.__set_a(1) ;
-    a.__set_b("ugh") ;
-    a.__set_c(Bar()) ;
-    a.c.__set_a(2) ;
-    a.c.__set_b("argh");
-    if (true) {
-      a.d.push_back(a.c) ;
-      a.d.push_back(a.c) ;
-      a.e["foo"] = a.c ;
-      a.e["bar"] = a.c ;
-      a.g.insert(32) ;
-      a.j = map<string, set<int32_t> >{
-	{"foo", {1,2,3}},
-	{"bar", {4,5,6}},
-      } ;
-    }
-    std::string serialized = apache::thrift::ThriftJSONString(a) ;
-
-    Foo a2 ;
-    {
-      shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-      shared_ptr<TJSONProtocol> p(new TJSONProtocol(buf)); 
-    
-      buf->resetBuffer((uint8_t*)serialized.data(), static_cast<uint32_t>(serialized.length()));
-      a2.read(p.get());
-
-    }
-
-    BOOST_CHECK(a == a2) ;
-  }
-}
-
 BOOST_AUTO_TEST_CASE( Bar )
 {
   {
@@ -172,4 +135,19 @@ BOOST_AUTO_TEST_CASE( Goo )
 		      std::exception ) ;
   BOOST_CHECK_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[1]"_json } }),
 		      std::exception ) ;
+}
+
+BOOST_AUTO_TEST_CASE( Foo )
+{
+  json j = R"foo(
+{ "a": 10,
+  "b": "bar",
+  "c": { "a": 1, "b": "ugh" },
+  "d": [{ "a": 1, "b": "ugh" }, { "a": 1, "b": "ugh" }]
+}
+)foo"_json ;
+  std::cout << j << std::endl ;
+  RoundTrip<thrift_test::Foo>("Foo", { { "a", 1 }, { "b", "ugh" } }) ;
+
+  //  RoundTrip<thrift_test::Foo>("Foo", j) ;
 }
