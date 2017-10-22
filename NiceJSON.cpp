@@ -81,7 +81,7 @@ t_type_kind t_type_case(const t_type& tt) {
   if (tt.__isset.set_val) return set_val ;
   if (tt.__isset.map_val) return map_val ;
   if (tt.__isset.service_val) return service_val ;
-  throw apache::thrift::plugin::ThriftPluginError("Unknown t_type type");
+  throw apache::thrift::plugin::ThriftPluginError("t_type_case: Unknown t_type type");
   
 }
 
@@ -122,6 +122,8 @@ TType t_type2ttype(const t_type& tt) {
   switch(t_type_case(tt)) {
   case base_type_val:
     return t_base2ttype(tt.base_type_val.value) ;
+  case list_val:
+    return T_LIST ;
   default:
     throw apache::thrift::plugin::ThriftPluginError("t_type2ttype: Unknown t_type type");
   }
@@ -181,13 +183,28 @@ void NiceJSON::json2protocol(
       break ;
     }
     default:
-      throw apache::thrift::plugin::ThriftPluginError("unhandled t_base");
+      throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_base");
     }
     break ;
   }
 
+  case list_val: {
+    if (!jser.is_array())
+	throw apache::thrift::plugin::ThriftPluginError("json2protocol: not an array");
+    const uint32_t size = jser.size() ;
+    const t_type_id elem_type_id = tt.list_val.elem_type ;
+    const t_type& elem_type = lookup_type(elem_type_id) ;
+    const TType elemTType = t_type2ttype(elem_type) ;
+    oprot->writeListBegin(elemTType, size) ;
+    for(json::const_iterator aii = jser.begin() ; aii != jser.end() ; ++aii) {
+      const json& elem = *aii ;
+      json2protocol(elem_type_id, elem, oprot) ;
+    }
+    oprot->writeListEnd() ;
+    break ;
+  }
   default:
-    throw apache::thrift::plugin::ThriftPluginError("unhandled t_type");
+    throw apache::thrift::plugin::ThriftPluginError("json2protocol: unhandled t_type");
   }
 }
 
@@ -236,6 +253,7 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
     iprot->readStructEnd() ;
     return rv ;
   }
+
   case base_type_val: {
     switch (t_base2ttype(tt.base_type_val.value)) {
     case T_I32: {
@@ -252,10 +270,24 @@ json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TPr
       return rv ;
     }
     default:
-      throw apache::thrift::plugin::ThriftPluginError("unhandled t_base");
+      throw apache::thrift::plugin::ThriftPluginError("protocol2json: unhandled t_base");
     }
   }
+
+  case list_val: {
+    json rv = "[]"_json ; // TODO: fix this to be more efficient maybe?
+    uint32_t size ;
+    ::apache::thrift::protocol::TType eTType ;
+    const t_type_id elem_type_id = tt.list_val.elem_type ;
+    iprot->readListBegin(eTType, size) ;
+    for(uint32_t i = 0 ; i < size ; i++) {
+      rv.push_back(protocol2json(elem_type_id, iprot)) ;
+    }
+    iprot->readListEnd() ;
+    return rv ;
+  }
+
   default:
-    throw apache::thrift::plugin::ThriftPluginError("unhandled t_type");
+    throw apache::thrift::plugin::ThriftPluginError("protocol2json: unhandled t_type");
   }
 }

@@ -171,3 +171,23 @@ BOOST_AUTO_TEST_CASE( Bar2 )
     json bar_json2 = tt.marshal("Bar", bar) ;
     BOOST_CHECK( bar_json == bar_json2 );
 }
+
+BOOST_AUTO_TEST_CASE( Boo1 )
+{
+  std::string ss = file_contents("test.wirejson") ;
+  NiceJSON tt(ss) ;
+    {
+      std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
+      cout << serialized << std::endl ;
+    }
+
+    json boo_json = { { "l", "[]"_json } } ;
+    std::cout << boo_json << std::endl ;
+
+    thrift_test::Boo boo ;
+    tt.demarshal("Boo", boo_json, &boo) ;
+    cout << apache::thrift::ThriftDebugString(boo) << std::endl ;
+    json boo_json2 = tt.marshal("Boo", boo) ;
+    std::cout << boo_json2 << std::endl ;
+    BOOST_CHECK( boo_json == boo_json2 );
+}

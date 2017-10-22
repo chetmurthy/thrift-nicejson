@@ -34,3 +34,21 @@ BOOST_AUTO_TEST_CASE( JSON2 )
   BOOST_CHECK( j.is_null() );
   BOOST_CHECK( !j.is_object() );
 }
+
+BOOST_AUTO_TEST_CASE( JSON3 )
+{
+  json j = std::vector<int>{} ;
+  BOOST_CHECK( j.empty() );
+  BOOST_CHECK( !j.is_null() );
+  BOOST_CHECK( j.is_array() );
+  BOOST_CHECK( j.size() == 0 );
+}
+
+BOOST_AUTO_TEST_CASE( JSON4 )
+{
+  json j = "[]"_json ;
+  BOOST_CHECK( j.empty() );
+  BOOST_CHECK( !j.is_null() );
+  BOOST_CHECK( j.is_array() );
+  BOOST_CHECK( j.size() == 0 );
+}
