@@ -2,3 +2,7 @@ gen-*
 ThriftThrift
 thrift-gen-myjson
 *.o
+jsontest
+test.wirejson
+test1
+thrift-gen-wirejson
