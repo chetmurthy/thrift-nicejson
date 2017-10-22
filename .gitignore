@@ -3,6 +3,6 @@ ThriftThrift
 thrift-gen-myjson
 *.o
 jsontest
-test.wirejson
+*.wirejson
 test1
 thrift-gen-wirejson
