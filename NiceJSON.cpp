@@ -190,3 +190,72 @@ void NiceJSON::json2protocol(
     throw apache::thrift::plugin::ThriftPluginError("unhandled t_type");
   }
 }
+
+json NiceJSON::protocol2json(const t_type_id id, ::apache::thrift::protocol::TProtocol* iprot) {
+  const t_type& tt = lookup_type(id) ;
+  switch (t_type_case(tt)) {
+  case struct_val: {
+    /*
+     * (1) lookup struct info
+     * (2) begin struct
+     * (3) for each beginField (until we get T_STOP),  recurse / end field, addinng to JSON
+     *     begin field/ recurse / end field
+     * (4) end struct
+     */
+    json rv ;
+
+    const t_struct_fields& fdata = lookup_struct_fields(id) ;
+    string sname ;
+    iprot->readStructBegin(sname) ;
+    while (true) {
+      std::string fname;
+      ::apache::thrift::protocol::TType ftype;
+      int16_t fid;
+      iprot->readFieldBegin(fname, ftype, fid);
+      if (ftype == ::apache::thrift::protocol::T_STOP) {
+	break;
+      }
+      const map<int32_t, t_field>::const_iterator fii = fdata.byid.find(fid) ;
+      if (fii == fdata.byid.end()) {
+	iprot->skip(ftype) ;
+      }
+      else {
+	const t_field& f = fii->second ;
+	const t_type& f_type = lookup_type(f.type) ;
+	const TType ttype = t_type2ttype(f_type) ;
+	if (ttype != ftype) {
+	  iprot->skip(ftype) ;
+	}
+	else {
+	  json fvalue = protocol2json(f.type, iprot) ;
+	  rv[f.name] = fvalue ;
+	}
+      }
+      iprot->readFieldEnd() ;
+    }
+    iprot->readStructEnd() ;
+    return rv ;
+  }
+  case base_type_val: {
+    switch (t_base2ttype(tt.base_type_val.value)) {
+    case T_I32: {
+      int n;
+      iprot->readI32(n) ;
+      json rv = n ;
+      return rv ;
+    }
+      
+    case T_STRING: {
+      string s ;
+      iprot->readString(s) ;
+      json rv = s ;
+      return rv ;
+    }
+    default:
+      throw apache::thrift::plugin::ThriftPluginError("unhandled t_base");
+    }
+  }
+  default:
+    throw apache::thrift::plugin::ThriftPluginError("unhandled t_type");
+  }
+}

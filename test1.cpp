@@ -168,4 +168,6 @@ BOOST_AUTO_TEST_CASE( Bar2 )
     thrift_test::Bar bar ;
     tt.demarshal("Bar", bar_json, &bar) ;
     cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
+    json bar_json2 = tt.marshal("Bar", bar) ;
+    BOOST_CHECK( bar_json == bar_json2 );
 }
