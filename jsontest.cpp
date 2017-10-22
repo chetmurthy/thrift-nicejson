@@ -64,3 +64,14 @@ BOOST_AUTO_TEST_CASE( JSON5 )
   json j2 = { { "a", 10 }, { "b", "bar" } } ;
   BOOST_CHECK( j == j2) ;
 }
+
+BOOST_AUTO_TEST_CASE( JSON6 )
+{
+  json j = R"foo(
+{ "1": 10,
+  "2": "bar"
+}
+)foo"_json ;
+
+  BOOST_CHECK( j.is_object()) ;
+}
