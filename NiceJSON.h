@@ -70,20 +70,23 @@ t_type_kind t_type_case(const t_type& tt) ;
 
 class NiceJSON {
 public:
-  NiceJSON(const std::string& idl) {
-    shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-    shared_ptr<TJSONProtocol> p(new TJSONProtocol(buf)); 
-    
-    buf->resetBuffer((uint8_t*)idl.data(), static_cast<uint32_t>(idl.length()));
-    x_.read(p.get());
+  NiceJSON(uint8_t const  * const serialized, size_t length) {
+    deserialize(serialized, length) ;
     initialize() ;
   }
 
-  NiceJSON(boost::shared_ptr<TTransport> transport) {
-    TJSONProtocol proto(transport);
-
-    x_.read(&proto);
+ NiceJSON(const std::string& idl) {
+   deserialize((uint8_t const  * const)idl.data(), idl.length());
     initialize() ;
+  }
+
+ private:
+  void deserialize(uint8_t const  * const serialized, size_t length) {
+    shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
+    shared_ptr<TJSONProtocol> p(new TJSONProtocol(buf)); 
+    
+    buf->resetBuffer(const_cast<uint8_t *>(serialized), static_cast<uint32_t>(length));
+    x_.read(p.get());
   }
 
   void initialize() {
@@ -120,6 +123,7 @@ public:
     }
   }
 
+ public:
   void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) ;
 
   template <typename DST>
@@ -204,4 +208,4 @@ std::string file_contents(const std::string fname) ;
 }
 }
 }
-#endif NICEJSON_H_INCLUDED
+#endif
