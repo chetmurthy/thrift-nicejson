@@ -19,6 +19,9 @@
 
 #include "json.hpp"
 
+#ifndef NICEJSON_H_INCLUDED
+#define NICEJSON_H_INCLUDED
+
 using boost::shared_ptr;
 using std::cout;
 using std::endl;
@@ -201,3 +204,4 @@ std::string file_contents(const std::string fname) ;
 }
 }
 }
+#endif NICEJSON_H_INCLUDED
