@@ -342,7 +342,8 @@ void NiceJSON::json2protocol(
 
 json NiceJSON::protocol2json(const t_type_id id,
 			     const t_type& tt,
-			     ::apache::thrift::protocol::TProtocol* iprot) const {
+			     ::apache::thrift::protocol::TProtocol* iprot,
+			     const bool permissive) const {
   switch (t_type_case(tt)) {
   case struct_val: {
     /*
@@ -377,7 +378,7 @@ json NiceJSON::protocol2json(const t_type_id id,
 	  iprot->skip(ftype) ;
 	}
 	else {
-	  json fvalue = protocol2json(f.type, f_type, iprot) ;
+	  json fvalue = protocol2json(f.type, f_type, iprot, permissive) ;
 	  rv[f.name] = fvalue ;
 	}
       }
@@ -453,7 +454,7 @@ json NiceJSON::protocol2json(const t_type_id id,
     const t_type& elem_type = lookup_type(elem_type_id) ;
     iprot->readListBegin(eTType, size) ;
     for(uint32_t i = 0 ; i < size ; ++i) {
-      rv.push_back(protocol2json(elem_type_id, elem_type, iprot)) ;
+      rv.push_back(protocol2json(elem_type_id, elem_type, iprot, permissive)) ;
     }
     iprot->readListEnd() ;
     return rv ;
@@ -467,7 +468,7 @@ json NiceJSON::protocol2json(const t_type_id id,
     const t_type& elem_type = lookup_type(elem_type_id) ;
     iprot->readSetBegin(eTType, size) ;
     for(uint32_t i = 0 ; i < size ; ++i) {
-      rv.push_back(protocol2json(elem_type_id, elem_type, iprot)) ;
+      rv.push_back(protocol2json(elem_type_id, elem_type, iprot, permissive)) ;
     }
     iprot->readSetEnd() ;
     return rv ;
@@ -486,16 +487,16 @@ json NiceJSON::protocol2json(const t_type_id id,
     if (domTType == T_STRING) {
       rv = "{}"_json ; // TODO: fix this to be more efficient maybe?
       for(uint32_t i = 0 ; i < size ; ++i) {
-	json key = protocol2json(dom_type_id, dom_type, iprot) ;
-	json value = protocol2json(rng_type_id, rng_type, iprot) ;
+	json key = protocol2json(dom_type_id, dom_type, iprot, permissive) ;
+	json value = protocol2json(rng_type_id, rng_type, iprot, permissive) ;
 	rv[key.get<string>()] = value ;
       }
     }
     else {
       rv = "[]"_json ;
       for(uint32_t i = 0 ; i < size ; ++i) {
-	json key = protocol2json(dom_type_id, dom_type, iprot) ;
-	json value = protocol2json(rng_type_id, rng_type, iprot) ;
+	json key = protocol2json(dom_type_id, dom_type, iprot, permissive) ;
+	json value = protocol2json(rng_type_id, rng_type, iprot, permissive) ;
 	rv.push_back({key, value}) ;
       }
     }

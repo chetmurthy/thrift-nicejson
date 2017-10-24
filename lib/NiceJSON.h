@@ -136,21 +136,21 @@ public:
     dst->read(&protocol) ;
   }
 
-  json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot) const ;
+  json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot, const bool permissive = false) const ;
 
   template <typename SRC>
-    json marshal(const string name, const SRC& src) const {
+    json marshal(const string name, const SRC& src, const bool permissive = false) const {
     const t_type_id id = lookup_type_id(name) ;
     const t_type& ty = lookup_type(id) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
     TBinaryProtocol protocol(trans);
     src.write(&protocol) ;
-    return protocol2json(id, ty, &protocol) ;
+    return protocol2json(id, ty, &protocol, permissive) ;
   }
 
   const apache::thrift::plugin::GeneratorInput& it() const { return x_ ; }
 
-  const t_type_id real_type_id(const t_type_id id) const {
+  t_type_id real_type_id(const t_type_id id) const {
     const map<t_type_id, t_type>& types = it().type_registry.types ;
     const map<t_type_id, t_type>::const_iterator ii = types.find(id);
     assert(ii != types.end()) ;
@@ -174,7 +174,7 @@ public:
     }
   }
 
-  const t_type_id lookup_type_id(const string& name) const {
+  t_type_id lookup_type_id(const string& name) const {
     const map<string, t_type_id>::const_iterator ii = structs_by_name.find(name) ;
     assert (ii != structs_by_name.end()) ;
     return ii->second ;
