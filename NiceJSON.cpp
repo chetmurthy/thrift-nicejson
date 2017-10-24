@@ -169,7 +169,7 @@ void NiceJSON::json2protocol(
 			     const t_type_id id,
 			     const t_type& tt,
 			     const json& jser,
-			     ::apache::thrift::protocol::TProtocol* oprot) {
+			     ::apache::thrift::protocol::TProtocol* oprot) const {
   switch (t_type_case(tt)) {
   case struct_val: {
     /*
@@ -342,7 +342,7 @@ void NiceJSON::json2protocol(
 
 json NiceJSON::protocol2json(const t_type_id id,
 			     const t_type& tt,
-			     ::apache::thrift::protocol::TProtocol* iprot) {
+			     ::apache::thrift::protocol::TProtocol* iprot) const {
   switch (t_type_case(tt)) {
   case struct_val: {
     /*
@@ -508,6 +508,24 @@ json NiceJSON::protocol2json(const t_type_id id,
     throw NiceJSONError("protocol2json: unhandled t_type");
   }
 }
+
+map<string, const NiceJSON*>  NiceJSON::type_library_;
+
+void NiceJSON::register_typelib(const string& package, const string& name, const NiceJSON *p) {
+  const string key = package + "/" + name ;
+  if (type_library_.end() != type_library_.find(key)) {
+    throw NiceJSONError("Type library " + key + " already registered") ;
+  }
+  type_library_[key] = p ;
+}
+
+const NiceJSON* NiceJSON::lookup_typelib(const string& key) {
+  if (type_library_.end() == type_library_.find(key)) {
+    throw NiceJSONError("Type library " + key + " not found") ;
+  }
+  return type_library_[key] ;
+}
+
 }
 }
 }

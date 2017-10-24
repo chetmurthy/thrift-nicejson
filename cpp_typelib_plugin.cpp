@@ -88,12 +88,13 @@ struct StaticInitializer_%s {
 R"WIREJSON()FOO"} % ns % name % name) ;
 
   out << apache::thrift::ThriftJSONString(input) ;
-  out << R"FOO()WIREJSON") {
+  out << str(boost::format{R"FOO()WIREJSON") {
+    apache::thrift::nicejson::NiceJSON::register_typelib("%s", "%s", &json_) ;
 }
 
 apache::thrift::nicejson::NiceJSON json_ ;
 } json_ ;
 
 }
-)FOO";
+)FOO"} % ns % name);
 }

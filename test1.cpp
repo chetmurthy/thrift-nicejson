@@ -43,27 +43,23 @@ extern struct StaticInitializer_test {
 
 template<typename T>
 void RoundTrip(const string& structname, const json& json1) {
-  //  std::string ss = file_contents("test.wirejson") ;
-  //  NiceJSON tt(ss) ;
-  NiceJSON& tt = thrift_test::json_.json_ ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
 
-    T obj ;
-    tt.demarshal(structname, json1, &obj) ;
-    json json2 = tt.marshal(structname, obj) ;
-    BOOST_CHECK_MESSAGE( json1 == json2,
-			 "JSON not equal: should be " << json1.dump() << "\nbut instead " << json2.dump());
+  T obj ;
+  tt.demarshal(structname, json1, &obj) ;
+  json json2 = tt.marshal(structname, obj) ;
+  BOOST_CHECK_MESSAGE( json1 == json2,
+		       "JSON not equal: should be " << json1.dump() << "\nbut instead " << json2.dump());
 }
 
 template<typename T>
 void RoundTrip2(const string& structname, const T& arg) {
-  //  std::string ss = file_contents("test.wirejson") ;
-  //  NiceJSON tt(ss) ;
-  NiceJSON& tt = thrift_test::json_.json_ ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
 
-    json j = tt.marshal(structname, arg) ;
-    T rv ;
-    tt.demarshal(structname, j, &rv) ;
-    BOOST_CHECK( rv == arg );
+  json j = tt.marshal(structname, arg) ;
+  T rv ;
+  tt.demarshal(structname, j, &rv) ;
+  BOOST_CHECK( rv == arg );
 }
 
 BOOST_AUTO_TEST_CASE( Bar )

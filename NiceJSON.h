@@ -124,10 +124,10 @@ public:
   }
 
  public:
-  void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) ;
+  void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) const ;
 
   template <typename DST>
-    void demarshal(const string name, const json& jser, DST *dst) {
+    void demarshal(const string name, const json& jser, DST *dst) const {
     const t_type_id id = lookup_type_id(name) ;
     const t_type& ty = lookup_type(id) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
@@ -136,10 +136,10 @@ public:
     dst->read(&protocol) ;
   }
 
-  json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot) ;
+  json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot) const ;
 
   template <typename SRC>
-    json marshal(const string name, const SRC& src) {
+    json marshal(const string name, const SRC& src) const {
     const t_type_id id = lookup_type_id(name) ;
     const t_type& ty = lookup_type(id) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
@@ -196,11 +196,16 @@ public:
     return ii->second ;
   }
 
+  static void register_typelib(const string& package, const string& name, const NiceJSON *p) ;
+  static const NiceJSON* lookup_typelib(const string& key) ;
+
 private:
   apache::thrift::plugin::GeneratorInput x_;
   map<t_type_id, t_struct_lookaside> struct_lookaside ;
   map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<string, t_type_id> structs_by_name ;
+
+  static map<string, const NiceJSON*> type_library_ ;
 } ;
 
 std::string file_contents(const std::string fname) ;
