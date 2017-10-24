@@ -226,17 +226,24 @@ void NiceJSON::json2protocol(
       oprot->writeI16(n) ;
       break ;
     }
+
     case T_I32: {
       int32_t n = get_exactly<int32_t>(jser) ;
       oprot->writeI32(n) ;
       break ;
     }
+
     case T_I64: {
       if (!jser.is_string())
 	throw NiceJSONError("json2protocol: non-string member");
       string s = jser.get<string>() ;
       int64_t n = std::stoll(s) ;
       oprot->writeI64(n) ;
+      break ;
+    }
+    case T_DOUBLE: {
+      double n = jser.get<double>() ;
+      oprot->writeDouble(n) ;
       break ;
     }
 

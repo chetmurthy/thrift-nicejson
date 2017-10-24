@@ -183,6 +183,8 @@ BOOST_AUTO_TEST_CASE( Bar2 )
 
  BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(2.0 * (double)std::numeric_limits<int64_t>::max()) } }),
 		    std::out_of_range );
+
+ RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f9", 3.1415 } }) ;
 }
 
 BOOST_AUTO_TEST_CASE( BarMismatch )

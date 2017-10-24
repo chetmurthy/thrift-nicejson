@@ -13,6 +13,7 @@ struct Bar {
   6: optional i8 f6,
   7: optional i16 f7,
   8: optional i64 f8,
+  9: optional double f9,
 }
 
 struct Foo {
