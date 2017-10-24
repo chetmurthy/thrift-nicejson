@@ -299,3 +299,13 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
   tt.demarshal("GeneratorInput", j, &x) ;
   BOOST_CHECK( tt.it() == x ) ;
 }
+
+BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
+{
+  const NiceJSON& testtt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
+
+  json j = tt.marshal("GeneratorInput", testtt.it()) ;
+  std::cout << j << std::endl ;
+}
+
