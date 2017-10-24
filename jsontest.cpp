@@ -1,8 +1,3 @@
-#include <string>
-#include <fstream>
-#include <streambuf>
-#include <iostream>
-
 #define BOOST_TEST_MODULE JSONTest
 #include <boost/test/included/unit_test.hpp>
 #include <boost/smart_ptr.hpp>
