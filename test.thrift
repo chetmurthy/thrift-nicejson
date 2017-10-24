@@ -1,4 +1,5 @@
 namespace cpp thrift_test
+namespace typelib thrift_test
 
 enum E {
   A

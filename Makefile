@@ -2,7 +2,7 @@
 #THRIFT=thrift
 THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/thrift
 
-all: gen-files thrift-gen-wirejson
+all: gen-files thrift-gen-wirejson thrift-gen-cpp-typelib
 
 test: test1 jsontest test.wirejson plugin.wirejson
 	./test1
@@ -20,6 +20,9 @@ gen-cpp: test.thrift
 gen-json: test.thrift
 	$(THRIFT) --gen json -r test.thrift
 
+gen-cpp-typelib: test.thrift
+	PATH=.:${PATH} thrift -r -gen cpp-typelib $<
+
 TESTSRC=$(wildcard gen-cpp/test*.cpp)
 PLUGINSRC=$(wildcard gen-cpp/plugin*.cpp)
 
@@ -28,7 +31,7 @@ PLUGINOBJ=$(patsubst %.cpp,%.o,$(PLUGINSRC))
 GENCPPOBJ=$(TESTOBJ) $(PLUGINOBJ)
 
 
-LINKFLAGS=-L$(THRIFTROOT)/lib -lthrift -lssl -lcrypto -Wl,-rpath -Wl,/home/chet/Hack/thrift-0.10.0/lib
+LINKFLAGS=-L$(THRIFTROOT)/lib -lthrift -lssl -lcrypto -Wl,-rpath -Wl,/home/chet/Hack/thrift-0.10.0/lib -lboost_filesystem -lboost_system
 
 INCLUDES=-I$(THRIFTROOT)/include -I.  -Igen-cpp -I../json/src
 DEBUG=-g
@@ -43,6 +46,9 @@ jsontest: jsontest.o NiceJSON.o
 thrift-gen-wirejson: wirejson_plugin.o $(PLUGINOBJ)
 	g++ $(CPPFLAGS) -o thrift-gen-wirejson $^ -lthriftc $(LINKFLAGS)
 
+thrift-gen-cpp-typelib: cpp_typelib_plugin.o $(PLUGINOBJ)
+	g++ $(CPPFLAGS) -o thrift-gen-cpp-typelib $^ -lthriftc $(LINKFLAGS)
+
 %.wirejson: %.thrift thrift-gen-wirejson
 	PATH=.:${PATH} thrift -r -gen wirejson $< > $@
 
@@ -53,9 +59,12 @@ gen-cpp/%.o: gen-cpp/%.cpp
 	g++ $(CPPFLAGS) -c $< -o $@
 
 clean:
-	rm -rf */*.o *.o ThriftThrift test1 thrift-gen-wirejson *.wirejson jsontest
+	rm -rf */*.o *.o ThriftThrift test1 thrift-gen-wirejson thrift-gen-cpp-typelib *.wirejson jsontest
 
 realclean:: clean
 	rm -rf gen-*
 
 NiceJSON.o: NiceJSON.h
+
+foo: foo.o
+	g++  $(CPPFLAGS) -o foo $^ -lthriftc $(LINKFLAGS)
