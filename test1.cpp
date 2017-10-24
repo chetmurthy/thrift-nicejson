@@ -33,10 +33,19 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::nicejson;
 
+namespace thrift_test {
+extern struct StaticInitializer_test {
+  StaticInitializer_test();
+  apache::thrift::nicejson::NiceJSON json_ ;
+} json_ ;
+
+}
+
 template<typename T>
 void RoundTrip(const string& structname, const json& json1) {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
+  //  std::string ss = file_contents("test.wirejson") ;
+  //  NiceJSON tt(ss) ;
+  NiceJSON& tt = thrift_test::json_.json_ ;
 
     T obj ;
     tt.demarshal(structname, json1, &obj) ;
@@ -47,8 +56,9 @@ void RoundTrip(const string& structname, const json& json1) {
 
 template<typename T>
 void RoundTrip2(const string& structname, const T& arg) {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
+  //  std::string ss = file_contents("test.wirejson") ;
+  //  NiceJSON tt(ss) ;
+  NiceJSON& tt = thrift_test::json_.json_ ;
 
     json j = tt.marshal(structname, arg) ;
     T rv ;
