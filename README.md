@@ -9,5 +9,5 @@ for json.hpp, which is governed by the MIT License.
 ## Credits and Thanks
 
 The file "json.hpp" was copied with permission from
-[JSON for Modern C++](https://github.com/nlohmann/json) creatd by
+[JSON for Modern C++](https://github.com/nlohmann/json) created by
 Neils Lohmann.  This thing is bloody lovely marvel.
