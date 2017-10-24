@@ -19,3 +19,10 @@ string ns_close(const string& ns) {
    string rv = std::regex_replace(ns, component_re, " }") ;
    return rv ;
 }
+
+string ns_prefix (const string& ns) {
+   std::regex dot_re("\\.");
+ 
+   string rv = std::regex_replace(ns, dot_re, "::") ;
+   return rv ;
+}

@@ -12,5 +12,8 @@ BOOST_AUTO_TEST_CASE( XX )
   BOOST_CHECK( ns_close("apache") == " }" ) ;
   BOOST_CHECK( ns_close("apache.thrift.plugin") == " } } }" ) ;
 
+  BOOST_CHECK( ns_prefix("apache") == "apache" ) ;
+  BOOST_CHECK( ns_prefix("apache.thrift.plugin") == "apache::thrift::plugin" ) ;
+
 }
 
