@@ -368,14 +368,20 @@ json NiceJSON::protocol2json(const t_type_id id,
       }
       const map<int32_t, t_field>::const_iterator fii = fdata.byid.find(fid) ;
       if (fii == fdata.byid.end()) {
-	iprot->skip(ftype) ;
+	if (permissive) {
+	  rv[std::to_string(fid)] = skip2json(ftype, iprot) ;
+	} else
+	    iprot->skip(ftype) ;
       }
       else {
 	const t_field& f = fii->second ;
 	const t_type& f_type = lookup_type(f.type) ;
 	const TType ttype = t_type2ttype(f_type) ;
 	if (ttype != ftype) {
-	  iprot->skip(ftype) ;
+	  if (permissive) {
+	    rv[std::to_string(fid)] = skip2json(ftype, iprot) ;
+	  } else
+	    iprot->skip(ftype) ;
 	}
 	else {
 	  json fvalue = protocol2json(f.type, f_type, iprot, permissive) ;
@@ -426,7 +432,12 @@ json NiceJSON::protocol2json(const t_type_id id,
       json rv = std::to_string(n) ;
       return rv ;
     }
-      
+    case T_DOUBLE: {
+      double n ;
+      iprot->readDouble(n) ;
+      json rv = n ;
+      return rv ;
+    }
     case T_BOOL: {
       bool b;
       iprot->readBool(b) ;
@@ -508,6 +519,115 @@ json NiceJSON::protocol2json(const t_type_id id,
     std::cerr << boost::format{"protocol2json: unhandled t_type %s"} % tt << std::endl ;
     throw NiceJSONError("protocol2json: unhandled t_type");
   }
+}
+
+
+json NiceJSON::skip2json(const ::apache::thrift::protocol::TType ftype, ::apache::thrift::protocol::TProtocol* iprot) const {
+  switch (ftype) {
+  case T_BOOL: {
+    bool boolv;
+    iprot->readBool(boolv);
+    json rv = boolv ;
+    return rv ;
+  }
+  case T_BYTE: {
+    int8_t bytev;
+    iprot->readByte(bytev);
+    json rv = bytev ;
+    return rv ;
+  }
+  case T_I16: {
+    int16_t i16;
+    iprot->readI16(i16);
+    json rv = i16 ;
+    return rv ;
+  }
+  case T_I32: {
+    int32_t i32;
+    iprot->readI32(i32);
+    json rv = i32 ;
+    return rv ;
+  }
+  case T_I64: {
+    int64_t i64;
+    iprot->readI64(i64);
+    json rv = std::to_string(i64) ;
+    return rv ;
+  }
+  case T_DOUBLE: {
+    double dub;
+    iprot->readDouble(dub);
+    json rv = dub ;
+    return rv ;
+  }
+  case T_STRING: {
+    std::string str;
+    iprot->readBinary(str);
+    json rv = str ;
+    return rv ;
+  }
+  case T_STRUCT: {
+    std::string name;
+    int16_t fid;
+    TType ftype;
+    iprot->readStructBegin(name);
+    json j = "{}"_json ;
+    while (true) {
+      iprot->readFieldBegin(name, ftype, fid);
+      if (ftype == T_STOP) {
+	break;
+      }
+      j[std::to_string(fid)] = skip2json(ftype, iprot);
+      iprot->readFieldEnd();
+    }
+    iprot->readStructEnd();
+    return j ;
+  }
+  case T_MAP: {
+    TType keyType;
+    TType valType;
+    uint32_t i, size;
+    iprot->readMapBegin(keyType, valType, size);
+    json j = "[]"_json ;
+    for (i = 0; i < size; i++) {
+      json k = skip2json(keyType, iprot);
+      json v = skip2json(valType, iprot);
+      j.push_back({ k, v }) ;
+    }
+    iprot->readMapEnd();
+    return j ;
+  }
+  case T_SET: {
+    TType elemType;
+    uint32_t i, size;
+    iprot->readSetBegin(elemType, size);
+    json j = "[]"_json ;
+    for (i = 0; i < size; i++) {
+      j.push_back(skip2json(elemType, iprot));
+    }
+    iprot->readSetEnd();
+    return j ;
+  }
+  case T_LIST: {
+    TType elemType;
+    uint32_t i, size;
+    iprot->readListBegin(elemType, size);
+    json j = "[]"_json ;
+    for (i = 0; i < size; i++) {
+      j.push_back(skip2json(elemType, iprot));
+    }
+    iprot->readListEnd();
+    return j;
+  }
+  case T_STOP:
+  case T_VOID:
+  case T_U64:
+  case T_UTF8:
+  case T_UTF16:
+    break;
+  }
+  json j;
+  return j;    
 }
 
 map<string, const NiceJSON*>  NiceJSON::type_library_;

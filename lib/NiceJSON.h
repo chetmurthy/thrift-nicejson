@@ -136,6 +136,8 @@ public:
     dst->read(&protocol) ;
   }
 
+  json skip2json(const ::apache::thrift::protocol::TType ftype, ::apache::thrift::protocol::TProtocol* iprot) const ;
+
   json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot, const bool permissive = false) const ;
 
   template <typename SRC>
