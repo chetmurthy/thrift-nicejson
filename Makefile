@@ -20,8 +20,10 @@ gen-cpp: test.thrift
 gen-json: test.thrift
 	$(THRIFT) --gen json -r test.thrift
 
-gen-cpp-typelib: test.thrift
+gen-cpp-typelib: test.thrift thrift-gen-cpp-typelib
 	PATH=.:${PATH} thrift -r -gen cpp-typelib $<
+
+gen-cpp-typelib/%.cpp: gen-cpp-typelib
 
 TESTSRC=$(wildcard gen-cpp/test*.cpp)
 PLUGINSRC=$(wildcard gen-cpp/plugin*.cpp)
@@ -37,7 +39,7 @@ INCLUDES=-I$(THRIFTROOT)/include -I.  -Igen-cpp -I../json/src
 DEBUG=-g
 CPPFLAGS=$(INCLUDES)  -Wall -Wextra -pedantic $(DEBUG) -std=c++11
 
-test1: test1.o NiceJSON.o $(GENCPPOBJ)
+test1: test1.o NiceJSON.o $(GENCPPOBJ) gen-cpp-typelib/test_typelib.o
 	g++  $(CPPFLAGS) -o test1 $^ -lthriftc $(LINKFLAGS)
 
 jsontest: jsontest.o NiceJSON.o
@@ -53,6 +55,9 @@ thrift-gen-cpp-typelib: cpp_typelib_plugin.o $(PLUGINOBJ)
 	PATH=.:${PATH} thrift -r -gen wirejson $< > $@
 
 gen-cpp/%.o: gen-cpp/%.cpp
+	g++ $(CPPFLAGS) -c $< -o $@
+
+gen-cpp-typelib/%.o: gen-cpp-typelib/%.cpp
 	g++ $(CPPFLAGS) -c $< -o $@
 
 %.o: %.cpp

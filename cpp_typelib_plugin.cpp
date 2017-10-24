@@ -85,12 +85,10 @@ R"FOO(
 namespace %s {
 struct StaticInitializer_%s {
   StaticInitializer_%s() : json_(
-R"WIREJSON(
-)FOO"} % ns % name % name) ;
+R"WIREJSON()FOO"} % ns % name % name) ;
 
   out << apache::thrift::ThriftJSONString(input) ;
-  out << R"FOO(
-)WIREJSON") {
+  out << R"FOO()WIREJSON") {
 }
 
 apache::thrift::nicejson::NiceJSON json_ ;
