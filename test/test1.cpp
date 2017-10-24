@@ -18,6 +18,7 @@
 
 #include "gen-cpp/plugin_types.h"
 #include "gen-cpp/test_types.h"
+#include "gen-cpp-typelib/test_typelib.h"
 
 #include "NiceJSON.h"
 
@@ -79,10 +80,10 @@ void RoundTrip2(const string& structname, const T& arg) {
 }
 
 template<typename T>
-void Mismatch(const string& structname, const json& startjson, const NiceJSON& newtt,const NiceJSON& oldtt, const json &expected,const bool permissive) {
+void Mismatch(const string& structname, const json& startjson,const NiceJSON& oldtt, const json &expected,const bool permissive) {
 
   T obj ;
-  newtt.demarshal(structname, startjson, &obj) ;
+  thrift_test::demarshal(startjson, &obj) ;
 
   boost::shared_ptr<TMemoryBuffer> mem = apache::thrift::marshalToMemoryBuffer(obj) ;
   json actual = oldtt.marshal_from_binary(structname, mem, permissive) ;
@@ -186,34 +187,47 @@ BOOST_AUTO_TEST_CASE( Bar2 )
 
 BOOST_AUTO_TEST_CASE( BarMismatch )
 {
-  const NiceJSON& newtt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
   const NiceJSON& oldtt = *(NiceJSON::lookup_typelib("thrift_test0/test0")) ;
 
-  Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" },  }, newtt, oldtt, "{}"_json, false) ;
+  Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" },  }, oldtt, "{}"_json, false) ;
   Mismatch<thrift_test::Bar>(
 			     "Bar", { { "a", 1 }, { "b", "ugh" },  },
-			     newtt, oldtt,
+			     oldtt,
     { { "4", 1 }, { "5", "ugh" } },
 			     true) ;
 
- RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::min() } }) ;
+  Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::min() } },
+			      oldtt,
+    { { "4", 1 } , { "5", "ugh" } , { "6", std::numeric_limits<int8_t>::min() } },
+			     true) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", 1 + (int)std::numeric_limits<int16_t>::max() } }), std::exception ) ;
- RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::max() } }) ;
- RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::min() } }) ;
+  Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::max() } },
+			     oldtt,
+			     { { "4", 1 } , { "5", "ugh" } , { "7", std::numeric_limits<int16_t>::max() } },
+			     true) ;
+  Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::min() } },
+			     oldtt,
+			     { { "4", 1 } , { "5", "ugh" } , { "7", std::numeric_limits<int16_t>::min() } },
+			     true) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", 1ll + (int64_t)std::numeric_limits<int32_t>::max() } }), std::exception ) ;
+ Mismatch<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::max() } },
+			     oldtt,
+			     { { "5", "ugh" } , { "4", std::numeric_limits<int32_t>::max() } },
+			     true) ;
+ Mismatch<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::min() } },
+			     oldtt,
+			     { { "5", "ugh" } , { "4", std::numeric_limits<int32_t>::min() } },
+			     true) ;
 
- RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::max() } }) ;
- RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::min() } }) ;
+ Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::max()) } },
+			     oldtt,
+   { { "4", 1 } , { "5", "ugh" } , { "8", std::to_string(std::numeric_limits<int64_t>::max()) } },
+			     true) ;
+ Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::min()) } },
+			     oldtt,
+   { { "4", 1 } , { "5", "ugh" } , { "8", std::to_string(std::numeric_limits<int64_t>::min()) } },
+			     true) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", 1 } }), std::exception ) ;
-
- RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::max()) } }) ;
- RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::min()) } }) ;
-
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(2.0 * (double)std::numeric_limits<int64_t>::max()) } }),
-		    std::out_of_range );
 }
 
 BOOST_AUTO_TEST_CASE( Boo )

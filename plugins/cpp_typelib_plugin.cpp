@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <regex>
 #include <string>
 
@@ -58,52 +59,105 @@ int main(int argc, char* argv[]) {
 
   cerr << "Generating typelib" << endl ;
 
-  string ns ;
+  string cpp_ns ;
+  {
+    map<string, string>::const_iterator ii;
+    if (input.program.namespaces.end() != (ii = input.program.namespaces.find("cpp"))) {
+      cpp_ns = ii->second ;
+    }
+    else {
+      std::cerr << "(required) cpp namespace NOT declared" << std::endl ;
+      exit(-1) ;
+    }
+  }
+
+  string typelib_ns ;
   {
     map<string, string>::const_iterator ii;
     if (input.program.namespaces.end() != (ii = input.program.namespaces.find("typelib"))) {
-      ns = ii->second ;
+      typelib_ns = ii->second ;
     }
-    else if (input.program.namespaces.end() != (ii = input.program.namespaces.find("cpp"))) {
-      ns = ii->second ;
-    }
-    else {
-      std::cerr << "neither (required) typelib nor cpp namespaces declared" << std::endl ;
-      exit(-1) ;
-    }
+    else typelib_ns = cpp_ns ;
   }
 
   string out_path = input.program.out_path ;
   string name = input.program.name ;
   path destdir(str(boost::format{"%s/gen-cpp-typelib"} % out_path)) ;
-  string dest = str(boost::format{"%s/gen-cpp-typelib/%s_typelib.cpp"} %
-		    out_path % name) ;
+  string cppdest = str(boost::format{"%s/gen-cpp-typelib/%s_typelib.cpp"} %
+		       out_path % name) ;
+  string hdest = str(boost::format{"%s/gen-cpp-typelib/%s_typelib.h"} %
+		       out_path % name) ;
 
   if (!exists(destdir)) create_directory(destdir) ;
-  ofstream out ;
-  out.open(dest, ios::out | ios::trunc) ;
-  if (out.fail()) {
-    std::cerr << "Cannot open file " << dest << " for write" << std::endl ;
+  ofstream cppout ;
+  cppout.open(cppdest, ios::out | ios::trunc) ;
+  if (cppout.fail()) {
+    std::cerr << "Cannot open file " << cppdest << " for write" << std::endl ;
+    exit(-1) ;
+  }
+  ofstream hout ;
+  hout.open(hdest, ios::out | ios::trunc) ;
+  if (hout.fail()) {
+    std::cerr << "Cannot open file " << hdest << " for write" << std::endl ;
     exit(-1) ;
   }
 
-  out << str(boost::format{
+  cppout << str(boost::format{
 R"FOO(
-#include "NiceJSON.h"
-
+#include "gen-cpp-typelib/%s_typelib.h"
 %s
 struct StaticInitializer_%s {
   StaticInitializer_%s() : json_(
-R"WIREJSON()FOO"} % ns_open(ns) % name % name) ;
+R"WIREJSON()FOO"} % name % ns_open(typelib_ns) % name % name) ;
 
-  out << apache::thrift::ThriftJSONString(input) ;
-  out << str(boost::format{R"FOO()WIREJSON") {
+  cppout << apache::thrift::ThriftJSONString(input) ;
+  cppout << str(boost::format{R"FOO()WIREJSON") {
     apache::thrift::nicejson::NiceJSON::register_typelib("%s", "%s", &json_) ;
 }
 
 apache::thrift::nicejson::NiceJSON json_ ;
 } json_ ;
 
+)FOO"} % typelib_ns % name);
+
+  hout << str(boost::format{
+R"FOO(
+#include "NiceJSON.h"
+#include "gen-cpp/%s_types.h"
+#ifndef %s_typelib_INCLUDED
+#define %s_typelib_INCLUDED
 %s
-)FOO"} % ns % name % ns_close(ns));
+)FOO"} % name % name % name % ns_open(typelib_ns)) ;
+
+  auto alltypes = input.type_registry.types ;
+  for(auto ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
+      auto id = ii->first ;
+      auto ty = ii->second ;
+      if (!ty.__isset.struct_val) continue ;
+
+      const string& name = ty.struct_val.metadata.name ;
+      const string full_structname = ns_prefix(cpp_ns) + "::" + name ;
+      cppout << str(boost::format{R"FOO(
+  void demarshal(const json& j, %s *out) {
+    json_.json_.demarshal("%s", j, out) ;
+  }
+
+  json marshal(const %s& in) {
+    return json_.json_.marshal("%s", in) ;
+  }
+)FOO"} % full_structname % name % full_structname % name);
+
+      hout << str(boost::format{R"FOO(
+  void demarshal(const json& j, %s *out) ;
+
+  json marshal(const %s& in) ;
+)FOO"} % full_structname % full_structname);
+  }
+
+  cppout << str(boost::format{R"FOO(%s)FOO"} % ns_close(typelib_ns)) ;
+  hout << str(boost::format{R"FOO(
+%s
+#endif
+)FOO"} % ns_close(typelib_ns)) ;
+
 }
