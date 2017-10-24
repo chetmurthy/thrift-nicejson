@@ -17,16 +17,19 @@ test: test1
 
 gen-files:: gen-cpp gen-json gen-cpp-typelib
 
-gen-cpp: test.thrift
+gen-cpp::
 	$(THRIFT) --gen cpp -r test.thrift
+	$(THRIFT) --gen cpp -r test0.thrift
 
-gen-cpp-typelib:
+gen-cpp-typelib::
+	PATH=../plugins:${PATH} thrift -r -gen cpp-typelib test0.thrift
 	PATH=../plugins:${PATH} thrift -r -gen cpp-typelib test.thrift
 	PATH=../plugins:${PATH} thrift -r -gen cpp-typelib $(PLUGIN_THRIFT)
 
-gen-json: test.thrift $(PLUGIN_THRIFT)
+gen-json::
 	$(THRIFT) --gen json -r $(PLUGIN_THRIFT)
 	$(THRIFT) --gen json -r test.thrift
+	$(THRIFT) --gen json -r test0.thrift
 
 LINKFLAGS=-L$(THRIFTROOT)/lib -lthrift -lssl -lcrypto -Wl,-rpath -Wl,/home/chet/Hack/thrift-0.10.0/lib -lboost_filesystem -lboost_system
 

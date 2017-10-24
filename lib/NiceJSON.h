@@ -139,12 +139,25 @@ public:
   json protocol2json(const t_type_id id, const t_type& tt, ::apache::thrift::protocol::TProtocol* iprot, const bool permissive = false) const ;
 
   template <typename SRC>
-    json marshal(const string name, const SRC& src, const bool permissive = false) const {
+    json marshal(const string name, const SRC& src) const {
     const t_type_id id = lookup_type_id(name) ;
     const t_type& ty = lookup_type(id) ;
     boost::shared_ptr<TTransport> trans(new TMemoryBuffer());
     TBinaryProtocol protocol(trans);
     src.write(&protocol) ;
+    return protocol2json(id, ty, &protocol, false) ;
+  }
+
+  json marshal_from_binary(const string name, const uint8_t *serialized, const size_t length, const bool permissive = false) const {
+    boost::shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
+    buf->resetBuffer(const_cast<uint8_t *>(serialized), static_cast<uint32_t>(length));
+    return marshal_from_binary(name, buf, permissive) ;
+  }
+
+  json marshal_from_binary(const string name, boost::shared_ptr<TMemoryBuffer> buf, const bool permissive = false) const {
+    const t_type_id id = lookup_type_id(name) ;
+    const t_type& ty = lookup_type(id) ;
+    TBinaryProtocol protocol(buf);
     return protocol2json(id, ty, &protocol, permissive) ;
   }
 

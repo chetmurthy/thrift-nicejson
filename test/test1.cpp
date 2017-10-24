@@ -33,6 +33,22 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::nicejson;
 
+namespace apache {
+namespace thrift {
+
+template <typename ThriftStruct>
+boost::shared_ptr<TMemoryBuffer> marshalToMemoryBuffer(const ThriftStruct& ts) {
+  using namespace apache::thrift::transport;
+  using namespace apache::thrift::protocol;
+  boost::shared_ptr<TMemoryBuffer> trans(new TMemoryBuffer());
+  TBinaryProtocol protocol(trans);
+
+  ts.write(&protocol);
+  return trans ;
+}
+}
+}
+
 namespace thrift_test {
 extern struct StaticInitializer_test {
   StaticInitializer_test();
@@ -60,6 +76,18 @@ void RoundTrip2(const string& structname, const T& arg) {
   T rv ;
   tt.demarshal(structname, j, &rv) ;
   BOOST_CHECK( rv == arg );
+}
+
+template<typename T>
+void Mismatch(const string& structname, const json& startjson, const NiceJSON& newtt,const NiceJSON& oldtt, const json &expected,const bool permissive) {
+
+  T obj ;
+  newtt.demarshal(structname, startjson, &obj) ;
+
+  boost::shared_ptr<TMemoryBuffer> mem = apache::thrift::marshalToMemoryBuffer(obj) ;
+  json actual = oldtt.marshal_from_binary(structname, mem, permissive) ;
+  BOOST_CHECK_MESSAGE( actual == expected,
+		       "JSON not equal: should be " << expected.dump() << "\nbut instead " << actual.dump());
 }
 
 BOOST_AUTO_TEST_CASE( Bar )
@@ -136,6 +164,38 @@ BOOST_AUTO_TEST_CASE( Bar2 )
 
  BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", 1 + (int)std::numeric_limits<int8_t>::max() } }), std::exception ) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::max() } }) ;
+ RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::min() } }) ;
+
+ BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", 1 + (int)std::numeric_limits<int16_t>::max() } }), std::exception ) ;
+ RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::max() } }) ;
+ RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::min() } }) ;
+
+ BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", 1ll + (int64_t)std::numeric_limits<int32_t>::max() } }), std::exception ) ;
+
+ RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::max() } }) ;
+ RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::min() } }) ;
+
+ BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", 1 } }), std::exception ) ;
+
+ RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::max()) } }) ;
+ RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::min()) } }) ;
+
+ BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(2.0 * (double)std::numeric_limits<int64_t>::max()) } }),
+		    std::out_of_range );
+}
+
+BOOST_AUTO_TEST_CASE( BarMismatch )
+{
+  const NiceJSON& newtt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
+  const NiceJSON& oldtt = *(NiceJSON::lookup_typelib("thrift_test0/test0")) ;
+
+  Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" },  }, newtt, oldtt, "{}"_json, false) ;
+  Mismatch<thrift_test::Bar>(
+			     "Bar", { { "a", 1 }, { "b", "ugh" },  },
+			     newtt, oldtt,
+    { { "4", 1 }, { "5", "ugh" } },
+			     true) ;
+
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::min() } }) ;
 
  BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", 1 + (int)std::numeric_limits<int16_t>::max() } }), std::exception ) ;

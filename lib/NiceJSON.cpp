@@ -353,7 +353,7 @@ json NiceJSON::protocol2json(const t_type_id id,
      *     begin field/ recurse / end field
      * (4) end struct
      */
-    json rv ;
+    json rv = "{}"_json ;
 
     const t_struct_lookaside& fdata = lookup_struct_fields(id) ;
     string sname ;
