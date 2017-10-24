@@ -18,6 +18,9 @@
  */
 
 #include <iostream>
+#include <iterator>
+#include <regex>
+#include <string>
 
 #include "boost/filesystem.hpp"
 #include <boost/format.hpp>
@@ -31,6 +34,7 @@
 #include <thrift/transport/TBufferTransports.h>
 #include "thrift/transport/TFDTransport.h"
 
+#include "ns_utils.h"
 #include "thrift/plugin/plugin.h"
 #include "gen-cpp/plugin_types.h"
 
@@ -56,12 +60,17 @@ int main(int argc, char* argv[]) {
 
   string ns ;
   {
-    map<string, string>::const_iterator ii = input.program.namespaces.find("typelib") ;
-    if (ii == input.program.namespaces.end()) {
-      std::cerr << "No (required) typelib namespace declared" << std::endl ;
+    map<string, string>::const_iterator ii;
+    if (input.program.namespaces.end() != (ii = input.program.namespaces.find("typelib"))) {
+      ns = ii->second ;
+    }
+    else if (input.program.namespaces.end() != (ii = input.program.namespaces.find("cpp"))) {
+      ns = ii->second ;
+    }
+    else {
+      std::cerr << "neither (required) typelib nor cpp namespaces declared" << std::endl ;
       exit(-1) ;
     }
-    ns = ii->second ;
   }
 
   string out_path = input.program.out_path ;
@@ -82,10 +91,10 @@ int main(int argc, char* argv[]) {
 R"FOO(
 #include "NiceJSON.h"
 
-namespace %s {
+%s
 struct StaticInitializer_%s {
   StaticInitializer_%s() : json_(
-R"WIREJSON()FOO"} % ns % name % name) ;
+R"WIREJSON()FOO"} % ns_open(ns) % name % name) ;
 
   out << apache::thrift::ThriftJSONString(input) ;
   out << str(boost::format{R"FOO()WIREJSON") {
@@ -95,6 +104,6 @@ R"WIREJSON()FOO"} % ns % name % name) ;
 apache::thrift::nicejson::NiceJSON json_ ;
 } json_ ;
 
-}
-)FOO"} % ns % name);
+%s
+)FOO"} % ns % name % ns_close(ns));
 }

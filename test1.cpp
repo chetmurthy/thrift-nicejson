@@ -95,8 +95,7 @@ BOOST_AUTO_TEST_CASE( Ha1 )
 
 BOOST_AUTO_TEST_CASE( IO1 )
 {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
     {
       std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
       cout << serialized << std::endl ;
@@ -105,9 +104,6 @@ BOOST_AUTO_TEST_CASE( IO1 )
 
 BOOST_AUTO_TEST_CASE( Bar1 )
 {
-  std::string ss = file_contents("test.wirejson") ;
-  NiceJSON tt(ss) ;
-
   json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
   std::cout << bar_json << std::endl ;
 
@@ -234,8 +230,7 @@ BOOST_AUTO_TEST_CASE( Boo3 )
 
 BOOST_AUTO_TEST_CASE( Plugin1 )
 {
-  std::string ss = file_contents("plugin.wirejson") ;
-  NiceJSON tt(ss) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
 
   std::cout << apache::thrift::ThriftDebugString(tt.it()) << std::endl ;
 
