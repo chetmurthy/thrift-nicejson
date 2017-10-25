@@ -1,17 +1,17 @@
 all::
-	$(MAKE) -C lib gen-files
-	$(MAKE) -C lib all test
-	$(MAKE) -C plugins all
-	$(MAKE) -C test gen-files
-	$(MAKE) -C test all
+	$(MAKE) -C src/lib gen-files
+	$(MAKE) -C src/lib all test
+	$(MAKE) -C src/plugins all
+	$(MAKE) -C src/test gen-files
+	$(MAKE) -C src/test all
 
 clean::
-	$(MAKE) -C lib clean
-	$(MAKE) -C plugins clean
-	$(MAKE) -C test clean
+	$(MAKE) -C src/lib clean
+	$(MAKE) -C src/plugins clean
+	$(MAKE) -C src/test clean
 
 realclean:: clean
-	$(MAKE) -C lib realclean
-	$(MAKE) -C plugins realclean
-	$(MAKE) -C test realclean
+	$(MAKE) -C src/lib realclean
+	$(MAKE) -C src/plugins realclean
+	$(MAKE) -C src/test realclean
 

@@ -33,7 +33,7 @@ gen-json::
 
 LINKFLAGS=-L$(THRIFTROOT)/lib -lthrift -lssl -lcrypto -Wl,-rpath -Wl,/home/chet/Hack/thrift-0.10.0/lib -lboost_filesystem -lboost_system
 
-INCLUDES=-I$(THRIFTROOT)/include -I. -I../lib -Igen-cpp -I../../json/src
+INCLUDES=-I$(THRIFTROOT)/include -I. -I../lib -Igen-cpp -I../../../json/src
 DEBUG=-g
 CPPFLAGS=$(INCLUDES)  -Wall -Wextra -pedantic $(DEBUG) -std=c++11
 
