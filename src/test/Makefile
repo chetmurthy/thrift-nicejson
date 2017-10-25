@@ -38,7 +38,7 @@ DEBUG=-g
 CPPFLAGS=$(INCLUDES)  -Wall -Wextra -pedantic $(DEBUG) -std=c++11
 
 test1: test1.o $(GENCPPOBJ)
-	g++  $(CPPFLAGS) -o test1 test1.o ../lib/libnicejson.a $(GENCPPOBJ) -lthriftc $(LINKFLAGS)
+	g++  $(CPPFLAGS) -o test1 test1.o $(GENCPPOBJ) ../lib/libnicejson.a -lthriftc $(LINKFLAGS)
 
 %.o: %.cpp
 	g++ $(CPPFLAGS) -c $< -o $@

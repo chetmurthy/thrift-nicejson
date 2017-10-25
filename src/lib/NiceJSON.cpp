@@ -637,21 +637,22 @@ json NiceJSON::skip2json(const ::apache::thrift::protocol::TType ftype, ::apache
   return j;    
 }
 
-map<string, const NiceJSON*>  NiceJSON::type_library_;
-
 void NiceJSON::register_typelib(const string& package, const string& name, const NiceJSON *p) {
   const string key = package + "/" + name ;
-  if (type_library_.end() != type_library_.find(key)) {
+  type_library_t& tl = *type_library_() ;
+  if (tl.end() != tl.find(key)) {
     throw NiceJSONError("Type library " + key + " already registered") ;
   }
-  type_library_[key] = p ;
+  tl[key] = p ;
 }
 
 const NiceJSON* NiceJSON::lookup_typelib(const string& key) {
-  if (type_library_.end() == type_library_.find(key)) {
+  const type_library_t& tl = *type_library_() ;
+  type_library_t::const_iterator ii ;
+  if (tl.end() == (ii = tl.find(key))) {
     throw NiceJSONError("Type library " + key + " not found") ;
   }
-  return type_library_[key] ;
+  return ii->second ;
 }
 
 }

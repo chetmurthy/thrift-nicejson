@@ -211,8 +211,11 @@ public:
     return ii->second ;
   }
 
+
   static void register_typelib(const string& package, const string& name, const NiceJSON *p) ;
   static const NiceJSON* lookup_typelib(const string& key) ;
+
+  typedef map<string, const NiceJSON*> type_library_t;
 
 private:
   apache::thrift::plugin::GeneratorInput x_;
@@ -220,7 +223,10 @@ private:
   map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<string, t_type_id> structs_by_name ;
 
-  static map<string, const NiceJSON*> type_library_ ;
+  static type_library_t *type_library_() {
+    static type_library_t *type_library = new type_library_t() ;
+    return type_library ;
+  }
 } ;
 
 std::string file_contents(const std::string fname) ;
