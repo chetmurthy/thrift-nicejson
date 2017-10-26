@@ -32,6 +32,21 @@ binary-serialized messages to that format.
 
 This library provides those facilities.
 
+## What this library does **not** do
+
+There are two things that a "wire format" could mean:
+
+* It could mean a format such that Thrift messages (== "structs")
+  could be de/marshaled from/to that format
+  
+* It could mean a runtime stack that allows Thrift services to be
+  invoked and return responses, using this format.
+  
+This library currently supports the former, and **not** the latter.
+It's possible that in the fullness of time, I'll figure out a way to
+hack Thrift's generated code to make it possible to support the latter
+capability, but not anytime soon.
+
 ## Licensing
 
 All files are governed by the Apache license (included herein in file
