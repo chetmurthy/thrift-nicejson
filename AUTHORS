@@ -1,0 +1,8 @@
+The author of most of this code is Chet Murthy.  But much of it is
+based on examples from Apache Thrift, and it would be unfair to
+characterize Chet Murthy as "the author", rather than simply an
+"adapter" and "improver" upon Apache Thrift.
+
+The file "json.hpp" was copied with permission from
+[JSON for Modern C++](https://github.com/nlohmann/json) created by
+Neils Lohmann.  This thing is bloody lovely marvel.
