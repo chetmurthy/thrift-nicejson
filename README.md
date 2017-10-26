@@ -47,6 +47,31 @@ It's possible that in the fullness of time, I'll figure out a way to
 hack Thrift's generated code to make it possible to support the latter
 capability, but not anytime soon.
 
+## Installation
+
+This library requires a relatively recent Thrift installation (version
+0.10.0 or newer) and *also* a Thrift source-tree.  I've only tested
+the build against source that matches the binary Thrift installation,
+but perhaps it'll work if there's a mismatch.
+
+Build/install is straightforward, and is fully autotool-ized:
+
+```
+% ./configure --with-thrift-srcdir=<thrift-source-dir-here>
+% make all check
+% make install
+```
+
+Of course, if you wish to install, it's probably wise to pick a
+nonstandard location, e.g. ```$HOME/tmp/thrift-nicejson``` via
+
+```
+% ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here>
+```
+
+Examples will be forthcoming.  For now, there is a test in
+```src/test``` that demonstrates most of the capabilities of the library.
+
 ## Licensing
 
 All files are governed by the Apache license (included herein in file
