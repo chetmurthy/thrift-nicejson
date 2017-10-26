@@ -9,3 +9,4 @@ thrift-gen-wirejson
 thrift-gen-cpp-typelib
 ns_utils_test
 *.a
+autom4te.cache
