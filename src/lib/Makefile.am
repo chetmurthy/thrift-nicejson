@@ -5,9 +5,11 @@ GENCPP = gen-cpp/plugin_constants.cpp \
 
 BUILT_SOURCES = $(GENCPP)
 CLEANFILES = $(GENCPP)
-noinst_LIBRARIES=libnicejson.a
+lib_LIBRARIES=libnicejson.a
 libnicejson_a_SOURCES= NiceJSON.cpp NiceJSON.h ns_utils.cpp ns_utils.h $(GENCPP)
 
+pkgincludedir = $(includedir)/thrift-nicejson
+pkginclude_HEADERS = json.hpp NiceJSON.h
 
 libnicejson_a_CXXFLAGS = $(thrift_CFLAGS) $(AM_CXXFLAGS)
 #libnicejson_a_LIBADD    = $(thrift_LIBS)
