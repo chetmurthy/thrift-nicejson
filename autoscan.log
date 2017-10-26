@@ -1,0 +1,20 @@
+autoscan: warning: missing AC_C_INLINE wanted by: 
+	src/lib/gen-cpp/plugin_types.h:155
+	src/lib/gen-cpp/plugin_types.h:200
+	src/lib/gen-cpp/plugin_types.h:258
+	src/lib/gen-cpp/plugin_types.h:316
+	src/lib/gen-cpp/plugin_types.h:379
+	src/lib/gen-cpp/plugin_types.h:434
+	src/lib/gen-cpp/plugin_types.h:500
+	src/lib/gen-cpp/plugin_types.h:545
+	src/lib/gen-cpp/plugin_types.h:641
+	src/lib/gen-cpp/plugin_types.h:704
+	src/lib/gen-cpp/plugin_types.h:759
+	src/lib/gen-cpp/plugin_types.h:848
+	src/lib/gen-cpp/plugin_types.h:921
+	src/lib/gen-cpp/plugin_types.h:979
+	src/lib/gen-cpp/plugin_types.h:1091
+	src/lib/gen-cpp/plugin_types.h:1141
+	src/lib/gen-cpp/plugin_types.h:1191
+	src/lib/gen-cpp/plugin_types.h:1324
+	src/lib/gen-cpp/plugin_types.h:1374
