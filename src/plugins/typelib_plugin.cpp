@@ -45,19 +45,7 @@ using apache::thrift::protocol::TBinaryProtocol;
 using apache::thrift::transport::TFDTransport;
 using apache::thrift::transport::TFramedTransport;
 
-int main(int argc, char* argv[]) {
-    boost::shared_ptr<TFramedTransport> transport(
-      new TFramedTransport(boost::make_shared<TFDTransport>(fileno(stdin))));
-  TBinaryProtocol proto(transport);
-  apache::thrift::plugin::GeneratorInput input;
-  try {
-    input.read(&proto);
-  } catch (std::exception& err) {
-    std::cerr << "Error while receiving plugin data: " << err.what() << std::endl;
-    exit(-1);
-  }
-
-  cerr << "Generating typelib" << endl ;
+void gen_cpp_typelib(const apache::thrift::plugin::GeneratorInput& input) {
 
   string cpp_ns ;
   {
@@ -82,13 +70,13 @@ int main(int argc, char* argv[]) {
 
   string out_path = input.program.out_path ;
   string name = input.program.name ;
-  path destdir(str(boost::format{"%s/gen-cpp-typelib"} % out_path)) ;
+  path cppdestdir(str(boost::format{"%s/gen-cpp-typelib"} % out_path)) ;
   string cppdest = str(boost::format{"%s/gen-cpp-typelib/%s_typelib.cpp"} %
 		       out_path % name) ;
   string hdest = str(boost::format{"%s/gen-cpp-typelib/%s_typelib.h"} %
 		       out_path % name) ;
 
-  if (!exists(destdir)) create_directory(destdir) ;
+  if (!exists(cppdestdir)) create_directory(cppdestdir) ;
   ofstream cppout ;
   cppout.open(cppdest, ios::out | ios::trunc) ;
   if (cppout.fail()) {
@@ -108,7 +96,7 @@ R"FOO(
 %s
 struct StaticInitializer_%s {
   StaticInitializer_%s() : json_(
-R"WIREJSON()FOO"} % name % ns_open(typelib_ns) % name % name) ;
+R"WIREJSON()FOO"} % name % ns_open(cpp_ns) % name % name) ;
 
   cppout << apache::thrift::ThriftJSONString(input) ;
   cppout << str(boost::format{R"FOO()WIREJSON") {
@@ -127,7 +115,7 @@ R"FOO(
 #ifndef %s_typelib_INCLUDED
 #define %s_typelib_INCLUDED
 %s
-)FOO"} % name % name % name % ns_open(typelib_ns)) ;
+)FOO"} % name % name % name % ns_open(cpp_ns)) ;
 
   auto alltypes = input.type_registry.types ;
   for(auto ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
@@ -136,7 +124,7 @@ R"FOO(
       if (!ty.__isset.struct_val) continue ;
 
       const string& name = ty.struct_val.metadata.name ;
-      const string full_structname = ns_prefix(cpp_ns) + "::" + name ;
+      const string full_structname = /* ns_prefix(cpp_ns) + "::" + */ name ;
       cppout << str(boost::format{R"FOO(
   void demarshal(const json& j, %s *out) {
     json_.json_.demarshal("%s", j, out) ;
@@ -154,10 +142,28 @@ R"FOO(
 )FOO"} % full_structname % full_structname);
   }
 
-  cppout << str(boost::format{R"FOO(%s)FOO"} % ns_close(typelib_ns)) ;
+  cppout << str(boost::format{R"FOO(%s)FOO"} % ns_close(cpp_ns)) ;
   hout << str(boost::format{R"FOO(
 %s
 #endif
-)FOO"} % ns_close(typelib_ns)) ;
+)FOO"} % ns_close(cpp_ns)) ;
+
+}
+
+int main(int argc, char* argv[]) {
+    boost::shared_ptr<TFramedTransport> transport(
+      new TFramedTransport(boost::make_shared<TFDTransport>(fileno(stdin))));
+  TBinaryProtocol proto(transport);
+  apache::thrift::plugin::GeneratorInput input;
+  try {
+    input.read(&proto);
+  } catch (std::exception& err) {
+    std::cerr << "Error while receiving plugin data: " << err.what() << std::endl;
+    exit(-1);
+  }
+
+  cerr << "Generating typelib" << endl ;
+
+  gen_cpp_typelib(input) ;
 
 }

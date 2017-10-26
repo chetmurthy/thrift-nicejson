@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = thrift-gen-cpp-typelib$(EXEEXT)
+bin_PROGRAMS = thrift-gen-typelib$(EXEEXT)
 subdir = src/plugins
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
@@ -105,16 +105,15 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_thrift_gen_cpp_typelib_OBJECTS =  \
-	thrift_gen_cpp_typelib-cpp_typelib_plugin.$(OBJEXT)
-thrift_gen_cpp_typelib_OBJECTS = $(am_thrift_gen_cpp_typelib_OBJECTS)
+am_thrift_gen_typelib_OBJECTS =  \
+	thrift_gen_typelib-typelib_plugin.$(OBJEXT)
+thrift_gen_typelib_OBJECTS = $(am_thrift_gen_typelib_OBJECTS)
 am__DEPENDENCIES_1 =
-thrift_gen_cpp_typelib_DEPENDENCIES = ../lib/libnicejson.a \
+thrift_gen_typelib_DEPENDENCIES = ../lib/libnicejson.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-thrift_gen_cpp_typelib_LINK = $(CXXLD) \
-	$(thrift_gen_cpp_typelib_CXXFLAGS) $(CXXFLAGS) \
-	$(thrift_gen_cpp_typelib_LDFLAGS) $(LDFLAGS) -o $@
+thrift_gen_typelib_LINK = $(CXXLD) $(thrift_gen_typelib_CXXFLAGS) \
+	$(CXXFLAGS) $(thrift_gen_typelib_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -148,8 +147,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(thrift_gen_cpp_typelib_SOURCES)
-DIST_SOURCES = $(thrift_gen_cpp_typelib_SOURCES)
+SOURCES = $(thrift_gen_typelib_SOURCES)
+DIST_SOURCES = $(thrift_gen_typelib_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -296,10 +295,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -I../lib
-thrift_gen_cpp_typelib_SOURCES = cpp_typelib_plugin.cpp
-thrift_gen_cpp_typelib_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-thrift_gen_cpp_typelib_LDADD = ../lib/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-thrift_gen_cpp_typelib_CXXFLAGS = -I../lib $(thrift_CFLAGS) $(AM_CXXFLAGS)
+thrift_gen_typelib_SOURCES = typelib_plugin.cpp
+thrift_gen_typelib_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
+thrift_gen_typelib_LDADD = ../lib/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
+thrift_gen_typelib_CXXFLAGS = -I../lib $(thrift_CFLAGS) $(AM_CXXFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -376,9 +375,9 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-thrift-gen-cpp-typelib$(EXEEXT): $(thrift_gen_cpp_typelib_OBJECTS) $(thrift_gen_cpp_typelib_DEPENDENCIES) $(EXTRA_thrift_gen_cpp_typelib_DEPENDENCIES) 
-	@rm -f thrift-gen-cpp-typelib$(EXEEXT)
-	$(AM_V_CXXLD)$(thrift_gen_cpp_typelib_LINK) $(thrift_gen_cpp_typelib_OBJECTS) $(thrift_gen_cpp_typelib_LDADD) $(LIBS)
+thrift-gen-typelib$(EXEEXT): $(thrift_gen_typelib_OBJECTS) $(thrift_gen_typelib_DEPENDENCIES) $(EXTRA_thrift_gen_typelib_DEPENDENCIES) 
+	@rm -f thrift-gen-typelib$(EXEEXT)
+	$(AM_V_CXXLD)$(thrift_gen_typelib_LINK) $(thrift_gen_typelib_OBJECTS) $(thrift_gen_typelib_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -386,7 +385,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thrift_gen_typelib-typelib_plugin.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -404,19 +403,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-thrift_gen_cpp_typelib-cpp_typelib_plugin.o: cpp_typelib_plugin.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_cpp_typelib_CXXFLAGS) $(CXXFLAGS) -MT thrift_gen_cpp_typelib-cpp_typelib_plugin.o -MD -MP -MF $(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Tpo -c -o thrift_gen_cpp_typelib-cpp_typelib_plugin.o `test -f 'cpp_typelib_plugin.cpp' || echo '$(srcdir)/'`cpp_typelib_plugin.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Tpo $(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cpp_typelib_plugin.cpp' object='thrift_gen_cpp_typelib-cpp_typelib_plugin.o' libtool=no @AMDEPBACKSLASH@
+thrift_gen_typelib-typelib_plugin.o: typelib_plugin.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_typelib_CXXFLAGS) $(CXXFLAGS) -MT thrift_gen_typelib-typelib_plugin.o -MD -MP -MF $(DEPDIR)/thrift_gen_typelib-typelib_plugin.Tpo -c -o thrift_gen_typelib-typelib_plugin.o `test -f 'typelib_plugin.cpp' || echo '$(srcdir)/'`typelib_plugin.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/thrift_gen_typelib-typelib_plugin.Tpo $(DEPDIR)/thrift_gen_typelib-typelib_plugin.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='typelib_plugin.cpp' object='thrift_gen_typelib-typelib_plugin.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_cpp_typelib_CXXFLAGS) $(CXXFLAGS) -c -o thrift_gen_cpp_typelib-cpp_typelib_plugin.o `test -f 'cpp_typelib_plugin.cpp' || echo '$(srcdir)/'`cpp_typelib_plugin.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_typelib_CXXFLAGS) $(CXXFLAGS) -c -o thrift_gen_typelib-typelib_plugin.o `test -f 'typelib_plugin.cpp' || echo '$(srcdir)/'`typelib_plugin.cpp
 
-thrift_gen_cpp_typelib-cpp_typelib_plugin.obj: cpp_typelib_plugin.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_cpp_typelib_CXXFLAGS) $(CXXFLAGS) -MT thrift_gen_cpp_typelib-cpp_typelib_plugin.obj -MD -MP -MF $(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Tpo -c -o thrift_gen_cpp_typelib-cpp_typelib_plugin.obj `if test -f 'cpp_typelib_plugin.cpp'; then $(CYGPATH_W) 'cpp_typelib_plugin.cpp'; else $(CYGPATH_W) '$(srcdir)/cpp_typelib_plugin.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Tpo $(DEPDIR)/thrift_gen_cpp_typelib-cpp_typelib_plugin.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cpp_typelib_plugin.cpp' object='thrift_gen_cpp_typelib-cpp_typelib_plugin.obj' libtool=no @AMDEPBACKSLASH@
+thrift_gen_typelib-typelib_plugin.obj: typelib_plugin.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_typelib_CXXFLAGS) $(CXXFLAGS) -MT thrift_gen_typelib-typelib_plugin.obj -MD -MP -MF $(DEPDIR)/thrift_gen_typelib-typelib_plugin.Tpo -c -o thrift_gen_typelib-typelib_plugin.obj `if test -f 'typelib_plugin.cpp'; then $(CYGPATH_W) 'typelib_plugin.cpp'; else $(CYGPATH_W) '$(srcdir)/typelib_plugin.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/thrift_gen_typelib-typelib_plugin.Tpo $(DEPDIR)/thrift_gen_typelib-typelib_plugin.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='typelib_plugin.cpp' object='thrift_gen_typelib-typelib_plugin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_cpp_typelib_CXXFLAGS) $(CXXFLAGS) -c -o thrift_gen_cpp_typelib-cpp_typelib_plugin.obj `if test -f 'cpp_typelib_plugin.cpp'; then $(CYGPATH_W) 'cpp_typelib_plugin.cpp'; else $(CYGPATH_W) '$(srcdir)/cpp_typelib_plugin.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_gen_typelib_CXXFLAGS) $(CXXFLAGS) -c -o thrift_gen_typelib-typelib_plugin.obj `if test -f 'typelib_plugin.cpp'; then $(CYGPATH_W) 'typelib_plugin.cpp'; else $(CYGPATH_W) '$(srcdir)/typelib_plugin.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

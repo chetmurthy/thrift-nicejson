@@ -24,11 +24,18 @@ GENCPP_TYPELIB_plugin = \
 gen-cpp-typelib/plugin_typelib.cpp \
 gen-cpp-typelib/plugin_typelib.h
 
+GENJSON_test = gen-json/test.json
+GENJSON_test0 = gen-json/test0.json
+GENJSON_plugin = gen-json/plugin.json
+
 BUILT_SOURCES = \
 $(GENCPP0_test0) $(GENCPP_test) \
 $(GENCPP_TYPELIB_test) \
 $(GENCPP_TYPELIB_test0) \
-$(GENCPP_TYPELIB_plugin)
+$(GENCPP_TYPELIB_plugin) \
+$(GENJSON0_test0) \
+$(GENJSON_test) \
+$(GENJSON_plugin)
 
 CLEANFILES = $(BUILT_SOURCES)
 
@@ -52,11 +59,21 @@ $(GENCPP_test):
 	$(THRIFT) --gen cpp -r test.thrift
 
 $(GENCPP_TYPELIB_test):
-	PATH=../plugins:${PATH} thrift -r -gen cpp-typelib test.thrift
+	PATH=../plugins:${PATH} $(THRIFT) -r -gen typelib test.thrift
 
 $(GENCPP_TYPELIB_test0):
-	PATH=../plugins:${PATH} thrift -r -gen cpp-typelib test0.thrift
+	PATH=../plugins:${PATH} $(THRIFT) -r -gen typelib test0.thrift
 
 $(GENCPP_TYPELIB_plugin):
-	PATH=../plugins:${PATH} thrift -r -gen cpp-typelib $(PLUGIN_THRIFT)
+	PATH=../plugins:${PATH} $(THRIFT) -r -gen typelib $(PLUGIN_THRIFT)
 
+gen-json: $(GENJSON0_test0) $(GENJSON_test) $(GENJSON_plugin)
+
+$(GENJSON0_test0):
+	$(THRIFT) --gen json -r test0.thrift
+
+$(GENJSON_test):
+	$(THRIFT) --gen json -r test.thrift
+
+$(GENJSON_plugin):
+	$(THRIFT) -r -gen json $(PLUGIN_THRIFT)
