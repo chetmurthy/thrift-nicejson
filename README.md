@@ -1,4 +1,4 @@
-# thrift-niejson: A Nice JSON wire-format for Thrift
+# thrift-nicejson: A Nice JSON wire-format for Thrift
 
 I'm a big fan of Apache Thrift, for many reasons:
 
