@@ -21,8 +21,8 @@ ns_utils_test_LDADD = libnicejson.a $(thrift_LIBS)
 
 TESTS = jsontest ns_utils_test
 
-THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/thrift
-PLUGIN_THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/src/thrift/plugin/plugin.thrift
+THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
+PLUGIN_THRIFT=$(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 
 $(GENCPP): 
 	$(THRIFT) --gen cpp -r $(PLUGIN_THRIFT)

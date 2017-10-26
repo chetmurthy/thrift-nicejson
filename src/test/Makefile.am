@@ -42,8 +42,8 @@ test1_CXXFLAGS = -I../lib $(thrift_CFLAGS) $(AM_CXXFLAGS)
 
 TESTS= test1
 
-THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/thrift
-PLUGIN_THRIFT=$(THRIFTROOT)/src/thrift/compiler/cpp/src/thrift/plugin/plugin.thrift
+THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
+PLUGIN_THRIFT=$(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 
 $(GENCPP0_test0):
 	$(THRIFT) --gen cpp -r test0.thrift

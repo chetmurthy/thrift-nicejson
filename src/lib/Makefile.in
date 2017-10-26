@@ -465,6 +465,7 @@ RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+THRIFT_SRC_ROOT = @THRIFT_SRC_ROOT@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -516,6 +517,8 @@ srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 thrift_CFLAGS = @thrift_CFLAGS@
+thrift_EXEC_PREFIX = @thrift_EXEC_PREFIX@
+thrift_INCLUDEDIR = @thrift_INCLUDEDIR@
 thrift_LIBDIR = @thrift_LIBDIR@
 thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
@@ -534,8 +537,8 @@ libnicejson_a_CXXFLAGS = $(thrift_CFLAGS) $(AM_CXXFLAGS)
 jsontest_SOURCES = jsontest.cpp
 ns_utils_test_SOURCES = ns_utils_test.cpp
 ns_utils_test_LDADD = libnicejson.a $(thrift_LIBS)
-THRIFT = $(THRIFTROOT)/src/thrift/compiler/cpp/thrift
-PLUGIN_THRIFT = $(THRIFTROOT)/src/thrift/compiler/cpp/src/thrift/plugin/plugin.thrift
+THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
+PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

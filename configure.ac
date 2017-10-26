@@ -21,6 +21,8 @@ AC_PROG_RANLIB
 # Checks for libraries.
 PKG_CHECK_MODULES([thrift], [thrift >= 0.10.0])
 AC_SUBST([thrift_LIBDIR], [$(pkg-config  --variable=libdir --print-errors "thrift >= 0.10.0")])
+AC_SUBST([thrift_EXEC_PREFIX], [$(pkg-config  --variable=exec_prefix --print-errors "thrift >= 0.10.0")])
+AC_SUBST([thrift_INCLUDEDIR], [$(pkg-config  --variable=includedir --print-errors "thrift >= 0.10.0")])
 
 
 AX_BOOST_BASE([1.53.0],, [AC_MSG_ERROR([libnicejson needs Boost, but it was not found in your system])])
@@ -29,6 +31,13 @@ AX_BOOST_FILESYSTEM
 AC_SUBST([BOOST_LIB_DIR], [$(echo "$BOOST_LDFLAGS" | sed -e 's/^\-L//')])
 AC_SUBST([BOOST_FILESYSTEM_LDADD], [$(echo "-lboost_filesystem")])
 AC_SUBST([BOOST_SYSTEM_LDADD], [$(echo "-lboost_system")])
+
+AC_ARG_WITH([thrift-srcdir],
+  [AS_HELP_STRING([--with-thrift-srcdir],
+    [Directory to the (required) out-of-tree Thrift source])],,
+    [AC_MSG_FAILURE([MUST specify out-of-tree Thrift source directory])])
+AC_SUBST([THRIFT_SRC_ROOT],[$withval])
+
 
 # Checks for header files.
 

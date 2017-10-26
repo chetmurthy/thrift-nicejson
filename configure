@@ -629,6 +629,7 @@ LIBOBJS
 EGREP
 GREP
 CXXCPP
+THRIFT_SRC_ROOT
 BOOST_SYSTEM_LDADD
 BOOST_FILESYSTEM_LDADD
 BOOST_LIB_DIR
@@ -644,6 +645,8 @@ build_os
 build_vendor
 build_cpu
 build
+thrift_INCLUDEDIR
+thrift_EXEC_PREFIX
 thrift_LIBDIR
 thrift_LIBS
 thrift_CFLAGS
@@ -750,6 +753,7 @@ with_boost
 with_boost_libdir
 with_boost_system
 with_boost_filesystem
+with_thrift_srcdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1424,6 +1428,8 @@ Optional Packages:
                           use the Filesystem library from boost - it is
                           possible to specify a certain library for the linker
                           e.g. --with-boost-filesystem=boost_filesystem-gcc-mt
+  --with-thrift-srcdir    Directory to the (required) out-of-tree Thrift
+                          source
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -6186,6 +6192,10 @@ $as_echo "yes" >&6; }
 fi
 thrift_LIBDIR=$(pkg-config  --variable=libdir --print-errors "thrift >= 0.10.0")
 
+thrift_EXEC_PREFIX=$(pkg-config  --variable=exec_prefix --print-errors "thrift >= 0.10.0")
+
+thrift_INCLUDEDIR=$(pkg-config  --variable=includedir --print-errors "thrift >= 0.10.0")
+
 
 
 # Make sure we can run config.sub.
@@ -7020,6 +7030,21 @@ BOOST_LIB_DIR=$(echo "$BOOST_LDFLAGS" | sed -e 's/^\-L//')
 BOOST_FILESYSTEM_LDADD=$(echo "-lboost_filesystem")
 
 BOOST_SYSTEM_LDADD=$(echo "-lboost_system")
+
+
+
+# Check whether --with-thrift-srcdir was given.
+if test "${with_thrift_srcdir+set}" = set; then :
+  withval=$with_thrift_srcdir;
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "MUST specify out-of-tree Thrift source directory
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+
+THRIFT_SRC_ROOT=$withval
+
 
 
 # Checks for header files.
