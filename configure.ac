@@ -10,7 +10,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_LANG([C++])
 m4_include([aclocal/ax_cxx_compile_stdcxx.m4])
 AX_CXX_COMPILE_STDCXX(11)
-
+LT_INIT
 
 #AX_CXX_COMPILE_STDCXX([11], [noext], [optional])
 # Checks for programs.
@@ -56,6 +56,7 @@ AC_TYPE_UINT8_T
 
 AC_CONFIG_FILES([Makefile
                  src/lib/cpp/Makefile
+                 src/lib/py/Makefile
                  src/plugins/Makefile
                  src/test/cpp/Makefile])
 AC_OUTPUT
