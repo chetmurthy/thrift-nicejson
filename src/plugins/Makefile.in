@@ -115,7 +115,7 @@ am_thrift_gen_typelib_OBJECTS =  \
 	thrift_gen_typelib-typelib_plugin.$(OBJEXT) \
 	thrift_gen_typelib-ns_utils.$(OBJEXT)
 thrift_gen_typelib_OBJECTS = $(am_thrift_gen_typelib_OBJECTS)
-thrift_gen_typelib_DEPENDENCIES = ../lib/libnicejson.a \
+thrift_gen_typelib_DEPENDENCIES = ../lib/cpp/libnicejson.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 thrift_gen_typelib_LINK = $(CXXLD) $(thrift_gen_typelib_CXXFLAGS) \
@@ -516,11 +516,11 @@ thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CFLAGS = -I../lib
+AM_CFLAGS = -I../lib/cpp
 thrift_gen_typelib_SOURCES = typelib_plugin.cpp ns_utils.cpp ns_utils.h
 thrift_gen_typelib_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-thrift_gen_typelib_LDADD = ../lib/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-thrift_gen_typelib_CXXFLAGS = -I../lib $(thrift_CFLAGS) $(AM_CXXFLAGS)
+thrift_gen_typelib_LDADD = ../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
+thrift_gen_typelib_CXXFLAGS = -I../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
 ns_utils_test_SOURCES = ns_utils_test.cpp ns_utils.cpp ns_utils.h
 ns_utils_test_LDADD = $(thrift_LIBS)
 all: all-am

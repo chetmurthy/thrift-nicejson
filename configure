@@ -7658,7 +7658,7 @@ _ACEOF
 
 # Checks for library functions.
 
-ac_config_files="$ac_config_files Makefile src/lib/Makefile src/plugins/Makefile src/test/Makefile"
+ac_config_files="$ac_config_files Makefile src/lib/cpp/Makefile src/plugins/Makefile src/test/cpp/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -8396,9 +8396,9 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "src/lib/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Makefile" ;;
+    "src/lib/cpp/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/cpp/Makefile" ;;
     "src/plugins/Makefile") CONFIG_FILES="$CONFIG_FILES src/plugins/Makefile" ;;
-    "src/test/Makefile") CONFIG_FILES="$CONFIG_FILES src/test/Makefile" ;;
+    "src/test/cpp/Makefile") CONFIG_FILES="$CONFIG_FILES src/test/cpp/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

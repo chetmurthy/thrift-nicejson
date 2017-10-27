@@ -13,8 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -72,6 +70,7 @@ am__make_running_with_option = \
 am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
 pkgdatadir = $(datadir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkglibexecdir = $(libexecdir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
@@ -88,9 +87,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = jsontest$(EXEEXT)
-TESTS = jsontest$(EXEEXT)
-subdir = src/lib
+check_PROGRAMS = test1$(EXEEXT)
+TESTS = test1$(EXEEXT)
+subdir = src/test/cpp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
 	$(top_srcdir)/aclocal/ax_boost_filesystem.m4 \
@@ -99,58 +98,30 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(pkginclude_HEADERS) \
-	$(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"
-LIBRARIES = $(lib_LIBRARIES)
-AR = ar
-ARFLAGS = cru
-AM_V_AR = $(am__v_AR_@AM_V@)
-am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
-am__v_AR_0 = @echo "  AR      " $@;
-am__v_AR_1 = 
-libnicejson_a_AR = $(AR) $(ARFLAGS)
-libnicejson_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = gen-cpp/libnicejson_a-plugin_constants.$(OBJEXT) \
-	gen-cpp/libnicejson_a-plugin_types.$(OBJEXT)
-am_libnicejson_a_OBJECTS = libnicejson_a-NiceJSON.$(OBJEXT) \
-	$(am__objects_1)
-libnicejson_a_OBJECTS = $(am_libnicejson_a_OBJECTS)
-am_jsontest_OBJECTS = jsontest.$(OBJEXT)
-jsontest_OBJECTS = $(am_jsontest_OBJECTS)
-jsontest_LDADD = $(LDADD)
+am__objects_1 = gen-cpp/test1-test0_constants.$(OBJEXT) \
+	gen-cpp/test1-test0_types.$(OBJEXT)
+am__objects_2 = gen-cpp/test1-test_constants.$(OBJEXT) \
+	gen-cpp/test1-test_types.$(OBJEXT)
+am__objects_3 = gen-cpp-typelib/test1-test_typelib.$(OBJEXT)
+am__objects_4 = gen-cpp-typelib/test1-test0_typelib.$(OBJEXT)
+am__objects_5 = gen-cpp-typelib/test1-plugin_typelib.$(OBJEXT)
+am__objects_6 =
+am__objects_7 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
+	$(am__objects_6)
+am_test1_OBJECTS = test1-test1.$(OBJEXT) $(am__objects_7)
+test1_OBJECTS = $(am_test1_OBJECTS)
+am__DEPENDENCIES_1 =
+test1_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+test1_LINK = $(CXXLD) $(test1_CXXFLAGS) $(CXXFLAGS) $(test1_LDFLAGS) \
+	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -196,14 +167,13 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libnicejson_a_SOURCES) $(jsontest_SOURCES)
-DIST_SOURCES = $(libnicejson_a_SOURCES) $(jsontest_SOURCES)
+SOURCES = $(test1_SOURCES)
+DIST_SOURCES = $(test1_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-HEADERS = $(pkginclude_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -245,6 +215,33 @@ am__tty_colors = { \
     std='[m'; \
   fi; \
 }
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
 am__recheck_rx = ^[ 	]*:recheck:[ 	]*
 am__global_test_result_rx = ^[ 	]*:global-test-result:[ 	]*
 am__copy_in_global_log_rx = ^[ 	]*:copy-in-global-log:[ 	]*
@@ -403,7 +400,6 @@ TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-pkgincludedir = $(includedir)/thrift-nicejson
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -522,18 +518,47 @@ thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-GENCPP = gen-cpp/plugin_constants.cpp \
-  gen-cpp/plugin_constants.h \
-  gen-cpp/plugin_types.h \
-  gen-cpp/plugin_types.cpp
+GENCPP0_test0 = \
+gen-cpp/test0_constants.cpp \
+gen-cpp/test0_constants.h \
+gen-cpp/test0_types.cpp \
+gen-cpp/test0_types.h
 
-BUILT_SOURCES = $(GENCPP)
-CLEANFILES = $(GENCPP)
-lib_LIBRARIES = libnicejson.a
-libnicejson_a_SOURCES = NiceJSON.cpp NiceJSON.h $(GENCPP)
-pkginclude_HEADERS = json.hpp NiceJSON.h
-libnicejson_a_CXXFLAGS = $(thrift_CFLAGS) $(AM_CXXFLAGS)
-jsontest_SOURCES = jsontest.cpp
+GENCPP_test = \
+gen-cpp/test_constants.cpp \
+gen-cpp/test_constants.h \
+gen-cpp/test_types.cpp \
+gen-cpp/test_types.h
+
+GENCPP_TYPELIB_test = \
+gen-cpp-typelib/test_typelib.cpp \
+gen-cpp-typelib/test_typelib.h
+
+GENCPP_TYPELIB_test0 = \
+gen-cpp-typelib/test0_typelib.cpp \
+gen-cpp-typelib/test0_typelib.h
+
+GENCPP_TYPELIB_plugin = \
+gen-cpp-typelib/plugin_typelib.cpp \
+gen-cpp-typelib/plugin_typelib.h
+
+GENJSON_test = gen-json/test.json
+GENJSON_test0 = gen-json/test0.json
+GENJSON_plugin = gen-json/plugin.json
+BUILT_SOURCES = \
+$(GENCPP0_test0) $(GENCPP_test) \
+$(GENCPP_TYPELIB_test) \
+$(GENCPP_TYPELIB_test0) \
+$(GENCPP_TYPELIB_plugin) \
+$(GENJSON0_test0) \
+$(GENJSON_test) \
+$(GENJSON_plugin)
+
+CLEANFILES = $(BUILT_SOURCES)
+test1_SOURCES = test1.cpp $(BUILT_SOURCES)
+test1_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
+test1_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
+test1_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 all: $(BUILT_SOURCES)
@@ -550,9 +575,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/lib/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/test/cpp/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/lib/Makefile
+	  $(AUTOMAKE) --gnu src/test/cpp/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -570,71 +595,59 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-libLIBRARIES: $(lib_LIBRARIES)
-	@$(NORMAL_INSTALL)
-	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
-	list2=; for p in $$list; do \
-	  if test -f $$p; then \
-	    list2="$$list2 $$p"; \
-	  else :; fi; \
-	done; \
-	test -z "$$list2" || { \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(libdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(libdir)" || exit 1; \
-	  echo " $(INSTALL_DATA) $$list2 '$(DESTDIR)$(libdir)'"; \
-	  $(INSTALL_DATA) $$list2 "$(DESTDIR)$(libdir)" || exit $$?; }
-	@$(POST_INSTALL)
-	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
-	for p in $$list; do \
-	  if test -f $$p; then \
-	    $(am__strip_dir) \
-	    echo " ( cd '$(DESTDIR)$(libdir)' && $(RANLIB) $$f )"; \
-	    ( cd "$(DESTDIR)$(libdir)" && $(RANLIB) $$f ) || exit $$?; \
-	  else :; fi; \
-	done
 
-uninstall-libLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(libdir)'; $(am__uninstall_files_from_dir)
-
-clean-libLIBRARIES:
-	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 gen-cpp/$(am__dirstamp):
 	@$(MKDIR_P) gen-cpp
 	@: > gen-cpp/$(am__dirstamp)
 gen-cpp/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) gen-cpp/$(DEPDIR)
 	@: > gen-cpp/$(DEPDIR)/$(am__dirstamp)
-gen-cpp/libnicejson_a-plugin_constants.$(OBJEXT):  \
-	gen-cpp/$(am__dirstamp) gen-cpp/$(DEPDIR)/$(am__dirstamp)
-gen-cpp/libnicejson_a-plugin_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+gen-cpp/test1-test0_constants.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-test0_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-test_constants.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-test_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp-typelib/$(am__dirstamp):
+	@$(MKDIR_P) gen-cpp-typelib
+	@: > gen-cpp-typelib/$(am__dirstamp)
+gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gen-cpp-typelib/$(DEPDIR)
+	@: > gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
+gen-cpp-typelib/test1-test_typelib.$(OBJEXT):  \
+	gen-cpp-typelib/$(am__dirstamp) \
+	gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
+gen-cpp-typelib/test1-test0_typelib.$(OBJEXT):  \
+	gen-cpp-typelib/$(am__dirstamp) \
+	gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
+gen-cpp-typelib/test1-plugin_typelib.$(OBJEXT):  \
+	gen-cpp-typelib/$(am__dirstamp) \
+	gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
 
-libnicejson.a: $(libnicejson_a_OBJECTS) $(libnicejson_a_DEPENDENCIES) $(EXTRA_libnicejson_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libnicejson.a
-	$(AM_V_AR)$(libnicejson_a_AR) libnicejson.a $(libnicejson_a_OBJECTS) $(libnicejson_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libnicejson.a
-
-clean-checkPROGRAMS:
-	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
-
-jsontest$(EXEEXT): $(jsontest_OBJECTS) $(jsontest_DEPENDENCIES) $(EXTRA_jsontest_DEPENDENCIES) 
-	@rm -f jsontest$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(jsontest_OBJECTS) $(jsontest_LDADD) $(LIBS)
+test1$(EXEEXT): $(test1_OBJECTS) $(test1_DEPENDENCIES) $(EXTRA_test1_DEPENDENCIES) 
+	@rm -f test1$(EXEEXT)
+	$(AM_V_CXXLD)$(test1_LINK) $(test1_OBJECTS) $(test1_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f gen-cpp-typelib/*.$(OBJEXT)
 	-rm -f gen-cpp/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsontest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-NiceJSON.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test1-test1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test0_constants.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test0_types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test_constants.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test_types.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -652,68 +665,117 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-libnicejson_a-NiceJSON.o: NiceJSON.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT libnicejson_a-NiceJSON.o -MD -MP -MF $(DEPDIR)/libnicejson_a-NiceJSON.Tpo -c -o libnicejson_a-NiceJSON.o `test -f 'NiceJSON.cpp' || echo '$(srcdir)/'`NiceJSON.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnicejson_a-NiceJSON.Tpo $(DEPDIR)/libnicejson_a-NiceJSON.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NiceJSON.cpp' object='libnicejson_a-NiceJSON.o' libtool=no @AMDEPBACKSLASH@
+test1-test1.o: test1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT test1-test1.o -MD -MP -MF $(DEPDIR)/test1-test1.Tpo -c -o test1-test1.o `test -f 'test1.cpp' || echo '$(srcdir)/'`test1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test1-test1.Tpo $(DEPDIR)/test1-test1.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test1.cpp' object='test1-test1.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-NiceJSON.o `test -f 'NiceJSON.cpp' || echo '$(srcdir)/'`NiceJSON.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o test1-test1.o `test -f 'test1.cpp' || echo '$(srcdir)/'`test1.cpp
 
-libnicejson_a-NiceJSON.obj: NiceJSON.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT libnicejson_a-NiceJSON.obj -MD -MP -MF $(DEPDIR)/libnicejson_a-NiceJSON.Tpo -c -o libnicejson_a-NiceJSON.obj `if test -f 'NiceJSON.cpp'; then $(CYGPATH_W) 'NiceJSON.cpp'; else $(CYGPATH_W) '$(srcdir)/NiceJSON.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnicejson_a-NiceJSON.Tpo $(DEPDIR)/libnicejson_a-NiceJSON.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NiceJSON.cpp' object='libnicejson_a-NiceJSON.obj' libtool=no @AMDEPBACKSLASH@
+test1-test1.obj: test1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT test1-test1.obj -MD -MP -MF $(DEPDIR)/test1-test1.Tpo -c -o test1-test1.obj `if test -f 'test1.cpp'; then $(CYGPATH_W) 'test1.cpp'; else $(CYGPATH_W) '$(srcdir)/test1.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test1-test1.Tpo $(DEPDIR)/test1-test1.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test1.cpp' object='test1-test1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-NiceJSON.obj `if test -f 'NiceJSON.cpp'; then $(CYGPATH_W) 'NiceJSON.cpp'; else $(CYGPATH_W) '$(srcdir)/NiceJSON.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o test1-test1.obj `if test -f 'test1.cpp'; then $(CYGPATH_W) 'test1.cpp'; else $(CYGPATH_W) '$(srcdir)/test1.cpp'; fi`
 
-gen-cpp/libnicejson_a-plugin_constants.o: gen-cpp/plugin_constants.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/libnicejson_a-plugin_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Tpo -c -o gen-cpp/libnicejson_a-plugin_constants.o `test -f 'gen-cpp/plugin_constants.cpp' || echo '$(srcdir)/'`gen-cpp/plugin_constants.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Tpo gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/plugin_constants.cpp' object='gen-cpp/libnicejson_a-plugin_constants.o' libtool=no @AMDEPBACKSLASH@
+gen-cpp/test1-test0_constants.o: gen-cpp/test0_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test0_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test0_constants.Tpo -c -o gen-cpp/test1-test0_constants.o `test -f 'gen-cpp/test0_constants.cpp' || echo '$(srcdir)/'`gen-cpp/test0_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test0_constants.Tpo gen-cpp/$(DEPDIR)/test1-test0_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test0_constants.cpp' object='gen-cpp/test1-test0_constants.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/libnicejson_a-plugin_constants.o `test -f 'gen-cpp/plugin_constants.cpp' || echo '$(srcdir)/'`gen-cpp/plugin_constants.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test0_constants.o `test -f 'gen-cpp/test0_constants.cpp' || echo '$(srcdir)/'`gen-cpp/test0_constants.cpp
 
-gen-cpp/libnicejson_a-plugin_constants.obj: gen-cpp/plugin_constants.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/libnicejson_a-plugin_constants.obj -MD -MP -MF gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Tpo -c -o gen-cpp/libnicejson_a-plugin_constants.obj `if test -f 'gen-cpp/plugin_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/plugin_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/plugin_constants.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Tpo gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/plugin_constants.cpp' object='gen-cpp/libnicejson_a-plugin_constants.obj' libtool=no @AMDEPBACKSLASH@
+gen-cpp/test1-test0_constants.obj: gen-cpp/test0_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test0_constants.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test0_constants.Tpo -c -o gen-cpp/test1-test0_constants.obj `if test -f 'gen-cpp/test0_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/test0_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test0_constants.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test0_constants.Tpo gen-cpp/$(DEPDIR)/test1-test0_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test0_constants.cpp' object='gen-cpp/test1-test0_constants.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/libnicejson_a-plugin_constants.obj `if test -f 'gen-cpp/plugin_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/plugin_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/plugin_constants.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test0_constants.obj `if test -f 'gen-cpp/test0_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/test0_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test0_constants.cpp'; fi`
 
-gen-cpp/libnicejson_a-plugin_types.o: gen-cpp/plugin_types.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/libnicejson_a-plugin_types.o -MD -MP -MF gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Tpo -c -o gen-cpp/libnicejson_a-plugin_types.o `test -f 'gen-cpp/plugin_types.cpp' || echo '$(srcdir)/'`gen-cpp/plugin_types.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Tpo gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/plugin_types.cpp' object='gen-cpp/libnicejson_a-plugin_types.o' libtool=no @AMDEPBACKSLASH@
+gen-cpp/test1-test0_types.o: gen-cpp/test0_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test0_types.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test0_types.Tpo -c -o gen-cpp/test1-test0_types.o `test -f 'gen-cpp/test0_types.cpp' || echo '$(srcdir)/'`gen-cpp/test0_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test0_types.Tpo gen-cpp/$(DEPDIR)/test1-test0_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test0_types.cpp' object='gen-cpp/test1-test0_types.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/libnicejson_a-plugin_types.o `test -f 'gen-cpp/plugin_types.cpp' || echo '$(srcdir)/'`gen-cpp/plugin_types.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test0_types.o `test -f 'gen-cpp/test0_types.cpp' || echo '$(srcdir)/'`gen-cpp/test0_types.cpp
 
-gen-cpp/libnicejson_a-plugin_types.obj: gen-cpp/plugin_types.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/libnicejson_a-plugin_types.obj -MD -MP -MF gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Tpo -c -o gen-cpp/libnicejson_a-plugin_types.obj `if test -f 'gen-cpp/plugin_types.cpp'; then $(CYGPATH_W) 'gen-cpp/plugin_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/plugin_types.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Tpo gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/plugin_types.cpp' object='gen-cpp/libnicejson_a-plugin_types.obj' libtool=no @AMDEPBACKSLASH@
+gen-cpp/test1-test0_types.obj: gen-cpp/test0_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test0_types.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test0_types.Tpo -c -o gen-cpp/test1-test0_types.obj `if test -f 'gen-cpp/test0_types.cpp'; then $(CYGPATH_W) 'gen-cpp/test0_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test0_types.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test0_types.Tpo gen-cpp/$(DEPDIR)/test1-test0_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test0_types.cpp' object='gen-cpp/test1-test0_types.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/libnicejson_a-plugin_types.obj `if test -f 'gen-cpp/plugin_types.cpp'; then $(CYGPATH_W) 'gen-cpp/plugin_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/plugin_types.cpp'; fi`
-install-pkgincludeHEADERS: $(pkginclude_HEADERS)
-	@$(NORMAL_INSTALL)
-	@list='$(pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(pkgincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(pkgincludedir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(pkgincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(pkgincludedir)" || exit $$?; \
-	done
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test0_types.obj `if test -f 'gen-cpp/test0_types.cpp'; then $(CYGPATH_W) 'gen-cpp/test0_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test0_types.cpp'; fi`
 
-uninstall-pkgincludeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(pkgincludedir)'; $(am__uninstall_files_from_dir)
+gen-cpp/test1-test_constants.o: gen-cpp/test_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test_constants.Tpo -c -o gen-cpp/test1-test_constants.o `test -f 'gen-cpp/test_constants.cpp' || echo '$(srcdir)/'`gen-cpp/test_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test_constants.Tpo gen-cpp/$(DEPDIR)/test1-test_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test_constants.cpp' object='gen-cpp/test1-test_constants.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test_constants.o `test -f 'gen-cpp/test_constants.cpp' || echo '$(srcdir)/'`gen-cpp/test_constants.cpp
+
+gen-cpp/test1-test_constants.obj: gen-cpp/test_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test_constants.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test_constants.Tpo -c -o gen-cpp/test1-test_constants.obj `if test -f 'gen-cpp/test_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/test_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test_constants.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test_constants.Tpo gen-cpp/$(DEPDIR)/test1-test_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test_constants.cpp' object='gen-cpp/test1-test_constants.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test_constants.obj `if test -f 'gen-cpp/test_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/test_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test_constants.cpp'; fi`
+
+gen-cpp/test1-test_types.o: gen-cpp/test_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test_types.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test_types.Tpo -c -o gen-cpp/test1-test_types.o `test -f 'gen-cpp/test_types.cpp' || echo '$(srcdir)/'`gen-cpp/test_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test_types.Tpo gen-cpp/$(DEPDIR)/test1-test_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test_types.cpp' object='gen-cpp/test1-test_types.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test_types.o `test -f 'gen-cpp/test_types.cpp' || echo '$(srcdir)/'`gen-cpp/test_types.cpp
+
+gen-cpp/test1-test_types.obj: gen-cpp/test_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-test_types.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-test_types.Tpo -c -o gen-cpp/test1-test_types.obj `if test -f 'gen-cpp/test_types.cpp'; then $(CYGPATH_W) 'gen-cpp/test_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test_types.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-test_types.Tpo gen-cpp/$(DEPDIR)/test1-test_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/test_types.cpp' object='gen-cpp/test1-test_types.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-test_types.obj `if test -f 'gen-cpp/test_types.cpp'; then $(CYGPATH_W) 'gen-cpp/test_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/test_types.cpp'; fi`
+
+gen-cpp-typelib/test1-test_typelib.o: gen-cpp-typelib/test_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo -c -o gen-cpp-typelib/test1-test_typelib.o `test -f 'gen-cpp-typelib/test_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/test_typelib.cpp' object='gen-cpp-typelib/test1-test_typelib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-test_typelib.o `test -f 'gen-cpp-typelib/test_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test_typelib.cpp
+
+gen-cpp-typelib/test1-test_typelib.obj: gen-cpp-typelib/test_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test_typelib.obj -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo -c -o gen-cpp-typelib/test1-test_typelib.obj `if test -f 'gen-cpp-typelib/test_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/test_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/test_typelib.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/test_typelib.cpp' object='gen-cpp-typelib/test1-test_typelib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-test_typelib.obj `if test -f 'gen-cpp-typelib/test_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/test_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/test_typelib.cpp'; fi`
+
+gen-cpp-typelib/test1-test0_typelib.o: gen-cpp-typelib/test0_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test0_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Tpo -c -o gen-cpp-typelib/test1-test0_typelib.o `test -f 'gen-cpp-typelib/test0_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test0_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/test0_typelib.cpp' object='gen-cpp-typelib/test1-test0_typelib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-test0_typelib.o `test -f 'gen-cpp-typelib/test0_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test0_typelib.cpp
+
+gen-cpp-typelib/test1-test0_typelib.obj: gen-cpp-typelib/test0_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test0_typelib.obj -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Tpo -c -o gen-cpp-typelib/test1-test0_typelib.obj `if test -f 'gen-cpp-typelib/test0_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/test0_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/test0_typelib.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/test0_typelib.cpp' object='gen-cpp-typelib/test1-test0_typelib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-test0_typelib.obj `if test -f 'gen-cpp-typelib/test0_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/test0_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/test0_typelib.cpp'; fi`
+
+gen-cpp-typelib/test1-plugin_typelib.o: gen-cpp-typelib/plugin_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-plugin_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Tpo -c -o gen-cpp-typelib/test1-plugin_typelib.o `test -f 'gen-cpp-typelib/plugin_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/plugin_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/plugin_typelib.cpp' object='gen-cpp-typelib/test1-plugin_typelib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-plugin_typelib.o `test -f 'gen-cpp-typelib/plugin_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/plugin_typelib.cpp
+
+gen-cpp-typelib/test1-plugin_typelib.obj: gen-cpp-typelib/plugin_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-plugin_typelib.obj -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Tpo -c -o gen-cpp-typelib/test1-plugin_typelib.obj `if test -f 'gen-cpp-typelib/plugin_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/plugin_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/plugin_typelib.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/plugin_typelib.cpp' object='gen-cpp-typelib/test1-plugin_typelib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-plugin_typelib.obj `if test -f 'gen-cpp-typelib/plugin_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/plugin_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/plugin_typelib.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -908,9 +970,9 @@ recheck: all $(check_PROGRAMS)
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-jsontest.log: jsontest$(EXEEXT)
-	@p='jsontest$(EXEEXT)'; \
-	b='jsontest'; \
+test1.log: test1$(EXEEXT)
+	@p='test1$(EXEEXT)'; \
+	b='test1'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -965,11 +1027,8 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LIBRARIES) $(HEADERS)
+all-am: Makefile
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
@@ -1001,6 +1060,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
+	-rm -f gen-cpp-typelib/$(am__dirstamp)
 	-rm -f gen-cpp/$(DEPDIR)/$(am__dirstamp)
 	-rm -f gen-cpp/$(am__dirstamp)
 
@@ -1010,11 +1071,10 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-checkPROGRAMS clean-generic clean-libLIBRARIES \
-	mostlyclean-am
+clean-am: clean-checkPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) gen-cpp/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gen-cpp-typelib/$(DEPDIR) gen-cpp/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1031,13 +1091,13 @@ info: info-am
 
 info-am:
 
-install-data-am: install-pkgincludeHEADERS
+install-data-am:
 
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-libLIBRARIES
+install-exec-am:
 
 install-html: install-html-am
 
@@ -1060,7 +1120,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) gen-cpp/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gen-cpp-typelib/$(DEPDIR) gen-cpp/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1076,30 +1136,51 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-libLIBRARIES uninstall-pkgincludeHEADERS
+uninstall-am:
 
 .MAKE: all check check-am install install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-TESTS check-am clean \
-	clean-checkPROGRAMS clean-generic clean-libLIBRARIES \
-	cscopelist-am ctags ctags-am distclean distclean-compile \
-	distclean-generic distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-libLIBRARIES install-man install-pdf \
-	install-pdf-am install-pkgincludeHEADERS install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am recheck tags tags-am uninstall uninstall-am \
-	uninstall-libLIBRARIES uninstall-pkgincludeHEADERS
+	clean-checkPROGRAMS clean-generic cscopelist-am ctags ctags-am \
+	distclean distclean-compile distclean-generic distclean-tags \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	recheck tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
 
-$(GENCPP): 
-	$(THRIFT) --gen cpp -r $(PLUGIN_THRIFT)
+$(GENCPP0_test0):
+	$(THRIFT) --gen cpp -r test0.thrift
+
+$(GENCPP_test):
+	$(THRIFT) --gen cpp -r test.thrift
+
+$(GENCPP_TYPELIB_test):
+	PATH=../../plugins:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test.thrift
+
+$(GENCPP_TYPELIB_test0):
+	PATH=../../plugins:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test0.thrift
+
+$(GENCPP_TYPELIB_plugin):
+	PATH=../../plugins:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib $(PLUGIN_THRIFT)
+
+gen-json: $(GENJSON0_test0) $(GENJSON_test) $(GENJSON_plugin)
+
+$(GENJSON0_test0):
+	$(THRIFT) --gen json -r test0.thrift
+
+$(GENJSON_test):
+	$(THRIFT) --gen json -r test.thrift
+
+$(GENJSON_plugin):
+	$(THRIFT) -r -gen json $(PLUGIN_THRIFT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

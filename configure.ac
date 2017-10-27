@@ -55,7 +55,7 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
-                 src/lib/Makefile
+                 src/lib/cpp/Makefile
                  src/plugins/Makefile
-                 src/test/Makefile])
+                 src/test/cpp/Makefile])
 AC_OUTPUT
