@@ -45,6 +45,46 @@ using apache::thrift::protocol::TBinaryProtocol;
 using apache::thrift::transport::TFDTransport;
 using apache::thrift::transport::TFramedTransport;
 
+void gen_typelib(const apache::thrift::plugin::GeneratorInput& input) {
+
+  string cpp_ns ;
+  {
+    map<string, string>::const_iterator ii;
+    if (input.program.namespaces.end() != (ii = input.program.namespaces.find("cpp"))) {
+      cpp_ns = ii->second ;
+    }
+    else {
+      std::cerr << "(required) cpp namespace NOT declared" << std::endl ;
+      exit(-1) ;
+    }
+  }
+
+  string typelib_ns ;
+  {
+    map<string, string>::const_iterator ii;
+    if (input.program.namespaces.end() != (ii = input.program.namespaces.find("typelib"))) {
+      typelib_ns = ii->second ;
+    }
+    else typelib_ns = cpp_ns ;
+  }
+
+  string out_path = input.program.out_path ;
+  string name = input.program.name ;
+  path destdir(str(boost::format{"%s/gen-typelib"} % out_path)) ;
+  string dest = str(boost::format{"%s/gen-typelib/%s.%s.typelib"} %
+		       out_path % typelib_ns % name) ;
+
+  if (!exists(destdir)) create_directory(destdir) ;
+  ofstream out ;
+  out.open(dest, ios::out | ios::trunc) ;
+  if (out.fail()) {
+    std::cerr << "Cannot open file " << dest << " for write" << std::endl ;
+    exit(-1) ;
+  }
+
+  out << apache::thrift::ThriftJSONString(input) ;
+}
+
 void gen_cpp_typelib(const apache::thrift::plugin::GeneratorInput& input) {
 
   string cpp_ns ;
@@ -164,6 +204,15 @@ int main(int argc, char* argv[]) {
 
   cerr << "Generating typelib" << endl ;
 
-  gen_cpp_typelib(input) ;
-
+  for (auto ii = input.parsed_options.begin() ; ii != input.parsed_options.end() ; ++ii) {
+    if (ii->first == "cpp") {
+      gen_cpp_typelib(input) ;
+    }
+    else if (ii->first == "typelib") {
+      gen_typelib(input) ;
+    }
+    else {
+      cerr << boost::format{"Unrecognized typelib target %s\n"} % ii->first ;
+    }
+  }
 }
