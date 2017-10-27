@@ -88,8 +88,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = jsontest$(EXEEXT) ns_utils_test$(EXEEXT)
-TESTS = jsontest$(EXEEXT) ns_utils_test$(EXEEXT)
+check_PROGRAMS = jsontest$(EXEEXT)
+TESTS = jsontest$(EXEEXT)
 subdir = src/lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
@@ -146,15 +146,11 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = gen-cpp/libnicejson_a-plugin_constants.$(OBJEXT) \
 	gen-cpp/libnicejson_a-plugin_types.$(OBJEXT)
 am_libnicejson_a_OBJECTS = libnicejson_a-NiceJSON.$(OBJEXT) \
-	libnicejson_a-ns_utils.$(OBJEXT) $(am__objects_1)
+	$(am__objects_1)
 libnicejson_a_OBJECTS = $(am_libnicejson_a_OBJECTS)
 am_jsontest_OBJECTS = jsontest.$(OBJEXT)
 jsontest_OBJECTS = $(am_jsontest_OBJECTS)
 jsontest_LDADD = $(LDADD)
-am_ns_utils_test_OBJECTS = ns_utils_test.$(OBJEXT)
-ns_utils_test_OBJECTS = $(am_ns_utils_test_OBJECTS)
-am__DEPENDENCIES_1 =
-ns_utils_test_DEPENDENCIES = libnicejson.a $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -200,10 +196,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libnicejson_a_SOURCES) $(jsontest_SOURCES) \
-	$(ns_utils_test_SOURCES)
-DIST_SOURCES = $(libnicejson_a_SOURCES) $(jsontest_SOURCES) \
-	$(ns_utils_test_SOURCES)
+SOURCES = $(libnicejson_a_SOURCES) $(jsontest_SOURCES)
+DIST_SOURCES = $(libnicejson_a_SOURCES) $(jsontest_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -536,12 +530,10 @@ GENCPP = gen-cpp/plugin_constants.cpp \
 BUILT_SOURCES = $(GENCPP)
 CLEANFILES = $(GENCPP)
 lib_LIBRARIES = libnicejson.a
-libnicejson_a_SOURCES = NiceJSON.cpp NiceJSON.h ns_utils.cpp ns_utils.h $(GENCPP)
+libnicejson_a_SOURCES = NiceJSON.cpp NiceJSON.h $(GENCPP)
 pkginclude_HEADERS = json.hpp NiceJSON.h
 libnicejson_a_CXXFLAGS = $(thrift_CFLAGS) $(AM_CXXFLAGS)
 jsontest_SOURCES = jsontest.cpp
-ns_utils_test_SOURCES = ns_utils_test.cpp
-ns_utils_test_LDADD = libnicejson.a $(thrift_LIBS)
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 all: $(BUILT_SOURCES)
@@ -632,10 +624,6 @@ jsontest$(EXEEXT): $(jsontest_OBJECTS) $(jsontest_DEPENDENCIES) $(EXTRA_jsontest
 	@rm -f jsontest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(jsontest_OBJECTS) $(jsontest_LDADD) $(LIBS)
 
-ns_utils_test$(EXEEXT): $(ns_utils_test_OBJECTS) $(ns_utils_test_DEPENDENCIES) $(EXTRA_ns_utils_test_DEPENDENCIES) 
-	@rm -f ns_utils_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(ns_utils_test_OBJECTS) $(ns_utils_test_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f gen-cpp/*.$(OBJEXT)
@@ -645,8 +633,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsontest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-NiceJSON.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-ns_utils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ns_utils_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Po@am__quote@
 
@@ -679,20 +665,6 @@ libnicejson_a-NiceJSON.obj: NiceJSON.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NiceJSON.cpp' object='libnicejson_a-NiceJSON.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-NiceJSON.obj `if test -f 'NiceJSON.cpp'; then $(CYGPATH_W) 'NiceJSON.cpp'; else $(CYGPATH_W) '$(srcdir)/NiceJSON.cpp'; fi`
-
-libnicejson_a-ns_utils.o: ns_utils.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT libnicejson_a-ns_utils.o -MD -MP -MF $(DEPDIR)/libnicejson_a-ns_utils.Tpo -c -o libnicejson_a-ns_utils.o `test -f 'ns_utils.cpp' || echo '$(srcdir)/'`ns_utils.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnicejson_a-ns_utils.Tpo $(DEPDIR)/libnicejson_a-ns_utils.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ns_utils.cpp' object='libnicejson_a-ns_utils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-ns_utils.o `test -f 'ns_utils.cpp' || echo '$(srcdir)/'`ns_utils.cpp
-
-libnicejson_a-ns_utils.obj: ns_utils.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT libnicejson_a-ns_utils.obj -MD -MP -MF $(DEPDIR)/libnicejson_a-ns_utils.Tpo -c -o libnicejson_a-ns_utils.obj `if test -f 'ns_utils.cpp'; then $(CYGPATH_W) 'ns_utils.cpp'; else $(CYGPATH_W) '$(srcdir)/ns_utils.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnicejson_a-ns_utils.Tpo $(DEPDIR)/libnicejson_a-ns_utils.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ns_utils.cpp' object='libnicejson_a-ns_utils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-ns_utils.obj `if test -f 'ns_utils.cpp'; then $(CYGPATH_W) 'ns_utils.cpp'; else $(CYGPATH_W) '$(srcdir)/ns_utils.cpp'; fi`
 
 gen-cpp/libnicejson_a-plugin_constants.o: gen-cpp/plugin_constants.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/libnicejson_a-plugin_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Tpo -c -o gen-cpp/libnicejson_a-plugin_constants.o `test -f 'gen-cpp/plugin_constants.cpp' || echo '$(srcdir)/'`gen-cpp/plugin_constants.cpp
@@ -939,13 +911,6 @@ recheck: all $(check_PROGRAMS)
 jsontest.log: jsontest$(EXEEXT)
 	@p='jsontest$(EXEEXT)'; \
 	b='jsontest'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-ns_utils_test.log: ns_utils_test$(EXEEXT)
-	@p='ns_utils_test$(EXEEXT)'; \
-	b='ns_utils_test'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
