@@ -637,13 +637,19 @@ json NiceJSON::skip2json(const ::apache::thrift::protocol::TType ftype, ::apache
   return j;    
 }
 
-void NiceJSON::register_typelib(const string& package, const string& name, const NiceJSON *p) {
+void NiceJSON::register_typelib(const string& package, const string& name, NiceJSON const * const p) {
   const string key = package + "/" + name ;
   type_library_t& tl = *type_library_() ;
   if (tl.end() != tl.find(key)) {
     throw NiceJSONError("Type library " + key + " already registered") ;
   }
   tl[key] = p ;
+}
+
+  NiceJSON const * const NiceJSON::install_typelib(const string& package, const string& name, const string& serialized) {
+  NiceJSON *rv = new NiceJSON(serialized) ;
+  register_typelib(package, name, rv) ;
+  return rv ;
 }
 
 const NiceJSON* NiceJSON::lookup_typelib(const string& key) {

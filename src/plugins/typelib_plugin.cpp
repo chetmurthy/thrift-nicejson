@@ -135,18 +135,17 @@ R"FOO(
 #include "gen-cpp-typelib/%s_typelib.h"
 %s
 struct StaticInitializer_%s {
-  StaticInitializer_%s() : json_(
-R"WIREJSON()FOO"} % name % ns_open(cpp_ns) % name % name) ;
+  StaticInitializer_%s() : json_(*apache::thrift::nicejson::NiceJSON::install_typelib("%s", "%s",
+R"WIREJSON()FOO"} % name % ns_open(cpp_ns) % name % name % typelib_ns % name) ;
 
   cppout << apache::thrift::ThriftJSONString(input) ;
-  cppout << str(boost::format{R"FOO()WIREJSON") {
-    apache::thrift::nicejson::NiceJSON::register_typelib("%s", "%s", &json_) ;
+  cppout << R"FOO()WIREJSON")) {
 }
 
-apache::thrift::nicejson::NiceJSON json_ ;
+const apache::thrift::nicejson::NiceJSON& json_ ;
 } json_ ;
 
-)FOO"} % typelib_ns % name);
+)FOO" ;
 
   hout << str(boost::format{
 R"FOO(

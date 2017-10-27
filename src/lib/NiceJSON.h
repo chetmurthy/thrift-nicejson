@@ -213,9 +213,10 @@ public:
 
 
   static void register_typelib(const string& package, const string& name, const NiceJSON *p) ;
+  static NiceJSON const * const install_typelib(const string& package, const string& name, const string& serialized) ;
   static const NiceJSON* lookup_typelib(const string& key) ;
 
-  typedef map<string, const NiceJSON*> type_library_t;
+  typedef map<string, const NiceJSON *> type_library_t;
 
 private:
   apache::thrift::plugin::GeneratorInput x_;
