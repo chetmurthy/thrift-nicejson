@@ -3,10 +3,8 @@ ThriftThrift
 thrift-gen-myjson
 *.o
 jsontest
-*.wirejson
 test1
-thrift-gen-wirejson
-thrift-gen-cpp-typelib
+thrift-gen-typelib
 ns_utils_test
 *.a
 autom4te.cache
