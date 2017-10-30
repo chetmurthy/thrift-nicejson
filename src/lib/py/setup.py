@@ -1,7 +1,7 @@
 from distutils.core import setup, Extension
  
 # define the name of the extension to use
-extension_name    = 'zoo'
+extension_name    = 'nicejson'
 extension_version = '1.0'
  
 # define the directories to search for include files
@@ -19,7 +19,7 @@ library_dirs = [ '/usr/lib' ]
 libraries = [ 'boost_python' ]
  
 # define the source files for the extension
-source_files = [ 'zoo.cpp' ]
+source_files = [ 'nicejson.cpp' ]
  
 # create the extension and add it to the python distribution
 setup( name=extension_name, version=extension_version, ext_modules=[Extension( extension_name, source_files, include_dirs=include_dirs, library_dirs=library_dirs, libraries=libraries )] )
