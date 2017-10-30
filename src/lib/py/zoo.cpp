@@ -14,7 +14,7 @@ const std::string echo(const std::string name) {
 /*
  * This is a macro Boost.Python provides to signify a Python extension module.
  */
-BOOST_PYTHON_MODULE(libzoo) {
+BOOST_PYTHON_MODULE(zoo) {
     // An established convention for using boost.python.
     using namespace boost::python;
 

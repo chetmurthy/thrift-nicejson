@@ -19,6 +19,7 @@ AC_PROG_CC
 AC_PROG_RANLIB
 
 # Checks for libraries.
+PKG_PROG_PKG_CONFIG
 PKG_CHECK_MODULES([thrift], [thrift >= 0.10.0])
 AC_SUBST([thrift_LIBDIR], [$(pkg-config  --variable=libdir --print-errors "thrift >= 0.10.0")])
 AC_SUBST([thrift_EXEC_PREFIX], [$(pkg-config  --variable=exec_prefix --print-errors "thrift >= 0.10.0")])
@@ -38,6 +39,26 @@ AC_ARG_WITH([thrift-srcdir],
     [AC_MSG_FAILURE([MUST specify out-of-tree Thrift source directory])])
 AC_SUBST([THRIFT_SRC_ROOT],[$withval])
 
+
+AC_ARG_VAR([PY_PREFIX], [Prefix for installing Python modules.
+                         (Normal --prefix is ignored for Python because
+                         Python has different conventions.)
+                         Default = "/usr"])
+AS_IF([test "x$PY_PREFIX" = x], [PY_PREFIX="/usr"])
+# Find python regardless of with_python value, because it's needed by make cross
+AM_PATH_PYTHON(2.6,, :)
+AX_THRIFT_LIB(python, [Python], yes)
+if test "$with_python" = "yes";  then
+  if test -n "$PYTHON"; then
+    have_python="yes"
+  fi
+  AC_PATH_PROG([TRIAL], [trial])
+  if test -n "$TRIAL"; then
+    have_trial="yes"
+  fi
+fi
+AM_CONDITIONAL(WITH_PYTHON, [test "$have_python" = "yes"])
+AM_CONDITIONAL(WITH_TWISTED_TEST, [test "$have_trial" = "yes"])
 
 # Checks for header files.
 

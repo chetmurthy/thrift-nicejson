@@ -92,6 +92,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
 	$(top_srcdir)/aclocal/ax_boost_filesystem.m4 \
 	$(top_srcdir)/aclocal/ax_boost_system.m4 \
+	$(top_srcdir)/aclocal/ax_thrift_internal.m4 \
 	$(top_srcdir)/aclocal/libtool.m4 \
 	$(top_srcdir)/aclocal/ltoptions.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
@@ -283,12 +284,19 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
+PYTHON = @PYTHON@
+PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
+PYTHON_PLATFORM = @PYTHON_PLATFORM@
+PYTHON_PREFIX = @PYTHON_PREFIX@
+PYTHON_VERSION = @PYTHON_VERSION@
+PY_PREFIX = @PY_PREFIX@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 THRIFT_SRC_ROOT = @THRIFT_SRC_ROOT@
+TRIAL = @TRIAL@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -332,9 +340,13 @@ mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+pkgpyexecdir = @pkgpyexecdir@
+pkgpythondir = @pkgpythondir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pyexecdir = @pyexecdir@
+pythondir = @pythondir@
 runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
