@@ -1,4 +1,8 @@
 
+#include <boost/algorithm/hex.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/filesystem.hpp>
 #include "NiceJSON.h"
 
 
@@ -76,6 +80,23 @@ bool t_const_value::operator<(const t_const_value& that) const {
 namespace apache {
 namespace thrift {
 namespace nicejson {
+
+string hex(const string& v) {
+  std::string res;
+  boost::algorithm::hex(v.begin(), v.end(), back_inserter(res));
+  return res;
+}
+
+void f_write(const string& fname, const string& b) {
+  using namespace std ;
+  std::ofstream out ;
+  out.open(fname, ios::out | ios::trunc) ;
+  if (out.fail()) {
+    std::cerr << "Cannot open file " << fname << " for write" << std::endl ;
+    exit(-1) ;
+  }
+  out << b ;
+}
 
 std::string file_contents(const std::string fname) {
   std::ifstream t(fname);
@@ -637,8 +658,7 @@ json NiceJSON::skip2json(const ::apache::thrift::protocol::TType ftype, ::apache
   return j;    
 }
 
-void NiceJSON::register_typelib(const string& package, const string& name, NiceJSON const * const p) {
-  const string key = package + "/" + name ;
+void NiceJSON::register_typelib(const string& key, NiceJSON const * const p) {
   type_library_t& tl = *type_library_() ;
   if (tl.end() != tl.find(key)) {
     throw NiceJSONError("Type library " + key + " already registered") ;
@@ -646,9 +666,20 @@ void NiceJSON::register_typelib(const string& package, const string& name, NiceJ
   tl[key] = p ;
 }
 
-  NiceJSON const * const NiceJSON::install_typelib(const string& package, const string& name, const string& serialized) {
+void NiceJSON::register_typelib(const string& package, const string& name, NiceJSON const * const p) {
+  const string key = package + "/" + name ;
+  return register_typelib(key, p) ;
+}
+
+NiceJSON const * const NiceJSON::install_typelib(const string& package, const string& name, const string& serialized) {
   NiceJSON *rv = new NiceJSON(serialized) ;
   register_typelib(package, name, rv) ;
+  return rv ;
+}
+
+NiceJSON const * const NiceJSON::install_typelib(const string& key, const string& serialized) {
+  NiceJSON *rv = new NiceJSON(serialized) ;
+  register_typelib(key, rv) ;
   return rv ;
 }
 
@@ -659,6 +690,40 @@ const NiceJSON* NiceJSON::lookup_typelib(const string& key) {
     throw NiceJSONError("Type library " + key + " not found") ;
   }
   return ii->second ;
+}
+
+bool NiceJSON::typelib_installed(const string& key) {
+  const type_library_t& tl = *type_library_() ;
+  return (tl.end() != tl.find(key)) ;
+}
+
+
+const string kTHRIFT_TYPELIB_PATH = "THRIFT_TYPELIB_PATH" ;
+
+NiceJSON const * const NiceJSON::require_typelib(const string& typelib) {
+  using namespace boost::algorithm ;
+  using namespace boost::filesystem;
+
+  if (typelib_installed(typelib)) {
+    return lookup_typelib(typelib) ;
+  }
+
+  char *tlpath = getenv(kTHRIFT_TYPELIB_PATH.c_str()) ;
+  if (NULL == tlpath) {
+    throw NiceJSONError("error: no typelib path specified") ;
+  }
+  vector<string> path;
+  auto xx = string(tlpath) ;
+  split( path, xx, is_any_of(":"));
+
+  for(auto ii = path.begin() ; ii != path.end() ; ++ii) {
+    string candidate = str(boost::format{"%s/%s.typelib"} % *ii % typelib) ;
+    if (exists(candidate)) {
+      string lbytes = file_contents(candidate) ;
+      return install_typelib(typelib, lbytes) ;
+    }
+  }
+  throw NiceJSONError("error: no typelib " + typelib + " found on path (or already installed") ;
 }
 
 }

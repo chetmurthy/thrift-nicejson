@@ -1,2 +1,2 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src/lib/cpp src/lib/py src/plugins src/test/cpp
+SUBDIRS = src/lib/cpp src/lib/py src/plugins src/test/cpp src/tools/cpp

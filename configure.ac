@@ -29,6 +29,7 @@ AC_SUBST([thrift_INCLUDEDIR], [$(pkg-config  --variable=includedir --print-error
 AX_BOOST_BASE([1.53.0],, [AC_MSG_ERROR([libnicejson needs Boost, but it was not found in your system])])
 AX_BOOST_SYSTEM
 AX_BOOST_FILESYSTEM
+AX_BOOST_PROGRAM_OPTIONS
 AC_SUBST([BOOST_LIB_DIR], [$(echo "$BOOST_LDFLAGS" | sed -e 's/^\-L//')])
 AC_SUBST([BOOST_FILESYSTEM_LDADD], [$(echo "-lboost_filesystem")])
 AC_SUBST([BOOST_SYSTEM_LDADD], [$(echo "-lboost_system")])
@@ -79,5 +80,6 @@ AC_CONFIG_FILES([Makefile
                  src/lib/cpp/Makefile
                  src/lib/py/Makefile
                  src/plugins/Makefile
-                 src/test/cpp/Makefile])
+                 src/test/cpp/Makefile
+		 src/tools/cpp/Makefile])
 AC_OUTPUT

@@ -38,6 +38,39 @@ using namespace apache::thrift::plugin ;
 
 namespace apache {
 namespace thrift {
+
+template <typename ThriftStruct>
+boost::shared_ptr<TMemoryBuffer> marshalToMemoryBuffer(const ThriftStruct& ts) {
+  using namespace apache::thrift::transport;
+  using namespace apache::thrift::protocol;
+  boost::shared_ptr<TMemoryBuffer> trans(new TMemoryBuffer());
+  TBinaryProtocol protocol(trans);
+
+  ts.write(&protocol);
+  return trans ;
+}
+
+template <typename ThriftStruct>
+std::string ThriftBinaryString(const ThriftStruct& ts) {
+  using namespace apache::thrift::transport;
+  using namespace apache::thrift::protocol;
+  TMemoryBuffer* buffer = new TMemoryBuffer;
+  boost::shared_ptr<TTransport> trans(buffer);
+  TBinaryProtocol protocol(trans);
+
+  ts.write(&protocol);
+
+  uint8_t* buf;
+  uint32_t size;
+  buffer->getBuffer(&buf, &size);
+  return std::string((char*)buf, (unsigned int)size);
+}
+
+}
+}
+
+namespace apache {
+namespace thrift {
 namespace nicejson {
 
 struct t_struct_lookaside {
@@ -213,9 +246,13 @@ public:
 
 
   static void register_typelib(const string& package, const string& name, const NiceJSON *p) ;
+  static void register_typelib(const string& key, NiceJSON const * const p) ;
   static NiceJSON const * const install_typelib(const string& package, const string& name, const string& serialized) ;
-  static const NiceJSON* lookup_typelib(const string& key) ;
+  static NiceJSON const * const install_typelib(const string& key, const string& serialized) ;
 
+  static const NiceJSON* lookup_typelib(const string& key) ;
+  static bool typelib_installed(const string& key) ;
+  static NiceJSON const * const require_typelib(const string& typelib) ;
   typedef map<string, const NiceJSON *> type_library_t;
 
 private:
@@ -231,6 +268,8 @@ private:
 } ;
 
 std::string file_contents(const std::string fname) ;
+std::string hex(const std::string& v) ;
+void f_write(const std::string& fname, const std::string& b) ;
 
 }
 }

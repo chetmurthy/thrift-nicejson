@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <iostream>
 #include <streambuf>
 #include <iostream>
 
@@ -34,28 +35,10 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::nicejson;
 
-namespace apache {
-namespace thrift {
-
-template <typename ThriftStruct>
-boost::shared_ptr<TMemoryBuffer> marshalToMemoryBuffer(const ThriftStruct& ts) {
-  using namespace apache::thrift::transport;
-  using namespace apache::thrift::protocol;
-  boost::shared_ptr<TMemoryBuffer> trans(new TMemoryBuffer());
-  TBinaryProtocol protocol(trans);
-
-  ts.write(&protocol);
-  return trans ;
-}
-}
-}
-
-namespace thrift_test {
-extern struct StaticInitializer_test {
-  StaticInitializer_test();
-  apache::thrift::nicejson::NiceJSON json_ ;
-} json_ ;
-
+bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
+  if (this->a != that.a) return this->a < that.a ;
+  if (this->b != that.b) return this->b < that.b ;
+  return false ;
 }
 
 template<typename T>
@@ -89,6 +72,17 @@ void Mismatch(const string& structname, const json& startjson,const NiceJSON& ol
   json actual = oldtt.marshal_from_binary(structname, mem, permissive) ;
   BOOST_CHECK_MESSAGE( actual == expected,
 		       "JSON not equal: should be " << expected.dump() << "\nbut instead " << actual.dump());
+}
+
+BOOST_AUTO_TEST_CASE( Bar0 )
+{
+  {
+    thrift_test::Bar bar ;
+    bar.__set_a(1) ;
+    bar.__set_b("ugh") ;
+
+    std::string serialized  = apache::thrift::ThriftBinaryString(bar) ;
+  }
 }
 
 BOOST_AUTO_TEST_CASE( Bar )
@@ -271,12 +265,6 @@ BOOST_AUTO_TEST_CASE( Foo )
   RoundTrip<thrift_test::Foo>("Foo", j) ;
 
   //  RoundTrip<thrift_test::Foo>("Foo", j) ;
-}
-
-bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
-  if (this->a != that.a) return this->a < that.a ;
-  if (this->b != that.b) return this->b < that.b ;
-  return false ;
 }
 
 BOOST_AUTO_TEST_CASE( Boo2 )
