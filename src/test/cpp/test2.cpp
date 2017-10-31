@@ -43,11 +43,9 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
 
 BOOST_AUTO_TEST_CASE( Bar0 )
 {
-  {
-    thrift_test::Bar bar ;
-    bar.__set_a(1) ;
-    bar.__set_b("ugh") ;
+  thrift_test::Bar bar ;
+  bar.__set_a(1) ;
+  bar.__set_b("ugh") ;
 
-    std::string serialized  = apache::thrift::ThriftBinaryString(bar) ;
-  }
+  std::string serialized  = apache::thrift::ThriftBinaryString(bar) ;
 }
