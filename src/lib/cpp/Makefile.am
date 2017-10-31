@@ -11,7 +11,7 @@ libnicejson_a_SOURCES= NiceJSON.cpp NiceJSON.h $(GENCPP)
 pkgincludedir = $(includedir)/thrift-nicejson
 pkginclude_HEADERS = json.hpp NiceJSON.h
 
-libnicejson_a_CXXFLAGS = $(thrift_CFLAGS) $(AM_CXXFLAGS)
+libnicejson_a_CXXFLAGS = -fPIC $(thrift_CFLAGS) $(AM_CXXFLAGS)
 #libnicejson_a_LIBADD    = $(thrift_LIBS)
 
 check_PROGRAMS = jsontest

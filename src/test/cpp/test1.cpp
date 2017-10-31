@@ -4,7 +4,7 @@
 #include <streambuf>
 #include <iostream>
 
-#define BOOST_TEST_MODULE NiceJSONTest
+#define BOOST_TEST_MODULE NiceJSONStaticTest
 #include <boost/test/included/unit_test.hpp>
 #include <boost/smart_ptr.hpp>
 

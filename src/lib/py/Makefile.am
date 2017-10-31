@@ -18,7 +18,9 @@
 #
 
 all-local:
-	thrift_INCLUDEDIR=$(thrift_INCLUDEDIR) $(PYTHON) setup.py --verbose build
+	thrift_INCLUDEDIR=$(thrift_INCLUDEDIR) \
+	thrift_LIBDIR=$(thrift_LIBDIR) \
+	$(PYTHON) setup.py --verbose build
 
 install-exec-hook:
 	$(PYTHON) setup.py install --prefix=$(PY_PREFIX)
