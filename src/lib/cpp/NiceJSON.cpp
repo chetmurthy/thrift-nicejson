@@ -700,6 +700,16 @@ bool NiceJSON::typelib_installed(const string& key) {
 
 const string kTHRIFT_TYPELIB_PATH = "THRIFT_TYPELIB_PATH" ;
 
+vector<string> NiceJSON::typelib_path_prepends ;
+vector<string> NiceJSON::typelib_path_appends ;
+
+void NiceJSON::prepend_typelib_directory(const std::string& dir) {
+  typelib_path_prepends.push_back(dir) ;
+}
+void NiceJSON::append_typelib_directory(const std::string& dir) {
+  typelib_path_appends.push_back(dir) ;
+}
+
 NiceJSON const * const NiceJSON::require_typelib(const string& typelib) {
   using namespace boost::algorithm ;
   using namespace boost::filesystem;
@@ -709,12 +719,15 @@ NiceJSON const * const NiceJSON::require_typelib(const string& typelib) {
   }
 
   char *tlpath = getenv(kTHRIFT_TYPELIB_PATH.c_str()) ;
-  if (NULL == tlpath) {
-    throw NiceJSONError("error: no typelib path specified") ;
-  }
-  vector<string> path;
+  if (NULL == tlpath) tlpath = "" ;
+  vector<string> envpath;
   auto xx = string(tlpath) ;
-  split( path, xx, is_any_of(":"));
+  split( envpath, xx, is_any_of(":"));
+
+  vector<string> path ;
+  path.insert(path.end(), typelib_path_prepends.begin(), typelib_path_prepends.end()) ;
+  path.insert(path.end(), envpath.begin(), envpath.end()) ;
+  path.insert(path.end(), typelib_path_appends.begin(), typelib_path_appends.end()) ;
 
   for(auto ii = path.begin() ; ii != path.end() ; ++ii) {
     string candidate = str(boost::format{"%s/%s.typelib"} % *ii % typelib) ;

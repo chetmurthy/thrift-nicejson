@@ -253,6 +253,10 @@ public:
   static const NiceJSON* lookup_typelib(const string& key) ;
   static bool typelib_installed(const string& key) ;
   static NiceJSON const * const require_typelib(const string& typelib) ;
+
+  static void prepend_typelib_directory(const std::string& dir) ;
+  static void append_typelib_directory(const std::string& dir) ;
+
   typedef map<string, const NiceJSON *> type_library_t;
 
 private:
@@ -265,6 +269,9 @@ private:
     static type_library_t *type_library = new type_library_t() ;
     return type_library ;
   }
+
+  static vector<string> typelib_path_prepends ;
+  static vector<string> typelib_path_appends ;
 } ;
 
 std::string file_contents(const std::string fname) ;

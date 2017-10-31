@@ -4,7 +4,7 @@
 #include <streambuf>
 #include <iostream>
 
-#define BOOST_TEST_MODULE NiceJSONTest
+#define BOOST_TEST_MODULE NiceJSONTest2
 #include <boost/test/included/unit_test.hpp>
 #include <boost/smart_ptr.hpp>
 
@@ -41,6 +41,9 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
   return false ;
 }
 
+const string kTypelib = "thrift_test.test" ;
+const string kType = "Bar" ;
+
 BOOST_AUTO_TEST_CASE( Bar0 )
 {
   thrift_test::Bar bar ;
@@ -48,4 +51,9 @@ BOOST_AUTO_TEST_CASE( Bar0 )
   bar.__set_b("ugh") ;
 
   std::string serialized  = apache::thrift::ThriftBinaryString(bar) ;
+  NiceJSON::prepend_typelib_directory("./gen-typelib") ;
+  NiceJSON const * const nj = NiceJSON::require_typelib(kTypelib) ;
+  json actual = nj->marshal_from_binary(kType, (uint8_t*)serialized.data(), serialized.size(), false) ;
+  json expected = {{ "a", 1}, {"b", "ugh"}} ;
+  BOOST_CHECK( actual == expected ) ;
 }
