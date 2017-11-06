@@ -81,5 +81,6 @@ AC_CONFIG_FILES([Makefile
                  src/lib/py/Makefile
                  src/plugins/Makefile
                  src/test/cpp/Makefile
+                 src/test/py/Makefile
 		 src/tools/cpp/Makefile])
 AC_OUTPUT

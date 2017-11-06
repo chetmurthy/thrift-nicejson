@@ -2,7 +2,7 @@ from os import environ
 from distutils.core import setup, Extension
  
 # define the name of the extension to use
-extension_name    = 'nicejson'
+extension_name    = 'thrift_nicejson'
 extension_version = '1.0'
  
 # define the directories to search for include files
@@ -20,18 +20,21 @@ library_dirs = [ '../cpp' , '/usr/lib' , environ['thrift_LIBDIR'] ]
 libraries = [ 'nicejson', 'boost_python', 'boost_system', 'boost_filesystem' , 'thrift' ]
  
 # define the source files for the extension
-source_files = [ 'nicejson.cpp' ]
+source_files = [ 'thrift_nicejson.cpp' ]
  
 # create the extension and add it to the python distribution
 setup(
-    name=extension_name,
-    version=extension_version,
-    ext_modules=[Extension(
-        extension_name,
-        source_files,
-        include_dirs=include_dirs,
-        library_dirs=library_dirs,
-        libraries=libraries,
+    name='thrift_nicejson',
+    version='1.0',
+    packages = [
+        'thrift_nicejson'
+    ],
+    package_dir={ 'thrift_nicejson' : 'src' },
+    ext_modules=[Extension('thrift_nicejson_binary',
+        [ 'thrift_nicejson.cpp' ],
+        include_dirs=[ '/usr/include' , '../cpp' , environ['thrift_INCLUDEDIR'] ],
+        library_dirs=[ '../cpp' , '/usr/lib' , environ['thrift_LIBDIR'] ],
+        libraries=[ 'nicejson', 'boost_python', 'boost_system', 'boost_filesystem' , 'thrift' ],
         extra_compile_args=['-std=gnu++11'],
         extra_link_args=[ '-Wl,-rpath,' + environ['thrift_LIBDIR'] ]
    )]

@@ -52,11 +52,18 @@ std::string json_from_binary(const std::string& key, const std::string& type, co
   return actual.dump() ;
 }
 
-void require_typelib(const std::string& key) {
+std::string binary_from_json(const std::string& key, const std::string& type, const std::string& json_serialized) {
   NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
+  json j = json::parse(json_serialized) ;
+  std::string binary = nj->demarshal_to_binary(type, j) ;
+  return binary ;
 }
 
-BOOST_PYTHON_MODULE(nicejson)
+void require_typelib(const std::string& key) {
+  NiceJSON::require_typelib(key) ;
+}
+
+BOOST_PYTHON_MODULE(thrift_nicejson_binary)
 {
   using namespace boost::python;
   register_exception_translator<my_exception>(&translate_my_exception);
@@ -67,6 +74,7 @@ BOOST_PYTHON_MODULE(nicejson)
   def("install_typelib", install_typelib);
   def("require_typelib", require_typelib);
   def("json_from_binary", json_from_binary);
+  def("binary_from_json", binary_from_json);
   def("prepend_typelib_directory", prepend_typelib_directory);
   def("append_typelib_directory", append_typelib_directory);
 }

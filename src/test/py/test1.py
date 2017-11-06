@@ -5,7 +5,8 @@ import glob
 sys.path = ['./gen-py', '../../lib/py/build/lib.linux-x86_64-2.7' ] + sys.path
 
 from test.ttypes import Bar
-import nicejson
+import thrift_nicejson_binary
+from thrift_nicejson import NiceJSON
 
 from thrift import Thrift
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
@@ -23,32 +24,32 @@ def f_contents(fname):
 
 class TestEcho(unittest.TestCase):
     def test_echo(self):
-        self.assertEqual("hello, world", nicejson.echo("world"))
+        self.assertEqual("hello, world", thrift_nicejson_binary.echo("world"))
 
 class TestDynamicSetup(unittest.TestCase):
     def test_prepend(self):
-        nicejson.prepend_typelib_directory("../cpp/gen-typelib")
+        NiceJSON.prepend_typelib_directory("../cpp/gen-typelib")
         with self.assertRaisesRegexp(Exception, "Expected '{'"):
-            nicejson.install_typelib("foo", "argle")
+            NiceJSON.install_typelib("foo", "argle")
 
     def test_bad_install(self):
-        nicejson.prepend_typelib_directory("../cpp/gen-typelib")
+        NiceJSON.prepend_typelib_directory("../cpp/gen-typelib")
         with self.assertRaisesRegexp(Exception, "Expected '{'"):
-            nicejson.install_typelib("foo", "argle")
+            NiceJSON.install_typelib("foo", "argle")
 
     def test_bad_require(self):
-        nicejson.prepend_typelib_directory("../cpp/gen-typelib")
+        NiceJSON.prepend_typelib_directory("../cpp/gen-typelib")
         with self.assertRaisesRegexp(Exception, "error: no typelib foo found on path"):
-            nicejson.require_typelib("foo")
+            NiceJSON.require_typelib("foo")
 
     def test_ok_require(self):
-        nicejson.prepend_typelib_directory("../cpp/gen-typelib")
-        nicejson.require_typelib("apache.thrift.plugin.plugin")
-        nicejson.require_typelib("apache.thrift.plugin.plugin")
+        NiceJSON.prepend_typelib_directory("../cpp/gen-typelib")
+        NiceJSON.require_typelib("apache.thrift.plugin.plugin")
+        NiceJSON.require_typelib("apache.thrift.plugin.plugin")
 
 class TestSer(unittest.TestCase):
 
-    def test_ser_Bar1(self):
+    def test_ser_Bar1_again(self):
         buf = TTransport.TMemoryBuffer()
         transport = TTransport.TBufferedTransportFactory().getTransport(buf)
         protocol = TBinaryProtocol(transport)
@@ -58,10 +59,14 @@ class TestSer(unittest.TestCase):
         b.write(protocol)
         protocol.trans.flush()
         ser = buf.getvalue()
-        nicejson.require_typelib("thrift_test.test")
-        js = nicejson.json_from_binary("thrift_test.test", "Bar", ser)
-        print js
-        self.assertEqual(json.loads('{"a":1,"b":"ugh"}'), json.loads(js))
+        self.roundtrip("thrift_test.test", "Bar", ser, json.loads('{"a":1,"b":"ugh"}'))
+
+    def roundtrip(self, typelib, ty, ser, expected):
+        NiceJSON.require_typelib(typelib)
+        js = NiceJSON.json_from_binary(typelib, ty, ser)
+        self.assertEqual(expected, js)
+        ser2 = NiceJSON.binary_from_json(typelib,ty, js)
+        self.assertEqual(ser, ser2)
 
 def main():
     ser = ser_Bar1()
