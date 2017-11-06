@@ -40,8 +40,8 @@ void append_typelib_directory(const std::string& name) {
   NiceJSON::append_typelib_directory(name) ;
 }
 
-void install_typelib(const std::string& package, const std::string& name, const string& serialized) {
-  NiceJSON::install_typelib(package, name, serialized) ;
+void install_typelib(const std::string& key, const string& serialized) {
+  NiceJSON::install_typelib(key, serialized) ;
 }
 
 using namespace apache::thrift::nicejson;
@@ -50,6 +50,10 @@ std::string json_from_binary(const std::string& key, const std::string& type, co
   NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
   json actual = nj->marshal_from_binary(type, (uint8_t*)serialized.data(), serialized.size(), false) ;
   return actual.dump() ;
+}
+
+void require_typelib(const std::string& key) {
+  NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
 }
 
 BOOST_PYTHON_MODULE(nicejson)
@@ -61,6 +65,7 @@ BOOST_PYTHON_MODULE(nicejson)
   def("something_which_throws", something_which_throws);
   def("echo", echo);
   def("install_typelib", install_typelib);
+  def("require_typelib", require_typelib);
   def("json_from_binary", json_from_binary);
   def("prepend_typelib_directory", prepend_typelib_directory);
   def("append_typelib_directory", append_typelib_directory);

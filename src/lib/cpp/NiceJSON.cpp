@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <vector>
 
 #include <boost/algorithm/hex.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -704,10 +706,14 @@ vector<string> NiceJSON::typelib_path_prepends ;
 vector<string> NiceJSON::typelib_path_appends ;
 
 void NiceJSON::prepend_typelib_directory(const std::string& dir) {
-  typelib_path_prepends.push_back(dir) ;
+  if (std::find(typelib_path_prepends.begin(), typelib_path_prepends.end(), dir) == typelib_path_prepends.end()) {
+    typelib_path_prepends.push_back(dir) ;
+  }
 }
 void NiceJSON::append_typelib_directory(const std::string& dir) {
-  typelib_path_appends.push_back(dir) ;
+  if (std::find(typelib_path_appends.begin(), typelib_path_appends.end(), dir) == typelib_path_appends.end()) {
+    typelib_path_appends.push_back(dir) ;
+  }
 }
 
 NiceJSON const * const NiceJSON::require_typelib(const string& typelib) {
@@ -736,7 +742,7 @@ NiceJSON const * const NiceJSON::require_typelib(const string& typelib) {
       return install_typelib(typelib, lbytes) ;
     }
   }
-  throw NiceJSONError("error: no typelib " + typelib + " found on path (or already installed") ;
+  throw NiceJSONError("error: no typelib " + typelib + " found on path") ;
 }
 
 }

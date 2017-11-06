@@ -56,4 +56,9 @@ BOOST_AUTO_TEST_CASE( Bar0 )
   json actual = nj->marshal_from_binary(kType, (uint8_t*)serialized.data(), serialized.size(), false) ;
   json expected = {{ "a", 1}, {"b", "ugh"}} ;
   BOOST_CHECK( actual == expected ) ;
+
+  string bin = nj->demarshal_to_binary(kType, actual) ;
+  json actual2 = nj->marshal_from_binary(kType, (uint8_t*)bin.data(), bin.size(), false) ;
+  BOOST_CHECK( actual2 == expected ) ;
+  
 }
