@@ -87,6 +87,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@WITH_PYTHON_TRUE@am__append_1 = src/lib/py src/test/py
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
@@ -166,7 +167,8 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = src/lib/cpp src/plugins src/test/cpp src/tools/cpp \
+	src/lib/py src/test/py
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
 	ChangeLog INSTALL NEWS README compile config.guess config.sub \
 	depcomp install-sh ltmain.sh missing mkinstalldirs
@@ -363,7 +365,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src/lib/cpp src/lib/py src/plugins src/test/cpp src/test/py src/tools/cpp
+SUBDIRS = src/lib/cpp src/plugins src/test/cpp src/tools/cpp \
+	$(am__append_1)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
