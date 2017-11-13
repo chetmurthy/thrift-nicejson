@@ -27,8 +27,9 @@ nonstandard location, e.g. ```$HOME/tmp/thrift-nicejson``` via
 % ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here>
 ```
 
-Examples will be forthcoming.  For now, there is a test in
-```src/test``` that demonstrates most of the capabilities of the library.
+Examples can be found in `src/test/cpp` and `src/test/py`.  In
+particular, `src/test/cpp` demonstrates most of the capabilities of
+the library.
 
 ## Why does Thrift need "nice JSON" serialization?
 
