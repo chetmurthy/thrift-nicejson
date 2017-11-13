@@ -1,8 +1,9 @@
 # thrift-nicejson: A Nice JSON wire-format for Thrift
 
 This library provides a "nice" JSON serialization format for
-Thrift-defined objects.  Currently this is for C++, but via FFI it can
-be made available to other Thrift languages.
+Thrift-defined objects.  The implementation is in C++, and via FFI it
+can be made available to other Thrift languages, e.g. currently
+Python.
 
 ## Installation
 
