@@ -87,7 +87,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/test/py
+subdir = src/lib/ocaml
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
 	$(top_srcdir)/aclocal/ax_boost_filesystem.m4 \
@@ -154,7 +154,8 @@ CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
+CXXFLAGS = @CXXFLAGS@ -g2 -I. -I`$(OCAMLFIND) query cppffigen` \
+	-I$(OCAMLLIB) -std=gnu++11 $(AM_CXXFLAGS)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -297,9 +298,23 @@ thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-all: all-am
+OCAMLCFLAGS = -thread
+OCAMLMKLIB_FLAGS = -lstdc++
+PACKAGES = -package result,threads,oUnit
+RESULT = ocaml_somecode
+BUILT_SOURCES = $(RESULT).ml $(RESULT).mli  $(RESULT)_stubs.cc
+cleanfiles = $(BUILT_SOURCES)
+ML = $(RESULT).ml somecode.ml
+MLI = $(RESULT).mli
+CMO = $(RESULT).cmo somecode.cmo
+CMX = $(RESULT).cmx somecode.cmx
+CMI = $(RESULT).cmi somecode.cmi
+OBJECTS = $(CMO) $(CMX) $(CMI)
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
+.SUFFIXES: .cmi .cmo .cmx .ml .mli
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -309,9 +324,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/test/py/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/lib/ocaml/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/test/py/Makefile
+	  $(AUTOMAKE) --gnu src/lib/ocaml/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -373,11 +388,12 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) check-local
-check: check-am
-all-am: Makefile
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
+all-am: Makefile all-local
 installdirs:
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -407,9 +423,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -473,10 +490,10 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: check-am install-am install-strip
+.MAKE: all check install install-am install-strip
 
-.PHONY: all all-am check check-am check-local clean clean-generic \
-	clean-libtool cscopelist-am ctags-am distclean \
+.PHONY: all all-am all-local check check-am clean clean-generic \
+	clean-libtool clean-local cscopelist-am ctags-am distclean \
 	distclean-generic distclean-libtool distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
@@ -491,8 +508,37 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-check-local: all
-	$(PYTHON) test1.py
+all-local: $(RESULT).cma $(RESULT).cmxa dll$(RESULT).so
+
+$(RESULT).cma $(RESULT).cmxa dll$(RESULT).so: $(OBJECTS) $(RESULT)_stubs.o somecode.o
+	    $(OCAMLMKLIB) -verbose -o $(RESULT) $(CMO) $(CMX) $(RESULT)_stubs.o somecode.o $(OCAMLMKLIB_FLAGS)
+
+$(RESULT)_stubs.o: $(RESULT)_stubs.cc
+	g++ -c -fPIC ${CXXFLAGS} -DPIC -o $(RESULT)_stubs.o $(RESULT)_stubs.cc
+
+somecode.o: somecode.cc
+	g++ -c -fPIC ${CXXFLAGS} -DPIC -o $@ $<
+
+$(RESULT).ml $(RESULT).mli $(RESULT)_stubs.cc: somecode-ffi.idl
+	cppffigen --output ml < somecode-ffi.idl > $(RESULT).ml
+	cppffigen --output mli < somecode-ffi.idl > $(RESULT).mli
+	cppffigen --output cpp < somecode-ffi.idl > $(RESULT)_stubs.cc
+
+.ml.cmo:
+	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $< -o $@
+
+.ml.cmx:
+	$(OCAMLFIND) ocamlopt $(OCAMLCFLAGS) $(PACKAGES) -c $< -o $@
+
+.mli.cmi:
+	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $< -o $@
+
+clean-local:
+	rm -f *.a *.cma *.cmi *.cmo *.cmx *.cmxa *.o *.so \
+		$(RESULT).ml $(RESULT).mli $(RESULT)_stubs.cc
+
+ocaml_somecode.cmo: ocaml_somecode.cmi
+ocaml_somecode.cmx: ocaml_somecode.cmi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

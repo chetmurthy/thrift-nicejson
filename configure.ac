@@ -53,13 +53,43 @@ if test "$with_python" = "yes";  then
   if test -n "$PYTHON"; then
     have_python="yes"
   fi
-  AC_PATH_PROG([TRIAL], [trial])
-  if test -n "$TRIAL"; then
-    have_trial="yes"
-  fi
 fi
 AM_CONDITIONAL(WITH_PYTHON, [test "$have_python" = "yes"])
-AM_CONDITIONAL(WITH_TWISTED_TEST, [test "$have_trial" = "yes"])
+
+AC_PROG_OCAML
+AC_PROG_FINDLIB
+AC_CHECK_OCAML_PKG([result])
+AC_CHECK_OCAML_PKG([oUnit])
+AC_CHECK_OCAML_PKG([cppffigen])
+
+if test "$OCAMLC" != "no"; then
+if test "$OCAMLFIND" = "no" ; then
+  AC_MSG_ERROR([Please install OCaml findlib (the ocamlfind command)])
+fi
+
+if test "$OCAML_PKG_result" = "no" ; then
+  AC_MSG_ERROR([Please install OCaml package 'result'.])
+fi
+
+if test "$OCAML_PKG_oUnit" = "no" ; then
+  AC_MSG_ERROR([Please install OCaml package 'oUnit'.])
+fi
+
+if test "$OCAML_PKG_cppffigen" = "no" ; then
+  AC_MSG_ERROR([Please install OCaml package 'cppffigen'.])
+fi
+
+fi
+
+
+AX_THRIFT_LIB(ocaml, [Ocaml], yes)
+if test "$with_ocaml" = "yes";  then
+  if test "$OCAMLC" != "no"; then
+    have_ocaml="yes"
+  fi
+fi
+AM_CONDITIONAL(WITH_OCAML, [test "$have_ocaml" = "yes"])
+
 
 # Checks for header files.
 
@@ -79,8 +109,10 @@ AC_TYPE_UINT8_T
 AC_CONFIG_FILES([Makefile
                  src/lib/cpp/Makefile
                  src/lib/py/Makefile
+                 src/lib/ocaml/Makefile
                  src/plugins/Makefile
                  src/test/cpp/Makefile
                  src/test/py/Makefile
+                 src/test/ocaml/Makefile
 		 src/tools/cpp/Makefile])
 AC_OUTPUT

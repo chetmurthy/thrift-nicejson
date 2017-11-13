@@ -1,0 +1,35 @@
+(
+ (stanzas
+ (
+(CPP PROLOGUE
+   "
+#include <stdio.h>
+#include <string>
+#include <unistd.h>
+#include <ostream>
+#include <iostream>
+#include <vector>
+
+#include \"somecode.h\"
+#include \"cppffi.h\"
+")
+  (TYPEDEF
+  ((mltype (EXP int))
+   (cpptype (ID size_t))
+   (name size_t)))
+
+
+   (FOREIGN
+    ((ID std::string))
+    somecode_foo
+    (((PRIM INT) n))
+     "_res0 = somecode::foo(n); ")
+
+   (FOREIGN
+    ((TYCON "std::tuple" ((ID std::string) (PRIM INT))))
+    somecode_bar
+    (((ID std::string) s) ((PRIM INT) n))
+     "_res0 = somecode::bar(s, n); ")
+   )
+  )
+ )

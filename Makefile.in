@@ -88,6 +88,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @WITH_PYTHON_TRUE@am__append_1 = src/lib/py src/test/py
+@WITH_OCAML_TRUE@am__append_2 = src/lib/ocaml src/test/ocaml
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
@@ -99,6 +100,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
+	$(top_srcdir)/aclocal/ocaml.m4 \
 	$(top_srcdir)/aclocal/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -168,7 +170,7 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = src/lib/cpp src/plugins src/test/cpp src/tools/cpp \
-	src/lib/py src/test/py
+	src/lib/py src/test/py src/lib/ocaml src/test/ocaml
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
 	ChangeLog INSTALL NEWS README compile config.guess config.sub \
 	depcomp install-sh ltmain.sh missing mkinstalldirs
@@ -274,6 +276,24 @@ NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OCAML = @OCAML@
+OCAMLBEST = @OCAMLBEST@
+OCAMLBUILD = @OCAMLBUILD@
+OCAMLC = @OCAMLC@
+OCAMLCDOTOPT = @OCAMLCDOTOPT@
+OCAMLDEP = @OCAMLDEP@
+OCAMLDOC = @OCAMLDOC@
+OCAMLFIND = @OCAMLFIND@
+OCAMLLIB = @OCAMLLIB@
+OCAMLMKLIB = @OCAMLMKLIB@
+OCAMLMKTOP = @OCAMLMKTOP@
+OCAMLNATDYNLINK = @OCAMLNATDYNLINK@
+OCAMLOPT = @OCAMLOPT@
+OCAMLOPTDOTOPT = @OCAMLOPTDOTOPT@
+OCAMLVERSION = @OCAMLVERSION@
+OCAML_PKG_cppffigen = @OCAML_PKG_cppffigen@
+OCAML_PKG_oUnit = @OCAML_PKG_oUnit@
+OCAML_PKG_result = @OCAML_PKG_result@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -299,7 +319,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 THRIFT_SRC_ROOT = @THRIFT_SRC_ROOT@
-TRIAL = @TRIAL@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -366,7 +385,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src/lib/cpp src/plugins src/test/cpp src/tools/cpp \
-	$(am__append_1)
+	$(am__append_1) $(am__append_2)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

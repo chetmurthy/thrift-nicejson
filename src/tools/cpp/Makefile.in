@@ -100,6 +100,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
+	$(top_srcdir)/aclocal/ocaml.m4 \
 	$(top_srcdir)/aclocal/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -249,6 +250,24 @@ NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OCAML = @OCAML@
+OCAMLBEST = @OCAMLBEST@
+OCAMLBUILD = @OCAMLBUILD@
+OCAMLC = @OCAMLC@
+OCAMLCDOTOPT = @OCAMLCDOTOPT@
+OCAMLDEP = @OCAMLDEP@
+OCAMLDOC = @OCAMLDOC@
+OCAMLFIND = @OCAMLFIND@
+OCAMLLIB = @OCAMLLIB@
+OCAMLMKLIB = @OCAMLMKLIB@
+OCAMLMKTOP = @OCAMLMKTOP@
+OCAMLNATDYNLINK = @OCAMLNATDYNLINK@
+OCAMLOPT = @OCAMLOPT@
+OCAMLOPTDOTOPT = @OCAMLOPTDOTOPT@
+OCAMLVERSION = @OCAMLVERSION@
+OCAML_PKG_cppffigen = @OCAML_PKG_cppffigen@
+OCAML_PKG_oUnit = @OCAML_PKG_oUnit@
+OCAML_PKG_result = @OCAML_PKG_result@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -274,7 +293,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 THRIFT_SRC_ROOT = @THRIFT_SRC_ROOT@
-TRIAL = @TRIAL@
 VERSION = @VERSION@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
