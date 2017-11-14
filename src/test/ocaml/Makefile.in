@@ -299,7 +299,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 OCAMLCFLAGS = -thread -I ../../lib/ocaml
 PACKAGES = -package result,threads,oUnit
-RESULT = ocaml_somecode
+RESULT = ocaml_nicejson
 all: all-am
 
 .SUFFIXES:
@@ -493,12 +493,12 @@ uninstall-am:
 
 
 check-local: all
-	./somecode_tests.byte
+	./nicejson_tests.byte
 
-all-local: somecode_tests.byte
+all-local: nicejson_tests.byte
 
-somecode_tests.byte:
-	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o somecode_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml somecode_tests.ml -cclib -lstdc++
+nicejson_tests.byte:
+	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o nicejson_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml nicejson_tests.ml -cclib -lstdc++
 
 clean:
 	rm -rf oUnit* *.cm* *.byte

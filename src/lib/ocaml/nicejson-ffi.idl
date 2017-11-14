@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 
-#include \"somecode.h\"
+#include \"nicejson_intf.h\"
 #include \"cppffi.h\"
 ")
   (TYPEDEF
@@ -21,15 +21,15 @@
 
    (FOREIGN
     ((ID std::string))
-    somecode_foo
+    nicejson_foo
     (((PRIM INT) n))
-     "_res0 = somecode::foo(n); ")
+     "_res0 = nicejson::foo(n); ")
 
    (FOREIGN
     ((TYCON "std::tuple" ((ID std::string) (PRIM INT))))
-    somecode_bar
+    nicejson_bar
     (((ID std::string) s) ((PRIM INT) n))
-     "_res0 = somecode::bar(s, n); ")
+     "_res0 = nicejson::bar(s, n); ")
    )
   )
  )

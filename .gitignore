@@ -16,3 +16,8 @@ Makefile
 stamp-h1
 config.h
 config.status
+*.cm*
+oUnit*.cache
+*.so
+*.a
+*.byte

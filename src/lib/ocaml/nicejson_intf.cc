@@ -3,9 +3,9 @@
 #include <tuple>
 #include <vector>
 
-#include "somecode.h"
+#include "nicejson_intf.h"
 
-namespace somecode {
+namespace nicejson {
 
 std::string
 foo(int n) {
@@ -19,4 +19,4 @@ bar(std::string s, int n) {
   return std::tuple< std::string, int>{ s, n } ;
 }
 
-} // namespace somecode
+} // namespace nicejson

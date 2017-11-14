@@ -3,10 +3,10 @@
 #include <tuple>
 #include <vector>
 
-#ifndef somecode_h_included
-#define somecode_h_included
+#ifndef nicejson_h_included
+#define nicejson_h_included
 
-namespace somecode {
+namespace nicejson {
 
 std::string
   foo(int n) ;
@@ -14,6 +14,6 @@ std::string
 std::tuple< std::string, int >
   bar(std::string s, int n);
 
-} // namespace somecode
+} // namespace nicejson
 
 #endif
