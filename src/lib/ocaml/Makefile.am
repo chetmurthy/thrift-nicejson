@@ -10,12 +10,12 @@ RESULT = ocaml_somecode
 BUILT_SOURCES = $(RESULT).ml $(RESULT).mli  $(RESULT)_stubs.cc
 cleanfiles = $(BUILT_SOURCES)
 
-ML = $(RESULT).ml somecode.ml
+ML = $(RESULT).ml some_code.ml
 MLI = $(RESULT).mli
 
-CMO= $(RESULT).cmo somecode.cmo
-CMX= $(RESULT).cmx somecode.cmx
-CMI= $(RESULT).cmi somecode.cmi
+CMO= $(RESULT).cmo some_code.cmo
+CMX= $(RESULT).cmx some_code.cmx
+CMI= $(RESULT).cmi some_code.cmi
 OBJECTS = $(CMO) $(CMX) $(CMI)
 
 
@@ -37,13 +37,13 @@ $(RESULT).ml $(RESULT).mli $(RESULT)_stubs.cc: somecode-ffi.idl
 	cppffigen --output cpp < somecode-ffi.idl > $(RESULT)_stubs.cc
 
 .ml.cmo:
-	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $< -o $@
+	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
 .ml.cmx:
-	$(OCAMLFIND) ocamlopt $(OCAMLCFLAGS) $(PACKAGES) -c $< -o $@
+	$(OCAMLFIND) ocamlopt $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
 .mli.cmi:
-	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $< -o $@
+	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
 clean-local:
 	rm -f *.a *.cma *.cmi *.cmo *.cmx *.cmxa *.o *.so \
