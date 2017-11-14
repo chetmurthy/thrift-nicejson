@@ -410,8 +410,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
-
 clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
@@ -501,6 +499,9 @@ all-local: somecode_tests.byte
 
 somecode_tests.byte:
 	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o somecode_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml somecode_tests.ml -cclib -lstdc++
+
+clean:
+	rm -rf oUnit* *.cm* *.byte
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -519,9 +519,6 @@ $(RESULT)_stubs.o: $(RESULT)_stubs.cc
 somecode.o: somecode.cc
 	g++ -c -fPIC ${CXXFLAGS} -DPIC -o $@ $<
 
-somecode_tests.byte: $(RESULT).cma somecode_tests.cmo
-	ocamlfind ocamlc -custom -thread $(PACKAGES) -linkpkg -linkall -o somecode_tests.byte $(RESULT).cma -cclib -L.  somecode_tests.cmo
-
 $(RESULT).ml $(RESULT).mli $(RESULT)_stubs.cc: somecode-ffi.idl
 	cppffigen --output ml < somecode-ffi.idl > $(RESULT).ml
 	cppffigen --output mli < somecode-ffi.idl > $(RESULT).mli
