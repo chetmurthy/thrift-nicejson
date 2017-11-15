@@ -1,7 +1,8 @@
 
 OCAMLCFLAGS = -thread
-OCAMLMKLIB_FLAGS= -lstdc++
-CXXFLAGS += -g2 -I. -I`$(OCAMLFIND) query cppffigen` -I$(OCAMLLIB) -std=gnu++11 $(AM_CXXFLAGS)
+OCAMLMKLIB_FLAGS= -L`pwd`/../cpp -lnicejson  $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)  -lstdc++
+CXXFLAGS += -g2 -I../cpp -I. -I`$(OCAMLFIND) query cppffigen` -I$(OCAMLLIB) -std=gnu++11 $(AM_CXXFLAGS) \
+	-fPIC $(thrift_CFLAGS) $(AM_CXXFLAGS)
 
 PACKAGES = -package result,threads,oUnit
 

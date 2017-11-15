@@ -9,7 +9,11 @@ let all = "all_tests" >:::
 	assert_equal "45" (Ocaml_nicejson.nicejson_foo 45)) ;
     "nicejson_bar" >::
       (fun ctxt ->
-	assert_equal ("foo", 42) (Ocaml_nicejson.nicejson_bar "foo" 42))
+	assert_equal ("foo", 42) (Ocaml_nicejson.nicejson_bar "foo" 42)) ;
+    "prepend" >::
+      (fun ctxt ->
+	Ocaml_nicejson.prepend_typelib_directory "../cpp/gen-typelib"
+      ) ;
   ]
   
 (* Run the tests in test suite *)

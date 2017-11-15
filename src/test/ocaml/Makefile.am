@@ -2,7 +2,7 @@ OCAMLCFLAGS = -thread -I ../../lib/ocaml
 PACKAGES = -package result,threads,oUnit
 RESULT = ocaml_nicejson
 
-check-local: all
+check-local: all-local
 	./nicejson_tests.byte
 
 all-local: nicejson_tests.byte

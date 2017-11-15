@@ -492,7 +492,7 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-check-local: all
+check-local: all-local
 	./nicejson_tests.byte
 
 all-local: nicejson_tests.byte
