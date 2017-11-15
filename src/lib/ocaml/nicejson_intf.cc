@@ -4,11 +4,11 @@ namespace ocaml {
 namespace nicejson {
 
 using apache::thrift::nicejson::NiceJSON ;
+using apache::thrift::nicejson::NiceJSONError ;
 
 std::string
 foo(int n) {
   std::string rv = std::to_string(n) ;
-  std::cout << "rv = " << rv << std::endl ;
   return rv ;
 }
 
@@ -25,8 +25,15 @@ void append_typelib_directory(const std::string& name) {
   NiceJSON::append_typelib_directory(name) ;
 }
 
-void install_typelib(const std::string& key, const string& serialized) {
-  NiceJSON::install_typelib(key, serialized) ;
+std::string install_typelib(const std::string& key, const string& serialized) {
+  try {
+    NiceJSON::install_typelib(key, serialized) ;
+  } catch (NiceJSONError e) {
+    return e.what() ;
+  } catch (apache::thrift::protocol::TProtocolException e) {
+    return e.what() ;
+  }
+  return "" ;
 }
 
 std::string json_from_binary(const std::string& key, const std::string& type, const std::string& serialized) {
@@ -42,8 +49,15 @@ std::string binary_from_json(const std::string& key, const std::string& type, co
   return binary ;
 }
 
-void require_typelib(const std::string& key) {
+std::string require_typelib(const std::string& key) {
+  try {
   NiceJSON::require_typelib(key) ;
+  } catch (NiceJSONError e) {
+    return e.what() ;
+  } catch (apache::thrift::protocol::TProtocolException e) {
+    return e.what() ;
+  }
+  return "" ;
 }
 
 } // namespace nicejson

@@ -69,9 +69,14 @@ std::string ThriftBinaryString(const ThriftStruct& ts) {
 }
 }
 
+
 namespace apache {
 namespace thrift {
 namespace nicejson {
+
+struct NiceJSONError : public apache::thrift::TException {
+  NiceJSONError(const std::string& msg) : apache::thrift::TException(msg) {}
+};
 
 struct t_struct_lookaside {
   t_type_id type_id ;

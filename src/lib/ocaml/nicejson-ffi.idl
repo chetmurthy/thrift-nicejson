@@ -37,6 +37,17 @@
     (((ID std::string) s))
      "ocaml::nicejson::prepend_typelib_directory(s); ")
 
+   (FOREIGN
+    ((ID std::string))
+    install_typelib
+    (((ID std::string) key) ((ID std::string) serialized))
+     "_res0 = ocaml::nicejson::install_typelib(key, serialized); ")
+
+   (FOREIGN
+    ((ID std::string))
+    require_typelib
+    (((ID std::string) key))
+     "_res0 = ocaml::nicejson::require_typelib(key); ")
    )
   )
  )

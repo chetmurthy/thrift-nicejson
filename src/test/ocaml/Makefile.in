@@ -298,11 +298,21 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 OCAMLCFLAGS = -thread -I ../../lib/ocaml
-PACKAGES = -package result,threads,oUnit
+PACKAGES = -package result,threads,oUnit,thrift
 RESULT = ocaml_nicejson
-all: all-am
+GENOCAML_test = \
+	gen-ocaml/test_types.ml \
+	gen-ocaml/test_consts.ml \
+	gen-ocaml/test_types.mli
+
+BUILT_SOURCES = $(GENOCAML_test)
+BUILT_OBJECTS = 
+THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
+.SUFFIXES: .cmi .cmo .cmx .ml .mli
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -377,10 +387,12 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-local
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile all-local
 installdirs:
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -410,7 +422,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean-am: clean-generic clean-libtool mostlyclean-am
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+clean: clean-am
+
+clean-am: clean-generic clean-libtool clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -474,34 +489,49 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: check-am install-am install-strip
+.MAKE: all check check-am install install-am install-strip
 
 .PHONY: all all-am all-local check check-am check-local clean \
-	clean-generic clean-libtool cscopelist-am ctags-am distclean \
-	distclean-generic distclean-libtool distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-generic clean-libtool clean-local cscopelist-am ctags-am \
+	distclean distclean-generic distclean-libtool distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags-am uninstall \
 	uninstall-am
 
 .PRECIOUS: Makefile
 
+	gen-ocaml/test_types.cmo \
+	gen-ocaml/test_consts.cmo \
+	gen-ocaml/test_types.cmi
 
 check-local: all-local
 	./nicejson_tests.byte
 
 all-local: nicejson_tests.byte
 
-nicejson_tests.byte:
-	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o nicejson_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml nicejson_tests.ml -cclib -lstdc++
+nicejson_tests.byte: $(BUILT_OBJECTS) nicejson_tests.cmo
+	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o nicejson_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml $(BUILT_OBJECTS) nicejson_tests.cmo -cclib -lstdc++
 
-clean:
+clean-local:
 	rm -rf oUnit* *.cm* *.byte
+
+$(GENOCAML_test):
+	$(THRIFT) --gen ocaml -r ../cpp/test.thrift
+
+.ml.cmo:
+	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
+
+.ml.cmx:
+	$(OCAMLFIND) ocamlopt $(OCAMLCFLAGS) $(PACKAGES) -c $<
+
+.mli.cmi:
+	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -7,19 +7,6 @@
 #include <boost/filesystem.hpp>
 #include "NiceJSON.h"
 
-
-namespace apache {
-namespace thrift {
-namespace nicejson {
-
-struct NiceJSONError : public apache::thrift::TException {
-  NiceJSONError(const std::string& msg) : apache::thrift::TException(msg) {}
-};
-
-}
-}
-}
-
 namespace apache {
 namespace thrift {
 namespace plugin {
