@@ -68,10 +68,5 @@ class TestSer(unittest.TestCase):
         ser2 = NiceJSON.binary_from_json(typelib,ty, js)
         self.assertEqual(ser, ser2)
 
-def main():
-    ser = ser_Bar1()
-    f_write("test1.ser", ser)
-    print ser.encode('hex')
-
 if __name__ == '__main__':
     unittest.main()
