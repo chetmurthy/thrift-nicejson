@@ -210,6 +210,8 @@ OCAMLVERSION = @OCAMLVERSION@
 OCAML_PKG_cppffigen = @OCAML_PKG_cppffigen@
 OCAML_PKG_oUnit = @OCAML_PKG_oUnit@
 OCAML_PKG_result = @OCAML_PKG_result@
+OCAML_PKG_thrift = @OCAML_PKG_thrift@
+OCAML_PKG_yojson = @OCAML_PKG_yojson@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -301,15 +303,15 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 OCAMLCFLAGS = -thread
 OCAMLMKLIB_FLAGS = -L`pwd`/../cpp -lnicejson  $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)  -lstdc++
-PACKAGES = -package result,threads,oUnit
+PACKAGES = -package result,threads,oUnit,thrift,yojson
 RESULT = ocaml_nicejson
 BUILT_SOURCES = $(RESULT).ml $(RESULT).mli  $(RESULT)_stubs.cc
 cleanfiles = $(BUILT_SOURCES)
-ML = $(RESULT).ml nicejson.ml
+ML = $(RESULT).ml TBytesTransport.ml SerDes.ml nicejson.ml
 MLI = $(RESULT).mli
-CMO = $(RESULT).cmo nicejson.cmo
-CMX = $(RESULT).cmx nicejson.cmx
-CMI = $(RESULT).cmi nicejson.cmi
+CMO = $(RESULT).cmo TBytesTransport.cmo SerDes.cmo nicejson.cmo
+CMX = $(RESULT).cmx TBytesTransport.cmx SerDes.cmx nicejson.cmx
+CMI = $(RESULT).cmi TBytesTransport.cmi SerDes.cmi nicejson.cmi
 OBJECTS = $(CMO) $(CMX) $(CMI)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -540,6 +542,8 @@ clean-local:
 
 ocaml_nicejson.cmo: ocaml_nicejson.cmi
 ocaml_nicejson.cmx: ocaml_nicejson.cmi
+TBytesTransport.cmo: TBytesTransport.cmi
+#SerDes.cmo: SerDes.cmi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

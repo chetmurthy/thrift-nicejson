@@ -60,6 +60,8 @@ AC_PROG_OCAML
 AC_PROG_FINDLIB
 AC_CHECK_OCAML_PKG([result])
 AC_CHECK_OCAML_PKG([oUnit])
+AC_CHECK_OCAML_PKG([yojson])
+AC_CHECK_OCAML_PKG([thrift])
 AC_CHECK_OCAML_PKG([cppffigen])
 
 if test "$OCAMLC" != "no"; then

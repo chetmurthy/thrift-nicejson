@@ -1,5 +1,5 @@
-OCAMLCFLAGS = -thread -I ../../lib/ocaml
-PACKAGES = -package result,threads,oUnit,thrift
+OCAMLCFLAGS = -thread -I ../../lib/ocaml -I . -I ./gen-ocaml
+PACKAGES = -package result,threads,oUnit,thrift,yojson
 RESULT = ocaml_nicejson
 
 GENOCAML_test = \
@@ -8,10 +8,9 @@ GENOCAML_test = \
 	gen-ocaml/test_types.mli
 
 BUILT_SOURCES = $(GENOCAML_test)
-BUILT_OBJECTS =
+BUILT_OBJECTS = \
 	gen-ocaml/test_types.cmo \
-	gen-ocaml/test_consts.cmo \
-	gen-ocaml/test_types.cmi
+	gen-ocaml/test_consts.cmo
 
 check-local: all-local
 	./nicejson_tests.byte
@@ -29,7 +28,6 @@ THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
 $(GENOCAML_test):
 	$(THRIFT) --gen ocaml -r ../cpp/test.thrift
 
-
 .ml.cmo:
 	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
@@ -38,3 +36,6 @@ $(GENOCAML_test):
 
 .mli.cmi:
 	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
+
+gen-ocaml/test_types.cmi: gen-ocaml/test_types.mli
+gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi

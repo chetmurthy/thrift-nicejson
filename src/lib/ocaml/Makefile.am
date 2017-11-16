@@ -4,19 +4,19 @@ OCAMLMKLIB_FLAGS= -L`pwd`/../cpp -lnicejson  $(thrift_LIBS) $(BOOST_FILESYSTEM_L
 CXXFLAGS += -g2 -I../cpp -I. -I`$(OCAMLFIND) query cppffigen` -I$(OCAMLLIB) -std=gnu++11 $(AM_CXXFLAGS) \
 	-fPIC $(thrift_CFLAGS) $(AM_CXXFLAGS)
 
-PACKAGES = -package result,threads,oUnit
+PACKAGES = -package result,threads,oUnit,thrift,yojson
 
 RESULT = ocaml_nicejson
 
 BUILT_SOURCES = $(RESULT).ml $(RESULT).mli  $(RESULT)_stubs.cc
 cleanfiles = $(BUILT_SOURCES)
 
-ML = $(RESULT).ml nicejson.ml
+ML = $(RESULT).ml TBytesTransport.ml SerDes.ml nicejson.ml
 MLI = $(RESULT).mli
 
-CMO= $(RESULT).cmo nicejson.cmo
-CMX= $(RESULT).cmx nicejson.cmx
-CMI= $(RESULT).cmi nicejson.cmi
+CMO= $(RESULT).cmo TBytesTransport.cmo SerDes.cmo nicejson.cmo
+CMX= $(RESULT).cmx TBytesTransport.cmx SerDes.cmx nicejson.cmx
+CMI= $(RESULT).cmi TBytesTransport.cmi SerDes.cmi nicejson.cmi
 OBJECTS = $(CMO) $(CMX) $(CMI)
 
 
@@ -52,3 +52,5 @@ clean-local:
 
 ocaml_nicejson.cmo: ocaml_nicejson.cmi
 ocaml_nicejson.cmx: ocaml_nicejson.cmi
+TBytesTransport.cmo: TBytesTransport.cmi
+#SerDes.cmo: SerDes.cmi

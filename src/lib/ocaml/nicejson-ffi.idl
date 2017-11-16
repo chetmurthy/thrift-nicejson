@@ -48,6 +48,18 @@
     require_typelib
     (((ID std::string) key))
      "_res0 = ocaml::nicejson::require_typelib(key); ")
+
+   (FOREIGN
+    ((ID std::string) (ID std::string))
+    json_from_binary
+    (((ID std::string) key) ((ID std::string) type) ((ID std::string) serialized))
+     "_res0 = ocaml::nicejson::json_from_binary(key, type, serialized, &_res1); ")
+
+   (FOREIGN
+    ((ID std::string) (ID std::string))
+    binary_from_json
+    (((ID std::string) key) ((ID std::string) type) ((ID std::string) jss))
+     "_res0 = ocaml::nicejson::binary_from_json(key, type, jss, &_res1); ")
    )
   )
  )

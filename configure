@@ -639,6 +639,8 @@ LIBOBJS
 WITH_OCAML_FALSE
 WITH_OCAML_TRUE
 OCAML_PKG_cppffigen
+OCAML_PKG_thrift
+OCAML_PKG_yojson
 OCAML_PKG_oUnit
 OCAML_PKG_result
 OCAMLFIND
@@ -21040,6 +21042,54 @@ $as_echo "found" >&6; }
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
 $as_echo "not found" >&6; }
      OCAML_PKG_oUnit=no
+  fi
+
+
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OCaml findlib package yojson" >&5
+$as_echo_n "checking for OCaml findlib package yojson... " >&6; }
+
+  unset found
+  unset pkg
+  found=no
+  for pkg in yojson  ; do
+    if $OCAMLFIND query $pkg >/dev/null 2>/dev/null; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+       OCAML_PKG_yojson=$pkg
+       found=yes
+       break
+    fi
+  done
+  if test "$found" = "no" ; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+     OCAML_PKG_yojson=no
+  fi
+
+
+
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OCaml findlib package thrift" >&5
+$as_echo_n "checking for OCaml findlib package thrift... " >&6; }
+
+  unset found
+  unset pkg
+  found=no
+  for pkg in thrift  ; do
+    if $OCAMLFIND query $pkg >/dev/null 2>/dev/null; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+       OCAML_PKG_thrift=$pkg
+       found=yes
+       break
+    fi
+  done
+  if test "$found" = "no" ; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+     OCAML_PKG_thrift=no
   fi
 
 

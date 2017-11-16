@@ -208,6 +208,8 @@ OCAMLVERSION = @OCAMLVERSION@
 OCAML_PKG_cppffigen = @OCAML_PKG_cppffigen@
 OCAML_PKG_oUnit = @OCAML_PKG_oUnit@
 OCAML_PKG_result = @OCAML_PKG_result@
+OCAML_PKG_thrift = @OCAML_PKG_thrift@
+OCAML_PKG_yojson = @OCAML_PKG_yojson@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -297,8 +299,8 @@ thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-OCAMLCFLAGS = -thread -I ../../lib/ocaml
-PACKAGES = -package result,threads,oUnit,thrift
+OCAMLCFLAGS = -thread -I ../../lib/ocaml -I . -I ./gen-ocaml
+PACKAGES = -package result,threads,oUnit,thrift,yojson
 RESULT = ocaml_nicejson
 GENOCAML_test = \
 	gen-ocaml/test_types.ml \
@@ -306,7 +308,10 @@ GENOCAML_test = \
 	gen-ocaml/test_types.mli
 
 BUILT_SOURCES = $(GENOCAML_test)
-BUILT_OBJECTS = 
+BUILT_OBJECTS = \
+	gen-ocaml/test_types.cmo \
+	gen-ocaml/test_consts.cmo
+
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -506,9 +511,6 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-	gen-ocaml/test_types.cmo \
-	gen-ocaml/test_consts.cmo \
-	gen-ocaml/test_types.cmi
 
 check-local: all-local
 	./nicejson_tests.byte
@@ -532,6 +534,9 @@ $(GENOCAML_test):
 
 .mli.cmi:
 	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
+
+gen-ocaml/test_types.cmi: gen-ocaml/test_types.mli
+gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
