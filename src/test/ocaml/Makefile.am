@@ -38,5 +38,7 @@ $(GENOCAML_test):
 	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
 gen-ocaml/test_types.cmi: gen-ocaml/test_types.mli
-gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi
+gen-ocaml/test_types.cmx gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi
 nicejson_tests.cmo: TBytesTransport.cmo SerDes.cmo
+SerDes.cmo SerDes.cmx: TBytesTransport.cmi
+TBytesTransport.cmi: TBytesTransport.ml

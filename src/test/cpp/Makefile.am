@@ -9,7 +9,9 @@ GENCPP_test = \
 gen-cpp/test_constants.cpp \
 gen-cpp/test_constants.h \
 gen-cpp/test_types.cpp \
-gen-cpp/test_types.h
+gen-cpp/test_types.h \
+gen-cpp/S1.cpp \
+gen-cpp/S1.h
 
 GENCPP_TYPELIB_test = \
 gen-cpp-typelib/test_typelib.cpp \

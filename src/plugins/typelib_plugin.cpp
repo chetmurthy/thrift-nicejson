@@ -45,6 +45,22 @@ using apache::thrift::protocol::TBinaryProtocol;
 using apache::thrift::transport::TFDTransport;
 using apache::thrift::transport::TFramedTransport;
 
+template <typename ThriftStruct>
+std::string ThriftBinaryString(const ThriftStruct& ts) {
+  using namespace apache::thrift::transport;
+  using namespace apache::thrift::protocol;
+  TMemoryBuffer* buffer = new TMemoryBuffer;
+  boost::shared_ptr<TTransport> trans(buffer);
+  TBinaryProtocol protocol(trans);
+
+  ts.write(&protocol);
+
+  uint8_t* buf;
+  uint32_t size;
+  buffer->getBuffer(&buf, &size);
+  return std::string((char*)buf, (unsigned int)size);
+}
+
 void gen_typelib(const apache::thrift::plugin::GeneratorInput& input) {
 
   string cpp_ns ;
@@ -73,16 +89,49 @@ void gen_typelib(const apache::thrift::plugin::GeneratorInput& input) {
   path destdir(str(boost::format{"%s/gen-typelib"} % out_path)) ;
   string dest = str(boost::format{"%s/gen-typelib/%s.%s.typelib"} %
 		       out_path % typelib_ns % name) ;
+  string binary_dest = str(boost::format{"%s/gen-typelib/%s.%s.binary_typelib"} %
+		       out_path % typelib_ns % name) ;
 
   if (!exists(destdir)) create_directory(destdir) ;
-  ofstream out ;
-  out.open(dest, ios::out | ios::trunc) ;
-  if (out.fail()) {
-    std::cerr << "Cannot open file " << dest << " for write" << std::endl ;
-    exit(-1) ;
+  {
+    ofstream out ;
+    out.open(dest, ios::out | ios::trunc) ;
+    if (out.fail()) {
+      std::cerr << "Cannot open file " << dest << " for write" << std::endl ;
+      exit(-1) ;
+    }
+
+    out << apache::thrift::ThriftJSONString(input) ;
+  }
+  {
+    ofstream out ;
+    out.open(binary_dest, ios::out | ios::trunc) ;
+    if (out.fail()) {
+      std::cerr << "Cannot open file " << binary_dest << " for write" << std::endl ;
+      exit(-1) ;
+    }
+
+    out << ThriftBinaryString(input) ;
+  }
+}
+
+void generate1(const std::string& full_structname, const std::string& name,
+	       std::ostream *cppout, std::ostream* hout) {
+      *cppout << str(boost::format{R"FOO(
+  void demarshal(const json& j, %s *out) {
+    json_.json_.demarshal("%s", j, out) ;
   }
 
-  out << apache::thrift::ThriftJSONString(input) ;
+  json marshal(const %s& in) {
+    return json_.json_.marshal("%s", in) ;
+  }
+)FOO"} % full_structname % name % full_structname % name);
+
+      *hout << str(boost::format{R"FOO(
+  void demarshal(const json& j, %s *out) ;
+
+  json marshal(const %s& in) ;
+)FOO"} % full_structname % full_structname);
 }
 
 void gen_cpp_typelib(const apache::thrift::plugin::GeneratorInput& input) {
@@ -147,38 +196,62 @@ const apache::thrift::nicejson::NiceJSON& json_ ;
 
 )FOO" ;
 
+  hout << R"FOO(#include "NiceJSON.h")FOO" << std::endl ;
+  hout << str(boost::format{"#include \"gen-cpp/%s_types.h\""} % name) << std::endl ;
+
+  using apache::thrift::plugin::t_type_id ;
+  using apache::thrift::plugin::t_function ;
+
+  auto allservices = input.type_registry.services ;
+  auto alltypes = input.type_registry.types ;
+
+  for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
+    const std::string& servicename = ii->second.metadata.name ;
+    hout << str(boost::format{"#include \"gen-cpp/%s.h\""} % servicename) << std::endl ;
+  }
+
   hout << str(boost::format{
 R"FOO(
-#include "NiceJSON.h"
-#include "gen-cpp/%s_types.h"
 #ifndef %s_typelib_INCLUDED
 #define %s_typelib_INCLUDED
 %s
-)FOO"} % name % name % name % ns_open(cpp_ns)) ;
+)FOO"} % name % name % ns_open(cpp_ns)) ;
 
-  auto alltypes = input.type_registry.types ;
+  std::set<t_type_id> handled ;
+  for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
+    const std::string& servicename = ii->second.metadata.name ;
+    for (auto ff = ii->second.functions.begin() ; ff != ii->second.functions.end() ; ++ff) {
+      const t_function& func = *ff ;
+
+      std::vector<t_type_id> typelist = {func.arglist, func.returntype, func.xceptions} ;
+      for(auto tt = typelist.begin() ; tt != typelist.end() ; ++tt) {
+	handled.insert(*tt) ;
+
+	auto ttr = alltypes.find(*tt) ;
+	if (ttr == alltypes.end()) {
+	  std::cerr << str(boost::format{"t_type_id %ld of function %s not found in type_registry!!"} % *tt % func.name) << std::endl ;
+	  exit(-1) ;
+	}
+	auto ty = ttr->second ;
+	if (ty.__isset.struct_val) {
+	  if (ty.struct_val.metadata.name != "") {
+	    auto newname = servicename + "_" + ty.struct_val.metadata.name ;
+	    generate1(newname, ty.struct_val.metadata.name, &cppout, &hout) ;
+	  }
+	}
+      }
+    }
+  }
+
   for(auto ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
       auto id = ii->first ;
       auto ty = ii->second ;
+      if (handled.find(id) != handled.end()) continue ;
       if (!ty.__isset.struct_val) continue ;
+      if (ty.struct_val.members.size() == 0 && ty.struct_val.metadata.name == "") continue ;
 
-      const string& name = ty.struct_val.metadata.name ;
-      const string full_structname = /* ns_prefix(cpp_ns) + "::" + */ name ;
-      cppout << str(boost::format{R"FOO(
-  void demarshal(const json& j, %s *out) {
-    json_.json_.demarshal("%s", j, out) ;
-  }
-
-  json marshal(const %s& in) {
-    return json_.json_.marshal("%s", in) ;
-  }
-)FOO"} % full_structname % name % full_structname % name);
-
-      hout << str(boost::format{R"FOO(
-  void demarshal(const json& j, %s *out) ;
-
-  json marshal(const %s& in) ;
-)FOO"} % full_structname % full_structname);
+      const string& tyname = ty.struct_val.metadata.name ;
+      generate1(tyname, tyname, &cppout, &hout) ;
   }
 
   cppout << str(boost::format{R"FOO(%s)FOO"} % ns_close(cpp_ns)) ;

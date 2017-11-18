@@ -540,8 +540,11 @@ clean-local:
 	rm -f *.a *.cma *.cmi *.cmo *.cmx *.cmxa *.o *.so \
 		$(RESULT).ml $(RESULT).mli $(RESULT)_stubs.cc
 
+ocaml_nicejson.cmi: ocaml_nicejson.mli
 ocaml_nicejson.cmo: ocaml_nicejson.cmi
 ocaml_nicejson.cmx: ocaml_nicejson.cmi
+nicejson.cmo nicejson.cmx: ocaml_nicejson.cmi
+nicejson.cmi: nicejson.ml
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
