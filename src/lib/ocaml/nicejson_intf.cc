@@ -41,7 +41,6 @@ std::string json_from_binary(const std::string& key, const std::string& type, co
     NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
     json actual = nj->marshal_from_binary(type, (uint8_t*)serialized.data(), serialized.size(), false) ;
     *out = actual.dump() ;
-    std::cerr << "JSON: " << *out << std::endl ;
     return "" ;
   } catch (NiceJSONError e) {
     return e.what() ;

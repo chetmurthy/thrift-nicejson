@@ -1,10 +1,17 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src/lib/cpp src/plugins/cpp src/test/cpp src/tools/cpp
+LIB_SUBDIRS = src/lib/cpp
+PLUGIN_SUBDIRS = src/plugins/cpp
+TEST_SUBDIRS = src/test/cpp
 
 if WITH_PYTHON
-SUBDIRS +=  src/lib/py src/test/py
+LIB_SUBDIRS +=  src/lib/py
+TEST_SUBDIRS +=  src/test/py
 endif
 
 if WITH_OCAML
-SUBDIRS +=  src/lib/ocaml src/test/ocaml
+LIB_SUBDIRS +=  src/lib/ocaml
+PLUGIN_SUBDIRS +=  src/plugins/ocaml
+TEST_SUBDIRS +=  src/test/ocaml
 endif
+
+SUBDIRS = $(LIB_SUBDIRS) $(PLUGIN_SUBDIRS) $(TEST_SUBDIRS)
