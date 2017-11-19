@@ -67,13 +67,13 @@ $(GENCPP_test):
 	$(THRIFT) --gen cpp -r test.thrift
 
 $(GENCPP_TYPELIB_test):
-	PATH=../../plugins:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test.thrift
+	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test.thrift
 
 $(GENCPP_TYPELIB_test0):
-	PATH=../../plugins:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test0.thrift
+	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test0.thrift
 
 $(GENCPP_TYPELIB_plugin):
-	PATH=../../plugins:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib $(PLUGIN_THRIFT)
+	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib $(PLUGIN_THRIFT)
 
 gen-json: $(GENJSON0_test0) $(GENJSON_test) $(GENJSON_plugin)
 

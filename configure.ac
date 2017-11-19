@@ -112,7 +112,7 @@ AC_CONFIG_FILES([Makefile
                  src/lib/cpp/Makefile
                  src/lib/py/Makefile
                  src/lib/ocaml/Makefile
-                 src/plugins/Makefile
+                 src/plugins/cpp/Makefile
                  src/test/cpp/Makefile
                  src/test/py/Makefile
                  src/test/ocaml/Makefile

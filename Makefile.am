@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src/lib/cpp src/plugins src/test/cpp src/tools/cpp
+SUBDIRS = src/lib/cpp src/plugins/cpp src/test/cpp src/tools/cpp
 
 if WITH_PYTHON
 SUBDIRS +=  src/lib/py src/test/py
