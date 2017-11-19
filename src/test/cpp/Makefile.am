@@ -60,28 +60,28 @@ TESTS= test1 test2
 THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT=$(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 
-$(GENCPP0_test0):
+$(GENCPP0_test0): test0.thrift
 	$(THRIFT) --gen cpp -r test0.thrift
 
-$(GENCPP_test):
+$(GENCPP_test): test.thrift
 	$(THRIFT) --gen cpp -r test.thrift
 
-$(GENCPP_TYPELIB_test):
+$(GENCPP_TYPELIB_test): test.thrift
 	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test.thrift
 
-$(GENCPP_TYPELIB_test0):
+$(GENCPP_TYPELIB_test0): test0.thrift
 	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test0.thrift
 
-$(GENCPP_TYPELIB_plugin):
+$(GENCPP_TYPELIB_plugin): $(PLUGIN_THRIFT)
 	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib $(PLUGIN_THRIFT)
 
 gen-json: $(GENJSON0_test0) $(GENJSON_test) $(GENJSON_plugin)
 
-$(GENJSON0_test0):
+$(GENJSON0_test0): test0.thrift
 	$(THRIFT) --gen json -r test0.thrift
 
-$(GENJSON_test):
+$(GENJSON_test): test.thrift
 	$(THRIFT) --gen json -r test.thrift
 
-$(GENJSON_plugin):
+$(GENJSON_plugin): $(PLUGIN_THRIFT)
 	$(THRIFT) -r -gen json $(PLUGIN_THRIFT)

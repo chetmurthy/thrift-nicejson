@@ -26,7 +26,7 @@ clean-local:
 THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT=$(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 
-$(GENOCAML_test):
+$(GENOCAML_test): ../cpp/test.thrift
 	$(THRIFT) --gen ocaml -r ../cpp/test.thrift
 
 .ml.cmo:

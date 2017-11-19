@@ -510,7 +510,7 @@ uninstall-am:
 check-local: all
 	$(PYTHON) test1.py
 
-$(GENPY_test):
+$(GENPY_test): ../cpp/test.thrift
 	$(THRIFT) --gen py -r ../cpp/test.thrift
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

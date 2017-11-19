@@ -14,5 +14,5 @@ check-local: all
 
 THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
 
-$(GENPY_test):
+$(GENPY_test): ../cpp/test.thrift
 	$(THRIFT) --gen py -r ../cpp/test.thrift

@@ -19,6 +19,7 @@ let main () =
   Printf.fprintf stderr "read generator input\n"; flush stderr ;
   let ser = GI.ser gi in
   let js = Nicejson.json_from_binary "apache.thrift.plugin.plugin" "GeneratorInput" ser in
-  Yojson.Safe.pretty_to_channel stdout js
+  Yojson.Safe.pretty_to_channel stdout js ;
+  print_newline ()
 
 let _ = main () ;;
