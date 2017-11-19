@@ -70,6 +70,61 @@ namespace apache {
 namespace thrift {
 namespace nicejson {
 
+void NiceJSON::initialize() {
+  auto allservices = it().type_registry.services ;
+  auto alltypes = it().type_registry.types ;
+
+  std::set<t_type_id> skip ;
+  for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
+    const std::string& servicename = ii->second.metadata.name ;
+    for (auto ff = ii->second.functions.begin() ; ff != ii->second.functions.end() ; ++ff) {
+      const t_function& func = *ff ;
+
+      std::vector<t_type_id> typelist = {func.arglist, func.xceptions} ;
+      for(auto tt = typelist.begin() ; tt != typelist.end() ; ++tt) {
+	skip.insert(*tt) ;
+      }
+    }
+  }
+
+  for(map<t_type_id, t_type>::const_iterator ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
+    const t_type_id id = ii->first ;
+    const t_type& ty = ii->second ;
+    if (skip.find(id) != skip.end()) continue ;
+
+    if (ty.__isset.struct_val) {
+      if (ty.struct_val.metadata.name == "") {
+	std::cerr << str(boost::format{"struct without name at %ld"} % id) << std::endl ;
+	continue ;
+      }
+
+      structs_by_name[ty.struct_val.metadata.name] = id ;
+
+      struct_lookaside[id] = t_struct_lookaside() ;
+      t_struct_lookaside& p = struct_lookaside[id] ;
+
+      p.type_id = id ;
+      p.st = ty.struct_val ;
+      for(vector<t_field>::const_iterator jj = p.st.members.begin() ; jj != p.st.members.end() ; ++jj) {
+	const t_field& f = *jj ;
+	p.byname[f.name] = f ;
+	p.byid[f.key] = f ;
+      }
+    }
+    else if (ty.__isset.enum_val) {
+      enum_lookaside[id] = t_enum_lookaside() ;
+      t_enum_lookaside& p = enum_lookaside[id] ;
+
+      p.type_id = id ;
+      p.e = ty.enum_val ;
+      for(vector<t_enum_value>::const_iterator ii = p.e.constants.begin() ; ii != p.e.constants.end() ; ++ii) {
+	p.byname[ii->name] = ii->value ;
+	p.byi32[ii->value] = ii->name ;
+      }
+    }
+  }
+}
+
 string hex(const string& v) {
   std::string res;
   boost::algorithm::hex(v.begin(), v.end(), back_inserter(res));

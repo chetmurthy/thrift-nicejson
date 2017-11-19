@@ -118,6 +118,9 @@ public:
     initialize() ;
   }
 
+ NiceJSON(const apache::thrift::plugin::GeneratorInput& x) : x_(x) {
+   initialize() ;
+ }
  private:
   void deserialize(uint8_t const  * const serialized, size_t length) {
     shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
@@ -127,39 +130,7 @@ public:
     x_.read(p.get());
   }
 
-  void initialize() {
-    auto alltypes = it().type_registry.types ;
-    for(map<t_type_id, t_type>::const_iterator ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
-      const t_type_id id = ii->first ;
-      const t_type& ty = ii->second ;
-
-      if (ty.__isset.struct_val) {
-	structs_by_name[ty.struct_val.metadata.name] = id ;
-
-	struct_lookaside[id] = t_struct_lookaside() ;
-	t_struct_lookaside& p = struct_lookaside[id] ;
-
-	p.type_id = id ;
-	p.st = ty.struct_val ;
-	for(vector<t_field>::const_iterator jj = p.st.members.begin() ; jj != p.st.members.end() ; ++jj) {
-	  const t_field& f = *jj ;
-	  p.byname[f.name] = f ;
-	  p.byid[f.key] = f ;
-	}
-      }
-      else if (ty.__isset.enum_val) {
-	enum_lookaside[id] = t_enum_lookaside() ;
-	t_enum_lookaside& p = enum_lookaside[id] ;
-
-	p.type_id = id ;
-	p.e = ty.enum_val ;
-	for(vector<t_enum_value>::const_iterator ii = p.e.constants.begin() ; ii != p.e.constants.end() ; ++ii) {
-	  p.byname[ii->name] = ii->value ;
-	  p.byi32[ii->value] = ii->name ;
-	}
-      }
-    }
-  }
+  void initialize() ;
 
  public:
   void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) const ;
@@ -278,7 +249,6 @@ public:
 
   typedef map<string, const NiceJSON *> type_library_t;
 
-private:
   apache::thrift::plugin::GeneratorInput x_;
   map<t_type_id, t_struct_lookaside> struct_lookaside ;
   map<t_type_id, t_enum_lookaside> enum_lookaside ;

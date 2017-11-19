@@ -27,7 +27,6 @@
 #include <boost/format.hpp>
 #include <boost/smart_ptr.hpp>
 
-#include "thrift/generate/t_generator.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/protocol/TJSONProtocol.h>
 #include <thrift/transport/TTransport.h>
@@ -35,6 +34,7 @@
 #include <thrift/transport/TBufferTransports.h>
 #include "thrift/transport/TFDTransport.h"
 
+#include "NiceJSON.h"
 #include "ns_utils.h"
 #include "thrift/plugin/plugin.h"
 #include "gen-cpp/plugin_types.h"
@@ -44,22 +44,6 @@ using namespace boost::filesystem;
 using apache::thrift::protocol::TBinaryProtocol;
 using apache::thrift::transport::TFDTransport;
 using apache::thrift::transport::TFramedTransport;
-
-template <typename ThriftStruct>
-std::string ThriftBinaryString(const ThriftStruct& ts) {
-  using namespace apache::thrift::transport;
-  using namespace apache::thrift::protocol;
-  TMemoryBuffer* buffer = new TMemoryBuffer;
-  boost::shared_ptr<TTransport> trans(buffer);
-  TBinaryProtocol protocol(trans);
-
-  ts.write(&protocol);
-
-  uint8_t* buf;
-  uint32_t size;
-  buffer->getBuffer(&buf, &size);
-  return std::string((char*)buf, (unsigned int)size);
-}
 
 void gen_typelib(const apache::thrift::plugin::GeneratorInput& input) {
 
@@ -135,6 +119,8 @@ void generate1(const std::string& full_structname, const std::string& name,
 }
 
 void gen_cpp_typelib(const apache::thrift::plugin::GeneratorInput& input) {
+
+  apache::thrift::nicejson::NiceJSON nj(input) ;
 
   string cpp_ns ;
   {
@@ -217,31 +203,10 @@ R"FOO(
 %s
 )FOO"} % name % name % ns_open(cpp_ns)) ;
 
-  std::set<t_type_id> handled ;
-  for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
-    const std::string& servicename = ii->second.metadata.name ;
-    for (auto ff = ii->second.functions.begin() ; ff != ii->second.functions.end() ; ++ff) {
-      const t_function& func = *ff ;
-
-      std::vector<t_type_id> typelist = {func.arglist, func.xceptions} ;
-      for(auto tt = typelist.begin() ; tt != typelist.end() ; ++tt) {
-	handled.insert(*tt) ;
-      }
-    }
+  for(auto ii = nj.structs_by_name.begin() ; ii != nj.structs_by_name.end() ; ++ii) {
+    generate1(ii->first, ii->first, &cppout, &hout) ;
   }
 
-  for(auto ii = alltypes.begin() ; ii != alltypes.end(); ++ii) {
-      auto id = ii->first ;
-      auto ty = ii->second ;
-      if (handled.find(id) != handled.end()) continue ;
-      if (!ty.__isset.struct_val) continue ;
-      if (ty.struct_val.metadata.name == "") {
-	std::cerr << str(boost::format{"struct without name at %ld"} % id) << std::endl ;
-      }
-
-      const string& tyname = ty.struct_val.metadata.name ;
-      generate1(tyname, tyname, &cppout, &hout) ;
-  }
 
   cppout << str(boost::format{R"FOO(%s)FOO"} % ns_close(cpp_ns)) ;
   hout << str(boost::format{R"FOO(
