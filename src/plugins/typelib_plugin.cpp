@@ -223,22 +223,9 @@ R"FOO(
     for (auto ff = ii->second.functions.begin() ; ff != ii->second.functions.end() ; ++ff) {
       const t_function& func = *ff ;
 
-      std::vector<t_type_id> typelist = {func.arglist, func.returntype, func.xceptions} ;
+      std::vector<t_type_id> typelist = {func.arglist, func.xceptions} ;
       for(auto tt = typelist.begin() ; tt != typelist.end() ; ++tt) {
 	handled.insert(*tt) ;
-
-	auto ttr = alltypes.find(*tt) ;
-	if (ttr == alltypes.end()) {
-	  std::cerr << str(boost::format{"t_type_id %ld of function %s not found in type_registry!!"} % *tt % func.name) << std::endl ;
-	  exit(-1) ;
-	}
-	auto ty = ttr->second ;
-	if (ty.__isset.struct_val) {
-	  if (ty.struct_val.metadata.name != "") {
-	    auto newname = servicename + "_" + ty.struct_val.metadata.name ;
-	    generate1(newname, ty.struct_val.metadata.name, &cppout, &hout) ;
-	  }
-	}
       }
     }
   }
@@ -248,7 +235,9 @@ R"FOO(
       auto ty = ii->second ;
       if (handled.find(id) != handled.end()) continue ;
       if (!ty.__isset.struct_val) continue ;
-      if (ty.struct_val.members.size() == 0 && ty.struct_val.metadata.name == "") continue ;
+      if (ty.struct_val.metadata.name == "") {
+	std::cerr << str(boost::format{"struct without name at %ld"} % id) << std::endl ;
+      }
 
       const string& tyname = ty.struct_val.metadata.name ;
       generate1(tyname, tyname, &cppout, &hout) ;

@@ -114,7 +114,8 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = gen-cpp/test1-test0_constants.$(OBJEXT) \
 	gen-cpp/test1-test0_types.$(OBJEXT)
 am__objects_2 = gen-cpp/test1-test_constants.$(OBJEXT) \
-	gen-cpp/test1-test_types.$(OBJEXT) gen-cpp/test1-S1.$(OBJEXT)
+	gen-cpp/test1-test_types.$(OBJEXT) gen-cpp/test1-S1.$(OBJEXT) \
+	gen-cpp/test1-S2.$(OBJEXT)
 am__objects_3 = gen-cpp-typelib/test1-test_typelib.$(OBJEXT)
 am__objects_4 = gen-cpp-typelib/test1-test0_typelib.$(OBJEXT)
 am__objects_5 = gen-cpp-typelib/test1-plugin_typelib.$(OBJEXT)
@@ -135,7 +136,8 @@ test1_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(test1_CXXFLAGS) \
 	$(CXXFLAGS) $(test1_LDFLAGS) $(LDFLAGS) -o $@
 am__objects_8 = gen-cpp/test2-test_constants.$(OBJEXT) \
-	gen-cpp/test2-test_types.$(OBJEXT) gen-cpp/test2-S1.$(OBJEXT)
+	gen-cpp/test2-test_types.$(OBJEXT) gen-cpp/test2-S1.$(OBJEXT) \
+	gen-cpp/test2-S2.$(OBJEXT)
 am_test2_OBJECTS = test2-test2.$(OBJEXT) $(am__objects_8)
 test2_OBJECTS = $(am_test2_OBJECTS)
 test2_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
@@ -609,7 +611,9 @@ gen-cpp/test_constants.h \
 gen-cpp/test_types.cpp \
 gen-cpp/test_types.h \
 gen-cpp/S1.cpp \
-gen-cpp/S1.h
+gen-cpp/S1.h \
+gen-cpp/S2.cpp \
+gen-cpp/S2.h
 
 GENCPP_TYPELIB_test = \
 gen-cpp-typelib/test_typelib.cpp \
@@ -705,6 +709,8 @@ gen-cpp/test1-test_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 gen-cpp/test1-S1.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-S2.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 gen-cpp-typelib/$(am__dirstamp):
 	@$(MKDIR_P) gen-cpp-typelib
 	@: > gen-cpp-typelib/$(am__dirstamp)
@@ -730,6 +736,8 @@ gen-cpp/test2-test_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 gen-cpp/test2-S1.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test2-S2.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 
 test2$(EXEEXT): $(test2_OBJECTS) $(test2_DEPENDENCIES) $(EXTRA_test2_DEPENDENCIES) 
 	@rm -f test2$(EXEEXT)
@@ -749,11 +757,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-S1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-S2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test0_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test0_types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test_types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-S1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-S2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-test_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-test_types.Po@am__quote@
 
@@ -865,6 +875,20 @@ gen-cpp/test1-S1.obj: gen-cpp/S1.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-S1.obj `if test -f 'gen-cpp/S1.cpp'; then $(CYGPATH_W) 'gen-cpp/S1.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S1.cpp'; fi`
 
+gen-cpp/test1-S2.o: gen-cpp/S2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-S2.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-S2.Tpo -c -o gen-cpp/test1-S2.o `test -f 'gen-cpp/S2.cpp' || echo '$(srcdir)/'`gen-cpp/S2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-S2.Tpo gen-cpp/$(DEPDIR)/test1-S2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/S2.cpp' object='gen-cpp/test1-S2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-S2.o `test -f 'gen-cpp/S2.cpp' || echo '$(srcdir)/'`gen-cpp/S2.cpp
+
+gen-cpp/test1-S2.obj: gen-cpp/S2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-S2.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-S2.Tpo -c -o gen-cpp/test1-S2.obj `if test -f 'gen-cpp/S2.cpp'; then $(CYGPATH_W) 'gen-cpp/S2.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S2.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-S2.Tpo gen-cpp/$(DEPDIR)/test1-S2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/S2.cpp' object='gen-cpp/test1-S2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-S2.obj `if test -f 'gen-cpp/S2.cpp'; then $(CYGPATH_W) 'gen-cpp/S2.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S2.cpp'; fi`
+
 gen-cpp-typelib/test1-test_typelib.o: gen-cpp-typelib/test_typelib.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo -c -o gen-cpp-typelib/test1-test_typelib.o `test -f 'gen-cpp-typelib/test_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test_typelib.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po
@@ -962,6 +986,20 @@ gen-cpp/test2-S1.obj: gen-cpp/S1.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/S1.cpp' object='gen-cpp/test2-S1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test2-S1.obj `if test -f 'gen-cpp/S1.cpp'; then $(CYGPATH_W) 'gen-cpp/S1.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S1.cpp'; fi`
+
+gen-cpp/test2-S2.o: gen-cpp/S2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test2-S2.o -MD -MP -MF gen-cpp/$(DEPDIR)/test2-S2.Tpo -c -o gen-cpp/test2-S2.o `test -f 'gen-cpp/S2.cpp' || echo '$(srcdir)/'`gen-cpp/S2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test2-S2.Tpo gen-cpp/$(DEPDIR)/test2-S2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/S2.cpp' object='gen-cpp/test2-S2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test2-S2.o `test -f 'gen-cpp/S2.cpp' || echo '$(srcdir)/'`gen-cpp/S2.cpp
+
+gen-cpp/test2-S2.obj: gen-cpp/S2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test2-S2.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test2-S2.Tpo -c -o gen-cpp/test2-S2.obj `if test -f 'gen-cpp/S2.cpp'; then $(CYGPATH_W) 'gen-cpp/S2.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S2.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test2-S2.Tpo gen-cpp/$(DEPDIR)/test2-S2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/S2.cpp' object='gen-cpp/test2-S2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test2-S2.obj `if test -f 'gen-cpp/S2.cpp'; then $(CYGPATH_W) 'gen-cpp/S2.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S2.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

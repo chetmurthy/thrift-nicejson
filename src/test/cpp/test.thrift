@@ -49,8 +49,19 @@ exception InvalidOperation {
   2: string why
 }
 
+exception InvalidOperation2 {
+  1: i32 whatOp,
+  2: string why
+}
+
 service S1 {
   void ping(),
-   i32 add(1:i32 num1, 2:i32 num2),
-   i32 foo(1:i32 logid, 2:Bar w) throws (1:InvalidOperation ouch)
+  i32 add(1:i32 num1, 2:i32 num2),
+  i32 foo(1:i32 logid, 2:Bar w) throws (1:InvalidOperation ouch)
+}
+
+service S2 {
+  void ping(),
+  i32 foo(1:i32 logid, 2:Bar w) throws (1:InvalidOperation ouch, 2:InvalidOperation2 ouch2),
+  Bar goo()
 }

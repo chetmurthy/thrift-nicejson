@@ -11,7 +11,9 @@ gen-cpp/test_constants.h \
 gen-cpp/test_types.cpp \
 gen-cpp/test_types.h \
 gen-cpp/S1.cpp \
-gen-cpp/S1.h
+gen-cpp/S1.h \
+gen-cpp/S2.cpp \
+gen-cpp/S2.h
 
 GENCPP_TYPELIB_test = \
 gen-cpp-typelib/test_typelib.cpp \
