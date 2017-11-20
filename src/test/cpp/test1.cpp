@@ -57,6 +57,7 @@ void RoundTrip2(const string& structname, const T& arg) {
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
 
   json j = tt.marshal(structname, arg) ;
+  std::cout << j << std::endl ;
   T rv ;
   tt.demarshal(structname, j, &rv) ;
   BOOST_CHECK( rv == arg );
@@ -313,3 +314,37 @@ BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
   std::cout << j << std::endl ;
 }
 
+BOOST_AUTO_TEST_CASE( S2_foo_args )
+{
+  thrift_test::S2_foo_args args ;
+  args.logid = 1 ;
+  args.__isset.logid = true ;
+  thrift_test::Bar v;
+  v.a = 10 ;
+  v.b = "foo" ;
+  args.w = v ;
+  args.__isset.w = true ;
+
+  RoundTrip2<thrift_test::S2_foo_args>("S2_foo_args", args) ;
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_result )
+{
+  thrift_test::S2_foo_result result ;
+  result.success = 42 ;
+  result.__isset.success = true ;
+
+  RoundTrip2<thrift_test::S2_foo_result>("S2_foo_result", result) ;
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_result_2 )
+{
+  thrift_test::S2_foo_result result ;
+  thrift_test::InvalidOperation2 ouch2;
+  ouch2.__set_whatOp(36) ;
+  ouch2.__set_why("foo") ;
+  result.ouch2 = ouch2 ;
+  result.__isset.ouch2 = true ;
+
+  RoundTrip2<thrift_test::S2_foo_result>("S2_foo_result", result) ;
+}

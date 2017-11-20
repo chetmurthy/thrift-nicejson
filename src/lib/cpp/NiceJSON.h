@@ -191,6 +191,11 @@ public:
   const apache::thrift::plugin::GeneratorInput& it() const { return x_ ; }
 
   t_type_id real_type_id(const t_type_id id) const {
+    {
+      auto ii = xtra_types.find(id) ;
+      if (ii != xtra_types.end()) return id ;
+    }
+
     const map<t_type_id, t_type>& types = it().type_registry.types ;
     const map<t_type_id, t_type>::const_iterator ii = types.find(id);
     assert(ii != types.end()) ;
@@ -202,6 +207,11 @@ public:
   }
 
   const t_type& lookup_type(const t_type_id id) const {
+    {
+      auto ii = xtra_types.find(id) ;
+      if (ii != xtra_types.end()) return ii->second ;
+    }
+
     t_type_id real_id = real_type_id(id) ;
 
     const map<t_type_id, t_type>& types = it().type_registry.types ;
@@ -255,6 +265,7 @@ public:
   map<t_type_id, t_struct_lookaside> struct_lookaside ;
   map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<string, t_type_id> structs_by_name ;
+  map<t_type_id, t_type> xtra_types;
 
   static type_library_t *type_library_() {
     static type_library_t *type_library = new type_library_t() ;

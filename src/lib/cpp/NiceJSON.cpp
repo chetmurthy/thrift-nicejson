@@ -83,6 +83,10 @@ void NiceJSON::add_struct_lookaside(t_type_id id, const t_struct& ts) {
     p.byname[f.name] = f ;
     p.byid[f.key] = f ;
   }
+
+  t_type tt ;
+  tt.__set_struct_val(ts) ;
+  xtra_types[id] = tt ;
 }
 
 void NiceJSON::initialize() {
@@ -160,19 +164,27 @@ void NiceJSON::initialize() {
     const t_type& ty = ii->second ;
     if (skip.find(id) != skip.end()) continue ;
 
-    if (ty.__isset.struct_val) {
-      if (ty.struct_val.metadata.name == "") {
+    if (ty.__isset.struct_val || ty.__isset.xception_val) {
+       const t_struct * tsp ;
+      if (ty.__isset.struct_val) {
+	tsp = &ty.struct_val ;
+      } else if (ty.__isset.xception_val) {
+	tsp = &ty.xception_val ;
+      } else { assert(false) ; }
+      const t_struct& ts = *tsp ;
+
+      if (ts.metadata.name == "") {
 	std::cerr << str(boost::format{"struct without name at %ld"} % id) << std::endl ;
 	continue ;
       }
 
-      if (structs_by_name.find(ty.struct_val.metadata.name) != structs_by_name.end()) {
+      if (structs_by_name.find(ts.metadata.name) != structs_by_name.end()) {
 	std::string msg = str(boost::format{"Fatal error: struct %s occurs twice in typelib"} %
-			      ty.struct_val.metadata.name) ;
+			      ts.metadata.name) ;
 	std::cerr << msg << std::endl ;
 	throw NiceJSONError(msg);
       }
-      add_struct_lookaside(id, ty.struct_val) ;
+      add_struct_lookaside(id, ts) ;
     }
     else if (ty.__isset.enum_val) {
       enum_lookaside[id] = t_enum_lookaside() ;
@@ -268,6 +280,7 @@ TType t_type2ttype(const t_type& tt) {
   case set_val:
     return T_SET ;
   case struct_val:
+  case xception_val:
     return T_STRUCT ;
   case map_val:
     return T_MAP ;
