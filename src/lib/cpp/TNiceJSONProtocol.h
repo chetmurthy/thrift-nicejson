@@ -21,132 +21,61 @@
 #define _THRIFT_PROTOCOL_TNICEJSONPROTOCOL_H_ 1
 
 #include <thrift/protocol/TVirtualProtocol.h>
+#include <thrift/transport/TBufferTransports.h>
 
-#include <stack>
+#include "json.hpp"
+
+using nlohmann::json;
+using namespace apache::thrift::transport;
+
+class transport_input_adapter : public nlohmann::detail::input_adapter_protocol {
+public:
+  transport_input_adapter(boost::shared_ptr<TTransport> trans) : xprt_(trans) {
+  }
+
+  transport_input_adapter(const std::string ser) {
+    boost::shared_ptr<TMemoryBuffer> mem(new TMemoryBuffer((uint8_t*)ser.data(),
+							   static_cast<uint32_t>(ser.length()))) ;
+    xprt_ = mem ;
+  }
+
+  int get_character() override {
+    uint8_t c ;
+    if (1 != xprt_->read(&c, 1)) {
+      return std::char_traits<char>::eof() ;
+    } else {
+      buf.push_back(static_cast<char>(c)) ;
+      return c ;
+    }
+  }
+
+  std::string read(std::size_t offset, std::size_t length) override {
+    if (offset > buf.size() || offset + length > buf.size())
+      throw nlohmann::detail::parse_error::create(0, buf.size(), "read() called with invalid arguments") ;
+
+    return std::string(&buf[offset], length) ;
+  }
+
+  std::vector<char> buf ;
+  boost::shared_ptr<TTransport> xprt_ ;
+} ;
+
+json parse_via_transport(const std::string& s) {
+  using nlohmann::detail::input_adapter ;
+  using nlohmann::detail::input_adapter_protocol ;
+  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new transport_input_adapter(s)))) ;
+  return j ;
+}
 
 namespace apache {
 namespace thrift {
 namespace protocol {
 
-// Forward declaration
-class TNiceJSONContext;
-
-/**
- * JSON protocol for Thrift.
- *
- * Implements a protocol which uses JSON as the wire-format.
- *
- * Thrift types are represented as described below:
- *
- * 1. Every Thrift integer type is represented as a JSON number.
- *
- * 2. Thrift doubles are represented as JSON numbers. Some special values are
- *    represented as strings:
- *    a. "NaN" for not-a-number values
- *    b. "Infinity" for positive infinity
- *    c. "-Infinity" for negative infinity
- *
- * 3. Thrift string values are emitted as JSON strings, with appropriate
- *    escaping.
- *
- * 4. Thrift binary values are encoded into Base64 and emitted as JSON strings.
- *    The readBinary() method is written such that it will properly skip if
- *    called on a Thrift string (although it will decode garbage data).
- *
- *    NOTE: Base64 padding is optional for Thrift binary value encoding. So
- *    the readBinary() method needs to decode both input strings with padding
- *    and those without one.
- *
- * 5. Thrift structs are represented as JSON objects, with the field ID as the
- *    key, and the field value represented as a JSON object with a single
- *    key-value pair. The key is a short string identifier for that type,
- *    followed by the value. The valid type identifiers are: "tf" for bool,
- *    "i8" for byte, "i16" for 16-bit integer, "i32" for 32-bit integer, "i64"
- *    for 64-bit integer, "dbl" for double-precision loating point, "str" for
- *    string (including binary), "rec" for struct ("records"), "map" for map,
- *    "lst" for list, "set" for set.
- *
- * 6. Thrift lists and sets are represented as JSON arrays, with the first
- *    element of the JSON array being the string identifier for the Thrift
- *    element type and the second element of the JSON array being the count of
- *    the Thrift elements. The Thrift elements then follow.
- *
- * 7. Thrift maps are represented as JSON arrays, with the first two elements
- *    of the JSON array being the string identifiers for the Thrift key type
- *    and value type, followed by the count of the Thrift pairs, followed by a
- *    JSON object containing the key-value pairs. Note that JSON keys can only
- *    be strings, which means that the key type of the Thrift map should be
- *    restricted to numeric or string types -- in the case of numerics, they
- *    are serialized as strings.
- *
- * 8. Thrift messages are represented as JSON arrays, with the protocol
- *    version #, the message name, the message type, and the sequence ID as
- *    the first 4 elements.
- *
- * More discussion of the double handling is probably warranted. The aim of
- * the current implementation is to match as closely as possible the behavior
- * of Java's Double.toString(), which has no precision loss.  Implementors in
- * other languages should strive to achieve that where possible. I have not
- * yet verified whether boost:lexical_cast, which is doing that work for me in
- * C++, loses any precision, but I am leaving this as a future improvement. I
- * may try to provide a C component for this, so that other languages could
- * bind to the same underlying implementation for maximum consistency.
- *
- */
 class TNiceJSONProtocol : public TVirtualProtocol<TNiceJSONProtocol> {
 public:
   TNiceJSONProtocol(boost::shared_ptr<TTransport> ptrans);
 
   ~TNiceJSONProtocol();
-
-private:
-  void pushContext(boost::shared_ptr<TNiceJSONContext> c);
-
-  void popContext();
-
-  uint32_t writeJSONEscapeChar(uint8_t ch);
-
-  uint32_t writeJSONChar(uint8_t ch);
-
-  uint32_t writeJSONString(const std::string& str);
-
-  uint32_t writeJSONBase64(const std::string& str);
-
-  template <typename NumberType>
-  uint32_t writeJSONInteger(NumberType num);
-
-  uint32_t writeJSONDouble(double num);
-
-  uint32_t writeJSONObjectStart();
-
-  uint32_t writeJSONObjectEnd();
-
-  uint32_t writeJSONArrayStart();
-
-  uint32_t writeJSONArrayEnd();
-
-  uint32_t readJSONSyntaxChar(uint8_t ch);
-
-  uint32_t readJSONEscapeChar(uint16_t* out);
-
-  uint32_t readJSONString(std::string& str, bool skipContext = false);
-
-  uint32_t readJSONBase64(std::string& str);
-
-  uint32_t readJSONNumericChars(std::string& str);
-
-  template <typename NumberType>
-  uint32_t readJSONInteger(NumberType& num);
-
-  uint32_t readJSONDouble(double& num);
-
-  uint32_t readJSONObjectStart();
-
-  uint32_t readJSONObjectEnd();
-
-  uint32_t readJSONArrayStart();
-
-  uint32_t readJSONArrayEnd();
 
 public:
   /**
@@ -244,40 +173,8 @@ public:
 
   uint32_t readBinary(std::string& str);
 
-  class LookaheadReader {
-
-  public:
-    LookaheadReader(TTransport& trans) : trans_(&trans), hasData_(false) {}
-
-    uint8_t read() {
-      if (hasData_) {
-        hasData_ = false;
-      } else {
-        trans_->readAll(&data_, 1);
-      }
-      return data_;
-    }
-
-    uint8_t peek() {
-      if (!hasData_) {
-        trans_->readAll(&data_, 1);
-      }
-      hasData_ = true;
-      return data_;
-    }
-
-  private:
-    TTransport* trans_;
-    bool hasData_;
-    uint8_t data_;
-  };
-
 private:
   TTransport* trans_;
-
-  std::stack<boost::shared_ptr<TNiceJSONContext> > contexts_;
-  boost::shared_ptr<TNiceJSONContext> context_;
-  LookaheadReader reader_;
 };
 
 /**

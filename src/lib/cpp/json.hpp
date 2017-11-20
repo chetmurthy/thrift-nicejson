@@ -1562,6 +1562,8 @@ class input_adapter
   public:
     // native support
 
+  explicit input_adapter(input_adapter_t arg_ia) : ia(arg_ia) { }
+
     /// input adapter for input stream
     input_adapter(std::istream& i)
         : ia(std::make_shared<cached_input_stream_adapter<16384>>(i)) {}
