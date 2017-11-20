@@ -70,9 +70,27 @@ namespace apache {
 namespace thrift {
 namespace nicejson {
 
+void NiceJSON::add_struct_lookaside(t_type_id id, const t_struct& ts) {
+  structs_by_name[ts.metadata.name] = id ;
+
+  struct_lookaside[id] = t_struct_lookaside() ;
+  t_struct_lookaside& p = struct_lookaside[id] ;
+
+  p.type_id = id ;
+  p.st = ts ;
+  for(vector<t_field>::const_iterator jj = p.st.members.begin() ; jj != p.st.members.end() ; ++jj) {
+    const t_field& f = *jj ;
+    p.byname[f.name] = f ;
+    p.byid[f.key] = f ;
+  }
+}
+
 void NiceJSON::initialize() {
   auto allservices = it().type_registry.services ;
   auto alltypes = it().type_registry.types ;
+
+  const t_type_id maxid = alltypes.rbegin()->first ;
+  t_type_id nextid = maxid + 1 ;
 
   std::set<t_type_id> skip ;
   for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
@@ -83,6 +101,56 @@ void NiceJSON::initialize() {
       std::vector<t_type_id> typelist = {func.arglist, func.xceptions} ;
       for(auto tt = typelist.begin() ; tt != typelist.end() ; ++tt) {
 	skip.insert(*tt) ;
+      }
+      const t_type& args_ty = alltypes[func.arglist] ;
+      const t_type& xceptions_ty = alltypes[func.xceptions] ;
+      const t_type& rv_ty = alltypes[func.returntype] ;
+
+      if (! xceptions_ty.__isset.struct_val) {
+	std::string msg = str(boost::format{"service %s function %s exceptions not a struct"} % servicename % func.name) ;
+	std::cerr << msg << std::endl ;
+	throw NiceJSONError(msg) ;
+      }
+      if (! args_ty.__isset.struct_val) {
+	std::string msg = str(boost::format{"service %s function %s args not a struct"} % servicename % func.name) ;
+	std::cerr << msg << std::endl ;
+	throw NiceJSONError(msg) ;
+      }
+
+      const t_struct& ts_xceptions = xceptions_ty.struct_val ;
+      const t_struct& ts_args = args_ty.struct_val ;
+
+      if (! func.is_oneway) {
+	t_struct ts_result ;
+	ts_result.metadata = ts_args.metadata ; // some defaults
+	ts_result.metadata.name = servicename + "_" + func.name + "_result" ;
+	ts_result.is_union = false ;
+	ts_result.is_xception = false ;
+	t_field success ;
+	success.name = "success" ;
+	success.type = func.returntype ;
+	success.key = 0 ; // field-id is zero
+	success.req = Requiredness::T_OPT_IN_REQ_OUT ;
+	success.reference = false ;
+
+	ts_result.members.push_back(success) ;
+
+	std::copy(ts_xceptions.members.begin(), ts_xceptions.members.end(),
+		  std::back_inserter(ts_result.members)) ;
+	
+	add_struct_lookaside(nextid++, ts_result) ;
+      }
+      {
+	t_struct ts_real_args ;
+	ts_real_args.metadata = ts_args.metadata ; // some defaults
+	ts_real_args.metadata.name = servicename + "_" + func.name + "_args" ;
+	ts_real_args.is_union = false ;
+	ts_real_args.is_xception = false ;
+
+	std::copy(ts_args.members.begin(), ts_args.members.end(),
+		  std::back_inserter(ts_real_args.members)) ;
+	
+	add_struct_lookaside(nextid++, ts_real_args) ;
       }
     }
   }
@@ -98,18 +166,13 @@ void NiceJSON::initialize() {
 	continue ;
       }
 
-      structs_by_name[ty.struct_val.metadata.name] = id ;
-
-      struct_lookaside[id] = t_struct_lookaside() ;
-      t_struct_lookaside& p = struct_lookaside[id] ;
-
-      p.type_id = id ;
-      p.st = ty.struct_val ;
-      for(vector<t_field>::const_iterator jj = p.st.members.begin() ; jj != p.st.members.end() ; ++jj) {
-	const t_field& f = *jj ;
-	p.byname[f.name] = f ;
-	p.byid[f.key] = f ;
+      if (structs_by_name.find(ty.struct_val.metadata.name) != structs_by_name.end()) {
+	std::string msg = str(boost::format{"Fatal error: struct %s occurs twice in typelib"} %
+			      ty.struct_val.metadata.name) ;
+	std::cerr << msg << std::endl ;
+	throw NiceJSONError(msg);
       }
+      add_struct_lookaside(id, ty.struct_val) ;
     }
     else if (ty.__isset.enum_val) {
       enum_lookaside[id] = t_enum_lookaside() ;
@@ -210,9 +273,11 @@ TType t_type2ttype(const t_type& tt) {
     return T_MAP ;
   case enum_val:
     return T_I32 ;
-  default:
-    std::cerr << boost::format{"t_type2ttype: Unknown t_type type %d, %s"} % t_type_case(tt) % apache::thrift::ThriftDebugString(tt) << endl ;
-    throw NiceJSONError("t_type2ttype: Unknown t_type type");
+  default: {
+    std::string msg = str(boost::format{"t_type2ttype: Unknown t_type type %d, %s"} % t_type_case(tt) % apache::thrift::ThriftDebugString(tt)) ;
+    std::cerr << msg << endl ;
+    throw NiceJSONError(msg);
+  }
   }
 }
 
@@ -328,9 +393,11 @@ void NiceJSON::json2protocol(
       break ;
     }
 
-    default:
-      std::cerr << boost::format{"json2protocol: unhandled t_base %s"} % tt << std::endl ;
-      throw NiceJSONError("json2protocol: unhandled t_base");
+    default: {
+      std::string msg = str(boost::format{"json2protocol: unhandled t_base %s"} % tt) ;
+      std::cerr << msg << std::endl ;
+      throw NiceJSONError(msg);
+    }
     }
     break ;
   }
@@ -406,9 +473,11 @@ void NiceJSON::json2protocol(
     break ;
   }
 
-  default:
-    std::cerr << boost::format{"json2protocol: unhandled t_type %s"} % tt << std::endl ;
-    throw NiceJSONError("json2protocol: unhandled t_type");
+  default: {
+    std::string msg = str(boost::format{"json2protocol: unhandled t_type %s"} % tt) ;
+    std::cerr << msg << std::endl ;
+    throw NiceJSONError(msg);
+  }
   }
 }
 
@@ -523,9 +592,11 @@ json NiceJSON::protocol2json(const t_type_id id,
       json rv = s ;
       return rv ;
     }
-    default:
-      std::cerr << boost::format{"protocol2json: unhandled t_base %s"} % apache::thrift::ThriftDebugString(tt.base_type_val) << std::endl ;
-      throw NiceJSONError("protocol2json: unhandled t_base");
+    default: {
+      std::string msg = str(boost::format{"protocol2json: unhandled t_base %s"} % apache::thrift::ThriftDebugString(tt.base_type_val)) ;
+      std::cerr << msg << std::endl ;
+      throw NiceJSONError(msg);
+    }
     }
   }
 
@@ -587,9 +658,11 @@ json NiceJSON::protocol2json(const t_type_id id,
     return rv ;
   }
 
-  default:
-    std::cerr << boost::format{"protocol2json: unhandled t_type %s"} % tt << std::endl ;
-    throw NiceJSONError("protocol2json: unhandled t_type");
+  default: {
+    std::string msg = str(boost::format{"protocol2json: unhandled t_type %s"} % tt) ;
+    std::cerr << msg << std::endl ;
+    throw NiceJSONError(msg);
+  }
   }
 }
 

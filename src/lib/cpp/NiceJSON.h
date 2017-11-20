@@ -121,6 +121,7 @@ public:
  NiceJSON(const apache::thrift::plugin::GeneratorInput& x) : x_(x) {
    initialize() ;
  }
+
  private:
   void deserialize(uint8_t const  * const serialized, size_t length) {
     shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
@@ -131,6 +132,7 @@ public:
   }
 
   void initialize() ;
+  void add_struct_lookaside(t_type_id id, const t_struct& ts) ;
 
  public:
   void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) const ;
