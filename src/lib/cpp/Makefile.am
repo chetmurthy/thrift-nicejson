@@ -6,7 +6,7 @@ GENCPP = gen-cpp/plugin_constants.cpp \
 BUILT_SOURCES = $(GENCPP)
 CLEANFILES = $(GENCPP)
 lib_LIBRARIES=libnicejson.a
-libnicejson_a_SOURCES= NiceJSON.cpp NiceJSON.h $(GENCPP)
+libnicejson_a_SOURCES= NiceJSON.cpp NiceJSON.h TNiceJSONProtocol.h TNiceJSONProtocol.cpp $(GENCPP)
 
 pkgincludedir = $(includedir)/thrift-nicejson
 pkginclude_HEADERS = json.hpp NiceJSON.h

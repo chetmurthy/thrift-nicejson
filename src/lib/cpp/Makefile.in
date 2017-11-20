@@ -152,7 +152,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = gen-cpp/libnicejson_a-plugin_constants.$(OBJEXT) \
 	gen-cpp/libnicejson_a-plugin_types.$(OBJEXT)
 am_libnicejson_a_OBJECTS = libnicejson_a-NiceJSON.$(OBJEXT) \
-	$(am__objects_1)
+	libnicejson_a-TNiceJSONProtocol.$(OBJEXT) $(am__objects_1)
 libnicejson_a_OBJECTS = $(am_libnicejson_a_OBJECTS)
 am_jsontest_OBJECTS = jsontest.$(OBJEXT)
 jsontest_OBJECTS = $(am_jsontest_OBJECTS)
@@ -598,7 +598,7 @@ GENCPP = gen-cpp/plugin_constants.cpp \
 BUILT_SOURCES = $(GENCPP)
 CLEANFILES = $(GENCPP)
 lib_LIBRARIES = libnicejson.a
-libnicejson_a_SOURCES = NiceJSON.cpp NiceJSON.h $(GENCPP)
+libnicejson_a_SOURCES = NiceJSON.cpp NiceJSON.h TNiceJSONProtocol.h TNiceJSONProtocol.cpp $(GENCPP)
 pkginclude_HEADERS = json.hpp NiceJSON.h
 libnicejson_a_CXXFLAGS = -fPIC $(thrift_CFLAGS) $(AM_CXXFLAGS)
 jsontest_SOURCES = jsontest.cpp
@@ -707,6 +707,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsontest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-NiceJSON.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_types.Po@am__quote@
 
@@ -747,6 +748,20 @@ libnicejson_a-NiceJSON.obj: NiceJSON.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NiceJSON.cpp' object='libnicejson_a-NiceJSON.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-NiceJSON.obj `if test -f 'NiceJSON.cpp'; then $(CYGPATH_W) 'NiceJSON.cpp'; else $(CYGPATH_W) '$(srcdir)/NiceJSON.cpp'; fi`
+
+libnicejson_a-TNiceJSONProtocol.o: TNiceJSONProtocol.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT libnicejson_a-TNiceJSONProtocol.o -MD -MP -MF $(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Tpo -c -o libnicejson_a-TNiceJSONProtocol.o `test -f 'TNiceJSONProtocol.cpp' || echo '$(srcdir)/'`TNiceJSONProtocol.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Tpo $(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='TNiceJSONProtocol.cpp' object='libnicejson_a-TNiceJSONProtocol.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-TNiceJSONProtocol.o `test -f 'TNiceJSONProtocol.cpp' || echo '$(srcdir)/'`TNiceJSONProtocol.cpp
+
+libnicejson_a-TNiceJSONProtocol.obj: TNiceJSONProtocol.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT libnicejson_a-TNiceJSONProtocol.obj -MD -MP -MF $(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Tpo -c -o libnicejson_a-TNiceJSONProtocol.obj `if test -f 'TNiceJSONProtocol.cpp'; then $(CYGPATH_W) 'TNiceJSONProtocol.cpp'; else $(CYGPATH_W) '$(srcdir)/TNiceJSONProtocol.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Tpo $(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='TNiceJSONProtocol.cpp' object='libnicejson_a-TNiceJSONProtocol.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -c -o libnicejson_a-TNiceJSONProtocol.obj `if test -f 'TNiceJSONProtocol.cpp'; then $(CYGPATH_W) 'TNiceJSONProtocol.cpp'; else $(CYGPATH_W) '$(srcdir)/TNiceJSONProtocol.cpp'; fi`
 
 gen-cpp/libnicejson_a-plugin_constants.o: gen-cpp/plugin_constants.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnicejson_a_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/libnicejson_a-plugin_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Tpo -c -o gen-cpp/libnicejson_a-plugin_constants.o `test -f 'gen-cpp/plugin_constants.cpp' || echo '$(srcdir)/'`gen-cpp/plugin_constants.cpp
