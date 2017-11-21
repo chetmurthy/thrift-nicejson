@@ -80,6 +80,7 @@ struct NiceJSONError : public apache::thrift::TException {
 
 struct t_struct_lookaside {
   t_type_id type_id ;
+  std::string fqcppname ;
   t_struct st ;
   map<string, t_field> byname ;
   map<int32_t, t_field> byid ;
@@ -132,7 +133,8 @@ public:
   }
 
   void initialize() ;
-  void add_struct_lookaside(t_type_id id, const t_struct& ts) ;
+  std::string program_cpp_prefix(const t_struct& ts, const t_program_id program_id) ;
+  void add_struct_lookaside(const t_type_id id, const std::string& fqcppname, const t_struct& ts) ;
 
  public:
   void json2protocol(const t_type_id id, const t_type& tt, const json& jser, ::apache::thrift::protocol::TProtocol* oprot) const ;
@@ -267,6 +269,8 @@ public:
   typedef map<string, const NiceJSON *> type_library_t;
 
   apache::thrift::plugin::GeneratorInput x_;
+  t_program_id program_id_ ;
+  map<t_program_id, t_program> program_lookaside_ ;
   map<t_type_id, t_struct_lookaside> struct_lookaside ;
   map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<string, t_type_id> structs_by_name ;

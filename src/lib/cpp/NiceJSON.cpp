@@ -70,8 +70,8 @@ namespace apache {
 namespace thrift {
 namespace nicejson {
 
-void NiceJSON::add_struct_lookaside(t_type_id id, const t_struct& ts) {
-  structs_by_name[ts.metadata.name] = id ;
+void NiceJSON::add_struct_lookaside(const t_type_id id, const std::string& fqcppname, const t_struct& ts) {
+  structs_by_name[fqcppname] = id ;
 
   struct_lookaside[id] = t_struct_lookaside() ;
   t_struct_lookaside& p = struct_lookaside[id] ;
@@ -89,7 +89,29 @@ void NiceJSON::add_struct_lookaside(t_type_id id, const t_struct& ts) {
   xtra_types[id] = tt ;
 }
 
+std::string NiceJSON::program_cpp_prefix(const t_struct& ts, const t_program_id program_id) {
+  auto pp = program_lookaside_.find(program_id) ;
+  if (pp == program_lookaside_.end()) {
+    std::string msg = str(boost::format{"malformed typelib: struct %s found but missing t_program %ld"} %
+			  ts.metadata.name % program_id) ;
+    std::cerr << msg << std::endl ;
+    throw NiceJSONError(msg) ;
+  }
+  auto nn = pp->second.namespaces.find("cpp") ;
+  if (nn == pp->second.namespaces.end()) {
+    std::string msg = str(boost::format{"malformed typelib: struct %s has no (required!) cpp namespace"} %
+			  ts.metadata.name) ;
+    std::cerr << msg << std::endl ;
+    throw NiceJSONError(msg) ;
+  }
+  return nn->second ;
+}
+
 void NiceJSON::initialize() {
+  program_id_ = it().program.program_id ;
+  for(auto ii = it().program.includes.begin() ; ii != it().program.includes.end(); ++ii) {
+    program_lookaside_[ii->program_id] = *ii ;
+  }
   auto allservices = it().type_registry.services ;
   auto alltypes = it().type_registry.types ;
 
@@ -98,8 +120,9 @@ void NiceJSON::initialize() {
 
   std::set<t_type_id> skip ;
   for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
-    const std::string& servicename = ii->second.metadata.name ;
-    for (auto ff = ii->second.functions.begin() ; ff != ii->second.functions.end() ; ++ff) {
+    const t_service& tser = ii->second ;
+    const std::string& servicename = tser.metadata.name ;
+    for (auto ff = tser.functions.begin() ; ff != tser.functions.end() ; ++ff) {
       const t_function& func = *ff ;
 
       std::vector<t_type_id> typelist = {func.arglist, func.xceptions} ;
@@ -142,7 +165,11 @@ void NiceJSON::initialize() {
 	std::copy(ts_xceptions.members.begin(), ts_xceptions.members.end(),
 		  std::back_inserter(ts_result.members)) ;
 	
-	add_struct_lookaside(nextid++, ts_result) ;
+	std::string fqcppname = ts_result.metadata.name;
+	if (tser.metadata.program_id != program_id_) {
+	  fqcppname = program_cpp_prefix(ts_result, tser.metadata.program_id) + "::" + fqcppname ;
+	}
+	add_struct_lookaside(nextid++, fqcppname, ts_result) ;
       }
       {
 	t_struct ts_real_args ;
@@ -154,7 +181,11 @@ void NiceJSON::initialize() {
 	std::copy(ts_args.members.begin(), ts_args.members.end(),
 		  std::back_inserter(ts_real_args.members)) ;
 	
-	add_struct_lookaside(nextid++, ts_real_args) ;
+	std::string fqcppname = ts_real_args.metadata.name;
+	if (tser.metadata.program_id != program_id_) {
+	  fqcppname = program_cpp_prefix(ts_real_args, tser.metadata.program_id) + "::" + fqcppname ;
+	}
+	add_struct_lookaside(nextid++, fqcppname, ts_real_args) ;
       }
     }
   }
@@ -178,13 +209,18 @@ void NiceJSON::initialize() {
 	continue ;
       }
 
-      if (structs_by_name.find(ts.metadata.name) != structs_by_name.end()) {
+      std::string fqcppname = ts.metadata.name ;
+      if (ts.metadata.program_id != program_id_) {
+	  fqcppname = program_cpp_prefix(ts, ts.metadata.program_id) + "::" + fqcppname ;
+      }
+
+      if (structs_by_name.find(fqcppname) != structs_by_name.end()) {
 	std::string msg = str(boost::format{"Fatal error: struct %s occurs twice in typelib"} %
-			      ts.metadata.name) ;
+			      fqcppname) ;
 	std::cerr << msg << std::endl ;
 	throw NiceJSONError(msg);
       }
-      add_struct_lookaside(id, ts) ;
+      add_struct_lookaside(id, fqcppname, ts) ;
     }
     else if (ty.__isset.enum_val) {
       enum_lookaside[id] = t_enum_lookaside() ;
