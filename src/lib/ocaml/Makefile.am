@@ -56,3 +56,4 @@ ocaml_nicejson.cmx: ocaml_nicejson.cmi
 nicejson.cmo nicejson.cmx: ocaml_nicejson.cmi
 nicejson.cmi: nicejson.ml
 
+.NOTPARALLEL:

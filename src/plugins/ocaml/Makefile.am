@@ -41,3 +41,5 @@ gen-ocaml/plugin_types.cmo gen-ocaml/plugin_types.cmx: gen-ocaml/plugin_types.cm
 SerDes.cmo SerDes.cmx: TBytesTransport.cmo TBytesTransport.cmi
 TBytesTransport.cmi: TBytesTransport.ml
 thrift-gen-ocamltypelib.cmo: SerDes.cmi TBytesTransport.cmi
+
+.NOTPARALLEL:

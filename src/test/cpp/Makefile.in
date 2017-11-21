@@ -116,14 +116,20 @@ am__objects_1 = gen-cpp/test1-test0_constants.$(OBJEXT) \
 am__objects_2 = gen-cpp/test1-test_constants.$(OBJEXT) \
 	gen-cpp/test1-test_types.$(OBJEXT) gen-cpp/test1-S1.$(OBJEXT) \
 	gen-cpp/test1-S2.$(OBJEXT)
-am__objects_3 = gen-cpp-typelib/test1-test_typelib.$(OBJEXT)
-am__objects_4 = gen-cpp-typelib/test1-test0_typelib.$(OBJEXT)
-am__objects_5 = gen-cpp-typelib/test1-plugin_typelib.$(OBJEXT)
-am__objects_6 =
-am__objects_7 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+am__objects_3 = gen-cpp/test1-Calculator.$(OBJEXT) \
+	gen-cpp/test1-SharedService.$(OBJEXT) \
+	gen-cpp/test1-shared_constants.$(OBJEXT) \
+	gen-cpp/test1-shared_types.$(OBJEXT) \
+	gen-cpp/test1-tutorial_constants.$(OBJEXT) \
+	gen-cpp/test1-tutorial_types.$(OBJEXT)
+am__objects_4 = gen-cpp-typelib/test1-test_typelib.$(OBJEXT)
+am__objects_5 = gen-cpp-typelib/test1-test0_typelib.$(OBJEXT)
+am__objects_6 = gen-cpp-typelib/test1-plugin_typelib.$(OBJEXT)
+am__objects_7 =
+am__objects_8 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4) $(am__objects_5) $(am__objects_6) \
-	$(am__objects_6)
-am_test1_OBJECTS = test1-test1.$(OBJEXT) $(am__objects_7)
+	$(am__objects_7) $(am__objects_7) $(am__objects_7)
+am_test1_OBJECTS = test1-test1.$(OBJEXT) $(am__objects_8)
 test1_OBJECTS = $(am_test1_OBJECTS)
 am__DEPENDENCIES_1 =
 test1_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
@@ -135,10 +141,10 @@ am__v_lt_1 =
 test1_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(test1_CXXFLAGS) \
 	$(CXXFLAGS) $(test1_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_8 = gen-cpp/test2-test_constants.$(OBJEXT) \
+am__objects_9 = gen-cpp/test2-test_constants.$(OBJEXT) \
 	gen-cpp/test2-test_types.$(OBJEXT) gen-cpp/test2-S1.$(OBJEXT) \
 	gen-cpp/test2-S2.$(OBJEXT)
-am_test2_OBJECTS = test2-test2.$(OBJEXT) $(am__objects_8)
+am_test2_OBJECTS = test2-test2.$(OBJEXT) $(am__objects_9)
 test2_OBJECTS = $(am_test2_OBJECTS)
 test2_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -599,7 +605,7 @@ thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-GENCPP0_test0 = \
+GENCPP_test0 = \
 gen-cpp/test0_constants.cpp \
 gen-cpp/test0_constants.h \
 gen-cpp/test0_types.cpp \
@@ -615,9 +621,27 @@ gen-cpp/S1.h \
 gen-cpp/S2.cpp \
 gen-cpp/S2.h
 
+GENCPP_tutorial = \
+gen-cpp/Calculator.cpp \
+gen-cpp/Calculator.h \
+gen-cpp/SharedService.cpp \
+gen-cpp/SharedService.h \
+gen-cpp/shared_constants.cpp \
+gen-cpp/shared_constants.h \
+gen-cpp/shared_types.cpp \
+gen-cpp/shared_types.h \
+gen-cpp/tutorial_constants.cpp \
+gen-cpp/tutorial_constants.h \
+gen-cpp/tutorial_types.cpp \
+gen-cpp/tutorial_types.h
+
 GENCPP_TYPELIB_test = \
 gen-cpp-typelib/test_typelib.cpp \
 gen-cpp-typelib/test_typelib.h
+
+GENCPP_TUTORIAL_test = \
+gen-cpp-typelib/tutorial_typelib.cpp \
+gen-cpp-typelib/tutorial_typelib.h
 
 GENCPP_TYPELIB_test0 = \
 gen-cpp-typelib/test0_typelib.cpp \
@@ -628,15 +652,18 @@ gen-cpp-typelib/plugin_typelib.cpp \
 gen-cpp-typelib/plugin_typelib.h
 
 GENJSON_test = gen-json/test.json
+GENJSON_tutorial = gen-json/tutorial.json
 GENJSON_test0 = gen-json/test0.json
 GENJSON_plugin = gen-json/plugin.json
 BUILT_SOURCES = \
-$(GENCPP0_test0) $(GENCPP_test) \
+$(GENCPP_test0) $(GENCPP_test) $(GENCPP_tutorial) \
 $(GENCPP_TYPELIB_test) \
+$(GENCPP_TYPELIB_tutorial) \
 $(GENCPP_TYPELIB_test0) \
 $(GENCPP_TYPELIB_plugin) \
 $(GENJSON0_test0) \
 $(GENJSON_test) \
+$(GENJSON_tutorial) \
 $(GENJSON_plugin)
 
 CLEANFILES = $(BUILT_SOURCES)
@@ -650,6 +677,7 @@ test2_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDAD
 test2_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
+TUTORIAL_THRIFT = $(THRIFT_SRC_ROOT)/tutorial/tutorial.thrift
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -711,6 +739,18 @@ gen-cpp/test1-S1.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 gen-cpp/test1-S2.$(OBJEXT): gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-Calculator.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-SharedService.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-shared_constants.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-shared_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-tutorial_constants.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
+gen-cpp/test1-tutorial_types.$(OBJEXT): gen-cpp/$(am__dirstamp) \
+	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 gen-cpp-typelib/$(am__dirstamp):
 	@$(MKDIR_P) gen-cpp-typelib
 	@: > gen-cpp-typelib/$(am__dirstamp)
@@ -756,12 +796,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-Calculator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-S1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-S2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-SharedService.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-shared_constants.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-shared_types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test0_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test0_types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test_constants.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-test_types.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-tutorial_constants.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test1-tutorial_types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-S1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-S2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/test2-test_constants.Po@am__quote@
@@ -888,6 +934,90 @@ gen-cpp/test1-S2.obj: gen-cpp/S2.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/S2.cpp' object='gen-cpp/test1-S2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-S2.obj `if test -f 'gen-cpp/S2.cpp'; then $(CYGPATH_W) 'gen-cpp/S2.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/S2.cpp'; fi`
+
+gen-cpp/test1-Calculator.o: gen-cpp/Calculator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-Calculator.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-Calculator.Tpo -c -o gen-cpp/test1-Calculator.o `test -f 'gen-cpp/Calculator.cpp' || echo '$(srcdir)/'`gen-cpp/Calculator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-Calculator.Tpo gen-cpp/$(DEPDIR)/test1-Calculator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/Calculator.cpp' object='gen-cpp/test1-Calculator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-Calculator.o `test -f 'gen-cpp/Calculator.cpp' || echo '$(srcdir)/'`gen-cpp/Calculator.cpp
+
+gen-cpp/test1-Calculator.obj: gen-cpp/Calculator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-Calculator.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-Calculator.Tpo -c -o gen-cpp/test1-Calculator.obj `if test -f 'gen-cpp/Calculator.cpp'; then $(CYGPATH_W) 'gen-cpp/Calculator.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/Calculator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-Calculator.Tpo gen-cpp/$(DEPDIR)/test1-Calculator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/Calculator.cpp' object='gen-cpp/test1-Calculator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-Calculator.obj `if test -f 'gen-cpp/Calculator.cpp'; then $(CYGPATH_W) 'gen-cpp/Calculator.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/Calculator.cpp'; fi`
+
+gen-cpp/test1-SharedService.o: gen-cpp/SharedService.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-SharedService.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-SharedService.Tpo -c -o gen-cpp/test1-SharedService.o `test -f 'gen-cpp/SharedService.cpp' || echo '$(srcdir)/'`gen-cpp/SharedService.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-SharedService.Tpo gen-cpp/$(DEPDIR)/test1-SharedService.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/SharedService.cpp' object='gen-cpp/test1-SharedService.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-SharedService.o `test -f 'gen-cpp/SharedService.cpp' || echo '$(srcdir)/'`gen-cpp/SharedService.cpp
+
+gen-cpp/test1-SharedService.obj: gen-cpp/SharedService.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-SharedService.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-SharedService.Tpo -c -o gen-cpp/test1-SharedService.obj `if test -f 'gen-cpp/SharedService.cpp'; then $(CYGPATH_W) 'gen-cpp/SharedService.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/SharedService.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-SharedService.Tpo gen-cpp/$(DEPDIR)/test1-SharedService.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/SharedService.cpp' object='gen-cpp/test1-SharedService.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-SharedService.obj `if test -f 'gen-cpp/SharedService.cpp'; then $(CYGPATH_W) 'gen-cpp/SharedService.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/SharedService.cpp'; fi`
+
+gen-cpp/test1-shared_constants.o: gen-cpp/shared_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-shared_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-shared_constants.Tpo -c -o gen-cpp/test1-shared_constants.o `test -f 'gen-cpp/shared_constants.cpp' || echo '$(srcdir)/'`gen-cpp/shared_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-shared_constants.Tpo gen-cpp/$(DEPDIR)/test1-shared_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/shared_constants.cpp' object='gen-cpp/test1-shared_constants.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-shared_constants.o `test -f 'gen-cpp/shared_constants.cpp' || echo '$(srcdir)/'`gen-cpp/shared_constants.cpp
+
+gen-cpp/test1-shared_constants.obj: gen-cpp/shared_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-shared_constants.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-shared_constants.Tpo -c -o gen-cpp/test1-shared_constants.obj `if test -f 'gen-cpp/shared_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/shared_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/shared_constants.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-shared_constants.Tpo gen-cpp/$(DEPDIR)/test1-shared_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/shared_constants.cpp' object='gen-cpp/test1-shared_constants.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-shared_constants.obj `if test -f 'gen-cpp/shared_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/shared_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/shared_constants.cpp'; fi`
+
+gen-cpp/test1-shared_types.o: gen-cpp/shared_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-shared_types.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-shared_types.Tpo -c -o gen-cpp/test1-shared_types.o `test -f 'gen-cpp/shared_types.cpp' || echo '$(srcdir)/'`gen-cpp/shared_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-shared_types.Tpo gen-cpp/$(DEPDIR)/test1-shared_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/shared_types.cpp' object='gen-cpp/test1-shared_types.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-shared_types.o `test -f 'gen-cpp/shared_types.cpp' || echo '$(srcdir)/'`gen-cpp/shared_types.cpp
+
+gen-cpp/test1-shared_types.obj: gen-cpp/shared_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-shared_types.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-shared_types.Tpo -c -o gen-cpp/test1-shared_types.obj `if test -f 'gen-cpp/shared_types.cpp'; then $(CYGPATH_W) 'gen-cpp/shared_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/shared_types.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-shared_types.Tpo gen-cpp/$(DEPDIR)/test1-shared_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/shared_types.cpp' object='gen-cpp/test1-shared_types.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-shared_types.obj `if test -f 'gen-cpp/shared_types.cpp'; then $(CYGPATH_W) 'gen-cpp/shared_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/shared_types.cpp'; fi`
+
+gen-cpp/test1-tutorial_constants.o: gen-cpp/tutorial_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-tutorial_constants.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-tutorial_constants.Tpo -c -o gen-cpp/test1-tutorial_constants.o `test -f 'gen-cpp/tutorial_constants.cpp' || echo '$(srcdir)/'`gen-cpp/tutorial_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-tutorial_constants.Tpo gen-cpp/$(DEPDIR)/test1-tutorial_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/tutorial_constants.cpp' object='gen-cpp/test1-tutorial_constants.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-tutorial_constants.o `test -f 'gen-cpp/tutorial_constants.cpp' || echo '$(srcdir)/'`gen-cpp/tutorial_constants.cpp
+
+gen-cpp/test1-tutorial_constants.obj: gen-cpp/tutorial_constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-tutorial_constants.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-tutorial_constants.Tpo -c -o gen-cpp/test1-tutorial_constants.obj `if test -f 'gen-cpp/tutorial_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/tutorial_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/tutorial_constants.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-tutorial_constants.Tpo gen-cpp/$(DEPDIR)/test1-tutorial_constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/tutorial_constants.cpp' object='gen-cpp/test1-tutorial_constants.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-tutorial_constants.obj `if test -f 'gen-cpp/tutorial_constants.cpp'; then $(CYGPATH_W) 'gen-cpp/tutorial_constants.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/tutorial_constants.cpp'; fi`
+
+gen-cpp/test1-tutorial_types.o: gen-cpp/tutorial_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-tutorial_types.o -MD -MP -MF gen-cpp/$(DEPDIR)/test1-tutorial_types.Tpo -c -o gen-cpp/test1-tutorial_types.o `test -f 'gen-cpp/tutorial_types.cpp' || echo '$(srcdir)/'`gen-cpp/tutorial_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-tutorial_types.Tpo gen-cpp/$(DEPDIR)/test1-tutorial_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/tutorial_types.cpp' object='gen-cpp/test1-tutorial_types.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-tutorial_types.o `test -f 'gen-cpp/tutorial_types.cpp' || echo '$(srcdir)/'`gen-cpp/tutorial_types.cpp
+
+gen-cpp/test1-tutorial_types.obj: gen-cpp/tutorial_types.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp/test1-tutorial_types.obj -MD -MP -MF gen-cpp/$(DEPDIR)/test1-tutorial_types.Tpo -c -o gen-cpp/test1-tutorial_types.obj `if test -f 'gen-cpp/tutorial_types.cpp'; then $(CYGPATH_W) 'gen-cpp/tutorial_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/tutorial_types.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp/$(DEPDIR)/test1-tutorial_types.Tpo gen-cpp/$(DEPDIR)/test1-tutorial_types.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp/tutorial_types.cpp' object='gen-cpp/test1-tutorial_types.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp/test1-tutorial_types.obj `if test -f 'gen-cpp/tutorial_types.cpp'; then $(CYGPATH_W) 'gen-cpp/tutorial_types.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp/tutorial_types.cpp'; fi`
 
 gen-cpp-typelib/test1-test_typelib.o: gen-cpp-typelib/test_typelib.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Tpo -c -o gen-cpp-typelib/test1-test_typelib.o `test -f 'gen-cpp-typelib/test_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test_typelib.cpp
@@ -1396,11 +1526,17 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-$(GENCPP0_test0): test0.thrift
+$(GENCPP_test0): test0.thrift
 	$(THRIFT) --gen cpp -r test0.thrift
 
 $(GENCPP_test): test.thrift
 	$(THRIFT) --gen cpp -r test.thrift
+
+$(GENCPP_tutorial): $(TUTORIAL_THRIFT)
+	$(THRIFT) --gen cpp -r $^
+
+$(GENCPP_TYPELIB_tutorial): $(TUTORIAL_THRIFT)
+	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib $^
 
 $(GENCPP_TYPELIB_test): test.thrift
 	PATH=../../plugins/cpp:${PATH} $(THRIFT) -r -gen typelib:cpp,typelib test.thrift
@@ -1418,6 +1554,9 @@ $(GENJSON0_test0): test0.thrift
 
 $(GENJSON_test): test.thrift
 	$(THRIFT) --gen json -r test.thrift
+
+$(GENJSON_tutorial):  $(TUTORIAL_THRIFT)
+	$(THRIFT) --gen json -r $^
 
 $(GENJSON_plugin): $(PLUGIN_THRIFT)
 	$(THRIFT) -r -gen json $(PLUGIN_THRIFT)

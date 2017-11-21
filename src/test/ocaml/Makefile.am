@@ -43,3 +43,5 @@ gen-ocaml/test_types.cmx gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi
 nicejson_tests.cmo: TBytesTransport.cmo SerDes.cmo
 SerDes.cmo SerDes.cmx: TBytesTransport.cmo TBytesTransport.cmi
 TBytesTransport.cmi: TBytesTransport.ml
+
+.NOTPARALLEL:

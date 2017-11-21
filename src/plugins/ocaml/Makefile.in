@@ -726,6 +726,8 @@ SerDes.cmo SerDes.cmx: TBytesTransport.cmo TBytesTransport.cmi
 TBytesTransport.cmi: TBytesTransport.ml
 thrift-gen-ocamltypelib.cmo: SerDes.cmi TBytesTransport.cmi
 
+.NOTPARALLEL:
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
