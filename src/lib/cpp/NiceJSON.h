@@ -174,18 +174,23 @@ public:
     return protocol2json(id, ty, &protocol, permissive) ;
   }
 
-  string demarshal_to_binary(const string name, const json& jser) const {
-    const t_type_id id = lookup_type_id(name) ;
-    const t_type& ty = lookup_type(id) ;
+  std::string demarshal_to_binary(const string name, const json& jser) const {
     TMemoryBuffer* buffer = new TMemoryBuffer;
     boost::shared_ptr<TTransport> trans(buffer);
-    TBinaryProtocol protocol(trans);
-    json2protocol(id, ty, jser, &protocol) ;
+    boost::shared_ptr<TBinaryProtocol> protocol(new TBinaryProtocol(trans));
+
+    demarshal_to_binary(name, jser, protocol) ;
     
     uint8_t* buf;
     uint32_t size;
     buffer->getBuffer(&buf, &size);
     return std::string((char*)buf, (unsigned int)size);
+  }
+
+  void demarshal_to_binary(const string name, const json& jser, boost::shared_ptr<TBinaryProtocol>& proto) const {
+    const t_type_id id = lookup_type_id(name) ;
+    const t_type& ty = lookup_type(id) ;
+    json2protocol(id, ty, jser, proto.get()) ;
   }
 
   const apache::thrift::plugin::GeneratorInput& it() const { return x_ ; }

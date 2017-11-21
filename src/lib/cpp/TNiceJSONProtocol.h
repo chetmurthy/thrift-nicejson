@@ -20,23 +20,20 @@
 #ifndef _THRIFT_PROTOCOL_TNICEJSONPROTOCOL_H_
 #define _THRIFT_PROTOCOL_TNICEJSONPROTOCOL_H_ 1
 
+#include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/protocol/TVirtualProtocol.h>
 #include <thrift/transport/TBufferTransports.h>
 
 #include "json.hpp"
+#include "NiceJSON.h"
 
 using nlohmann::json;
 using namespace apache::thrift::transport;
+using namespace apache::thrift::nicejson;
 
 class transport_input_adapter : public nlohmann::detail::input_adapter_protocol {
 public:
-  transport_input_adapter(boost::shared_ptr<TTransport> trans) : xprt_(trans) {
-  }
-
-  transport_input_adapter(const std::string ser) {
-    boost::shared_ptr<TMemoryBuffer> mem(new TMemoryBuffer((uint8_t*)ser.data(),
-							   static_cast<uint32_t>(ser.length()))) ;
-    xprt_ = mem ;
+  transport_input_adapter(TTransport* trans) : xprt_(trans) {
   }
 
   int get_character() override {
@@ -57,13 +54,32 @@ public:
   }
 
   std::vector<char> buf ;
-  boost::shared_ptr<TTransport> xprt_ ;
+  TTransport* xprt_ ;
+} ;
+
+class convenient_transport_input_adapter : public nlohmann::detail::input_adapter_protocol {
+ public:
+ convenient_transport_input_adapter(const std::string ser) :
+  mem_(new TMemoryBuffer((uint8_t*)ser.data(),
+			 static_cast<uint32_t>(ser.length()))),
+    ia_(mem_.get())
+      {
+      }
+
+  int get_character() override { return ia_.get_character() ; }
+
+  std::string read(std::size_t offset, std::size_t length) override {
+    return ia_.read(offset, length) ;
+  }
+
+  boost::shared_ptr<TMemoryBuffer> mem_ ;
+  transport_input_adapter ia_ ;
 } ;
 
 json parse_via_transport(const std::string& s) {
   using nlohmann::detail::input_adapter ;
   using nlohmann::detail::input_adapter_protocol ;
-  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new transport_input_adapter(s)))) ;
+  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new convenient_transport_input_adapter(s)))) ;
   return j ;
 }
 
@@ -73,7 +89,8 @@ namespace protocol {
 
 class TNiceJSONProtocol : public TVirtualProtocol<TNiceJSONProtocol> {
 public:
-  TNiceJSONProtocol(boost::shared_ptr<TTransport> ptrans);
+  TNiceJSONProtocol(const std::string typelib, const std::string service,
+		    boost::shared_ptr<TTransport> ptrans);
 
   ~TNiceJSONProtocol();
 
@@ -173,8 +190,22 @@ public:
 
   uint32_t readBinary(std::string& str);
 
+ private:
+  void must_be_writing() ;
+  void must_be_reading() ;
+  void must_be_none() ;
+  
+
 private:
   TTransport* trans_;
+  enum { NONE, WRITING_MESSAGE, READING_MESSAGE, BROKEN } mode_ ;
+  std::string message_name_ ;
+  TMessageType message_type_ ;
+  int32_t message_seqid_ ;
+  boost::shared_ptr<TMemoryBuffer> message_buffer_ ;
+  boost::shared_ptr<TBinaryProtocol> message_proto_ ;
+  const std::string service_ ;
+  const NiceJSON& typelib_ ;
 };
 
 /**
@@ -186,8 +217,9 @@ public:
 
   virtual ~TNiceJSONProtocolFactory() {}
 
-  boost::shared_ptr<TProtocol> getProtocol(boost::shared_ptr<TTransport> trans) {
-    return boost::shared_ptr<TProtocol>(new TNiceJSONProtocol(trans));
+  boost::shared_ptr<TProtocol> getProtocol(const std::string typelib, const std::string service,
+					   boost::shared_ptr<TTransport> trans) {
+    return boost::shared_ptr<TProtocol>(new TNiceJSONProtocol(typelib, service, trans));
   }
 };
 }
