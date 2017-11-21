@@ -33,7 +33,7 @@ GENCPP_TYPELIB_test = \
 gen-cpp-typelib/test_typelib.cpp \
 gen-cpp-typelib/test_typelib.h
 
-GENCPP_TUTORIAL_test = \
+GENCPP_TYPELIB_tutorial = \
 gen-cpp-typelib/tutorial_typelib.cpp \
 gen-cpp-typelib/tutorial_typelib.h
 
