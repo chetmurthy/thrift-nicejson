@@ -76,12 +76,7 @@ class convenient_transport_input_adapter : public nlohmann::detail::input_adapte
   transport_input_adapter ia_ ;
 } ;
 
-json parse_via_transport(const std::string& s) {
-  using nlohmann::detail::input_adapter ;
-  using nlohmann::detail::input_adapter_protocol ;
-  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new convenient_transport_input_adapter(s)))) ;
-  return j ;
-}
+json parse_via_transport(const std::string& s) ;
 
 namespace apache {
 namespace thrift {

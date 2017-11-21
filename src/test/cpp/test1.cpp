@@ -21,6 +21,7 @@
 #include "gen-cpp/test_types.h"
 #include "gen-cpp-typelib/test_typelib.h"
 
+#include "TNiceJSONProtocol.h"
 #include "NiceJSON.h"
 
 using boost::shared_ptr;
@@ -35,6 +36,8 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::nicejson;
 
+const std::string kTypelib = "thrift_test/test" ;
+
 bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
   if (this->a != that.a) return this->a < that.a ;
   if (this->b != that.b) return this->b < that.b ;
@@ -43,7 +46,7 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
 
 template<typename T>
 void RoundTrip(const string& structname, const json& json1) {
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib(kTypelib)) ;
 
   T obj ;
   tt.demarshal(structname, json1, &obj) ;
@@ -54,7 +57,7 @@ void RoundTrip(const string& structname, const json& json1) {
 
 template<typename T>
 void RoundTrip2(const string& structname, const T& arg) {
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib(kTypelib)) ;
 
   json j = tt.marshal(structname, arg) ;
   std::cout << j << std::endl ;
@@ -307,7 +310,7 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
 
 BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
 {
-  const NiceJSON& testtt = *(NiceJSON::lookup_typelib("thrift_test/test")) ;
+  const NiceJSON& testtt = *(NiceJSON::lookup_typelib(kTypelib)) ;
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
 
   json j = tt.marshal("GeneratorInput", testtt.it()) ;
@@ -326,6 +329,119 @@ BOOST_AUTO_TEST_CASE( S2_foo_args )
   args.__isset.w = true ;
 
   RoundTrip2<thrift_test::S2_foo_args>("S2_foo_args", args) ;
+}
+
+std::string memory_buffer_contents(boost::shared_ptr<TMemoryBuffer>& mem) {
+  uint8_t* buf;
+  uint32_t size;
+  mem->getBuffer(&buf, &size);
+  std::string contents((char*)buf, (unsigned int)size);
+  return contents ;
+}
+
+TMemoryBuffer* new_memory_buffer_with_contents(const std::string& contents) {
+  TMemoryBuffer* mem = new TMemoryBuffer() ;
+  mem->resetBuffer((uint8_t*)(contents.data()), contents.length()) ;
+  return mem ;
+}
+
+template<typename T>
+void MessageRoundTrip2(const string& service, const string& operation,
+		      const TMessageType messageType,
+		      const int32_t seqid,
+		      const T& arg) {
+
+  using apache::thrift::protocol::TNiceJSONProtocol ;
+
+  boost::shared_ptr<TMemoryBuffer> trans(new TMemoryBuffer()) ;
+  boost::shared_ptr<TNiceJSONProtocol> proto(new TNiceJSONProtocol(kTypelib, service, trans)) ;
+  proto->writeMessageBegin(operation, messageType, seqid) ;
+  arg.write(proto.get()) ;
+  proto->writeMessageEnd() ;
+
+  string read_operation ;
+  TMessageType read_messageType ;
+  int32_t read_seqid ;
+  proto->readMessageBegin(read_operation, read_messageType, read_seqid) ;
+  T rv ;
+  rv.read(proto.get()) ;
+  proto->readMessageEnd() ;
+  BOOST_CHECK( read_operation == operation ) ;
+  BOOST_CHECK( read_messageType == messageType ) ;
+  BOOST_CHECK( read_seqid == seqid ) ;
+  BOOST_CHECK( rv == arg);
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_args_2 )
+{
+  thrift_test::S2_foo_args args ;
+  args.logid = 1 ;
+  args.__isset.logid = true ;
+  thrift_test::Bar v;
+  v.a = 10 ;
+  v.b = "foo" ;
+  args.w = v ;
+  args.__isset.w = true ;
+
+  using apache::thrift::protocol::TNiceJSONProtocol ;
+
+  boost::shared_ptr<TMemoryBuffer> trans(new TMemoryBuffer()) ;
+  boost::shared_ptr<TNiceJSONProtocol> proto(new TNiceJSONProtocol(kTypelib, "S2", trans)) ;
+  proto->writeMessageBegin("foo", T_CALL, 1l) ;
+  args.write(proto.get()) ;
+  proto->writeMessageEnd() ;
+
+  std::cout << memory_buffer_contents(trans) ;
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_args_3 )
+{
+  thrift_test::S2_foo_args args ;
+  args.logid = 1 ;
+  args.__isset.logid = true ;
+  thrift_test::Bar v;
+  v.a = 10 ;
+  v.b = "foo" ;
+  args.w = v ;
+  args.__isset.w = true ;
+
+  MessageRoundTrip2<thrift_test::S2_foo_args>("S2", "foo", T_CALL, 1l, args) ;
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_args_4 )
+{
+  thrift_test::S2_foo_args args ;
+  const std::string msg = R"FOO(
+{"body":{"logid":1,"w":{"a":10,"b":"foo"}},"name":"foo","seqid":1,"type":"call"}
+)FOO" ;
+
+  boost::shared_ptr<TMemoryBuffer> trans(new_memory_buffer_with_contents(msg)) ;
+  boost::shared_ptr<TNiceJSONProtocol> proto(new TNiceJSONProtocol(kTypelib, "S2", trans)) ;
+  string read_operation ;
+  TMessageType read_messageType ;
+  int32_t read_seqid ;
+  proto->readMessageBegin(read_operation, read_messageType, read_seqid) ;
+  args.read(proto.get()) ;
+  proto->readMessageEnd() ;
+  BOOST_CHECK( read_operation == "foo" ) ;
+  BOOST_CHECK( read_messageType == T_CALL ) ;
+  BOOST_CHECK( read_seqid == 1l ) ;
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_args_5 )
+{
+  thrift_test::S2_foo_args args ;
+  const std::string msg = R"FOO(
+{"body":{"logid":1,"w":{"a":10,"b":
+)FOO" ;
+
+  boost::shared_ptr<TMemoryBuffer> trans(new_memory_buffer_with_contents(msg)) ;
+  boost::shared_ptr<TNiceJSONProtocol> proto(new TNiceJSONProtocol(kTypelib, "S2", trans)) ;
+  string read_operation ;
+  TMessageType read_messageType ;
+  int32_t read_seqid ;
+  BOOST_CHECK_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
+		     apache::thrift::protocol::TProtocolException );
 }
 
 BOOST_AUTO_TEST_CASE( S2_foo_result )

@@ -34,6 +34,13 @@
 
 using namespace apache::thrift::transport;
 
+json parse_via_transport(const std::string& s) {
+  using nlohmann::detail::input_adapter ;
+  using nlohmann::detail::input_adapter_protocol ;
+  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new convenient_transport_input_adapter(s)))) ;
+  return j ;
+}
+
 namespace apache {
 namespace thrift {
 namespace protocol {
@@ -50,7 +57,7 @@ namespace protocol {
     message_buffer_(nullptr),
     message_proto_(nullptr),
     service_(service),
-    typelib_(*NiceJSON::lookup_typelib(service))
+    typelib_(*NiceJSON::lookup_typelib(typelib))
   {
   }
 
@@ -260,7 +267,12 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
   must_be_none() ;
   using nlohmann::detail::input_adapter ;
   using nlohmann::detail::input_adapter_protocol ;
-  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new transport_input_adapter(trans_)))) ;
+  json j ;
+  try {
+    j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new transport_input_adapter(trans_)))) ;
+  } catch (nlohmann::detail::parse_error e) {
+    throw TProtocolException(str(boost::format{"TNiceJSONProtocol: parse error: %s"} % e.what())) ;
+  }
   {
     if (j.count("type") == 0)
       throw TProtocolException("TNiceJSONProtocol: bad JSON, missing type element") ;
