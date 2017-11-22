@@ -833,7 +833,7 @@ void NiceJSON::register_typelib(const string& key, NiceJSON const * const p) {
 }
 
 void NiceJSON::register_typelib(const string& package, const string& name, NiceJSON const * const p) {
-  const string key = package + "/" + name ;
+  const string key = package + "." + name ;
   return register_typelib(key, p) ;
 }
 

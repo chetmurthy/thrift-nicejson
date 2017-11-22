@@ -35,7 +35,9 @@ gen-cpp-typelib/test_typelib.h
 
 GENCPP_TYPELIB_tutorial = \
 gen-cpp-typelib/tutorial_typelib.cpp \
-gen-cpp-typelib/tutorial_typelib.h
+gen-cpp-typelib/tutorial_typelib.h \
+gen-cpp-typelib/shared_typelib.cpp \
+gen-cpp-typelib/shared_typelib.h
 
 GENCPP_TYPELIB_test0 = \
 gen-cpp-typelib/test0_typelib.cpp \

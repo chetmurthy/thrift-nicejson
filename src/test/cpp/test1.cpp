@@ -20,6 +20,9 @@
 #include "gen-cpp/plugin_types.h"
 #include "gen-cpp/test_types.h"
 #include "gen-cpp-typelib/test_typelib.h"
+#include "gen-cpp/tutorial_types.h"
+#include "gen-cpp-typelib/tutorial_typelib.h"
+#include "gen-cpp-typelib/shared_typelib.h"
 
 #include "TNiceJSONProtocol.h"
 #include "NiceJSON.h"
@@ -36,7 +39,7 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 using namespace apache::thrift::nicejson;
 
-const std::string kTestTypelib = "thrift_test/test" ;
+const std::string kTestTypelib = "thrift_test.test" ;
 
 bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
   if (this->a != that.a) return this->a < that.a ;
@@ -45,8 +48,8 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
 }
 
 template<typename T>
-void RoundTrip(const string& structname, const json& json1) {
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib(kTestTypelib)) ;
+void RoundTrip(const string& structname, const json& json1, const std::string& typelib = kTestTypelib) {
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib(typelib)) ;
 
   T obj ;
   tt.demarshal(structname, json1, &obj) ;
@@ -56,11 +59,10 @@ void RoundTrip(const string& structname, const json& json1) {
 }
 
 template<typename T>
-void RoundTrip2(const string& structname, const T& arg) {
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib(kTestTypelib)) ;
+void RoundTrip2(const string& structname, const T& arg, const std::string& typelib = kTestTypelib) {
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib(typelib)) ;
 
   json j = tt.marshal(structname, arg) ;
-  std::cout << j << std::endl ;
   T rv ;
   tt.demarshal(structname, j, &rv) ;
   BOOST_CHECK( rv == arg );
@@ -122,7 +124,7 @@ BOOST_AUTO_TEST_CASE( Ha1 )
 
 BOOST_AUTO_TEST_CASE( IO1 )
 {
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin.plugin")) ;
     {
       std::string serialized = apache::thrift::ThriftDebugString(tt.it()) ;
       cout << serialized << std::endl ;
@@ -187,7 +189,7 @@ BOOST_AUTO_TEST_CASE( Bar2 )
 
 BOOST_AUTO_TEST_CASE( BarMismatch )
 {
-  const NiceJSON& oldtt = *(NiceJSON::lookup_typelib("thrift_test0/test0")) ;
+  const NiceJSON& oldtt = *(NiceJSON::lookup_typelib("thrift_test0.test0")) ;
 
   Mismatch<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" },  }, oldtt, "{}"_json, false) ;
   Mismatch<thrift_test::Bar>(
@@ -298,7 +300,7 @@ BOOST_AUTO_TEST_CASE( Boo3 )
 
 BOOST_AUTO_TEST_CASE( Plugin1 )
 {
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin.plugin")) ;
 
   std::cout << apache::thrift::ThriftDebugString(tt.it()) << std::endl ;
 
@@ -311,7 +313,7 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
 BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
 {
   const NiceJSON& testtt = *(NiceJSON::lookup_typelib(kTestTypelib)) ;
-  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin/plugin")) ;
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin.plugin")) ;
 
   json j = tt.marshal("GeneratorInput", testtt.it()) ;
   std::cout << j << std::endl ;
@@ -463,4 +465,14 @@ BOOST_AUTO_TEST_CASE( S2_foo_result_2 )
   result.__isset.ouch2 = true ;
 
   RoundTrip2<thrift_test::S2_foo_result>("S2_foo_result", result) ;
+}
+
+BOOST_AUTO_TEST_CASE( shared_SharedStruct )
+{
+  shared::SharedStruct x ;
+  x.__set_key(42) ;
+  x.__set_value("foo") ;
+
+  RoundTrip2<shared::SharedStruct>("shared::SharedStruct", x, "tutorial.tutorial") ;
+  RoundTrip2<shared::SharedStruct>("SharedStruct", x, "shared.shared") ;
 }

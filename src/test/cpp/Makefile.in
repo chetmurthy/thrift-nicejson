@@ -123,7 +123,8 @@ am__objects_3 = gen-cpp/test1-Calculator.$(OBJEXT) \
 	gen-cpp/test1-tutorial_constants.$(OBJEXT) \
 	gen-cpp/test1-tutorial_types.$(OBJEXT)
 am__objects_4 = gen-cpp-typelib/test1-test_typelib.$(OBJEXT)
-am__objects_5 = gen-cpp-typelib/test1-tutorial_typelib.$(OBJEXT)
+am__objects_5 = gen-cpp-typelib/test1-tutorial_typelib.$(OBJEXT) \
+	gen-cpp-typelib/test1-shared_typelib.$(OBJEXT)
 am__objects_6 = gen-cpp-typelib/test1-test0_typelib.$(OBJEXT)
 am__objects_7 = gen-cpp-typelib/test1-plugin_typelib.$(OBJEXT)
 am__objects_8 =
@@ -643,7 +644,9 @@ gen-cpp-typelib/test_typelib.h
 
 GENCPP_TYPELIB_tutorial = \
 gen-cpp-typelib/tutorial_typelib.cpp \
-gen-cpp-typelib/tutorial_typelib.h
+gen-cpp-typelib/tutorial_typelib.h \
+gen-cpp-typelib/shared_typelib.cpp \
+gen-cpp-typelib/shared_typelib.h
 
 GENCPP_TYPELIB_test0 = \
 gen-cpp-typelib/test0_typelib.cpp \
@@ -765,6 +768,9 @@ gen-cpp-typelib/test1-test_typelib.$(OBJEXT):  \
 gen-cpp-typelib/test1-tutorial_typelib.$(OBJEXT):  \
 	gen-cpp-typelib/$(am__dirstamp) \
 	gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
+gen-cpp-typelib/test1-shared_typelib.$(OBJEXT):  \
+	gen-cpp-typelib/$(am__dirstamp) \
+	gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
 gen-cpp-typelib/test1-test0_typelib.$(OBJEXT):  \
 	gen-cpp-typelib/$(am__dirstamp) \
 	gen-cpp-typelib/$(DEPDIR)/$(am__dirstamp)
@@ -799,6 +805,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test1-test1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test2-test2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-plugin_typelib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-test_typelib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp-typelib/$(DEPDIR)/test1-tutorial_typelib.Po@am__quote@
@@ -1052,6 +1059,20 @@ gen-cpp-typelib/test1-tutorial_typelib.obj: gen-cpp-typelib/tutorial_typelib.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/tutorial_typelib.cpp' object='gen-cpp-typelib/test1-tutorial_typelib.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-tutorial_typelib.obj `if test -f 'gen-cpp-typelib/tutorial_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/tutorial_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/tutorial_typelib.cpp'; fi`
+
+gen-cpp-typelib/test1-shared_typelib.o: gen-cpp-typelib/shared_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-shared_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Tpo -c -o gen-cpp-typelib/test1-shared_typelib.o `test -f 'gen-cpp-typelib/shared_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/shared_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/shared_typelib.cpp' object='gen-cpp-typelib/test1-shared_typelib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-shared_typelib.o `test -f 'gen-cpp-typelib/shared_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/shared_typelib.cpp
+
+gen-cpp-typelib/test1-shared_typelib.obj: gen-cpp-typelib/shared_typelib.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-shared_typelib.obj -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Tpo -c -o gen-cpp-typelib/test1-shared_typelib.obj `if test -f 'gen-cpp-typelib/shared_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/shared_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/shared_typelib.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Tpo gen-cpp-typelib/$(DEPDIR)/test1-shared_typelib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='gen-cpp-typelib/shared_typelib.cpp' object='gen-cpp-typelib/test1-shared_typelib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -c -o gen-cpp-typelib/test1-shared_typelib.obj `if test -f 'gen-cpp-typelib/shared_typelib.cpp'; then $(CYGPATH_W) 'gen-cpp-typelib/shared_typelib.cpp'; else $(CYGPATH_W) '$(srcdir)/gen-cpp-typelib/shared_typelib.cpp'; fi`
 
 gen-cpp-typelib/test1-test0_typelib.o: gen-cpp-typelib/test0_typelib.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test1_CXXFLAGS) $(CXXFLAGS) -MT gen-cpp-typelib/test1-test0_typelib.o -MD -MP -MF gen-cpp-typelib/$(DEPDIR)/test1-test0_typelib.Tpo -c -o gen-cpp-typelib/test1-test0_typelib.o `test -f 'gen-cpp-typelib/test0_typelib.cpp' || echo '$(srcdir)/'`gen-cpp-typelib/test0_typelib.cpp
