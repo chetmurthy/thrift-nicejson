@@ -5,6 +5,7 @@ thrift-gen-myjson
 jsontest
 test1
 test2
+test3
 thrift-gen-typelib
 ns_utils_test
 *.a
