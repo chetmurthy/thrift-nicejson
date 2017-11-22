@@ -95,25 +95,22 @@ uint32_t TNiceJSONProtocol::writeMessageBegin(const std::string& name,
   return 0l ;
 }
 
-std::string struct_name(const std::string service, const std::string name, TMessageType messageType) {
-  std::string structname = service + "_" + name ;
+std::string struct_name(const NiceJSON& typelib, const std::string service, const std::string name, TMessageType messageType) {
   switch (messageType) {
   case T_CALL: {
-    structname += "_args" ;
+    return typelib.service_struct_names(service, name).first ;
     break ;
   }
   case T_REPLY: {
-    structname += "_result" ;
+    return typelib.service_struct_names(service, name).second ;
     break ;
   }
   case T_EXCEPTION: {
     assert(false) ;
-    break ;
   }
   default:
     assert(false) ;
   }
-  return structname ;
 }
 
 std::string json_message_type(TMessageType messageType) {
@@ -139,7 +136,7 @@ uint32_t TNiceJSONProtocol::writeMessageEnd() {
   must_be_writing() ;
   mode_ = BROKEN ; // so if we fail, the transport is marked broken ;
 
-  std::string structname = struct_name(service_, message_name_, message_type_) ;
+  std::string structname = struct_name(typelib_, service_, message_name_, message_type_) ;
   std::string json_msgType = json_message_type(message_type_) ;
   
   json j = typelib_.marshal_from_binary(structname, message_buffer_) ;
@@ -313,7 +310,7 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
   message_buffer_.swap(newbuf) ;
   message_proto_.swap(newproto) ;
 
-  std::string structname = struct_name(service_, message_name_, message_type_) ;
+  std::string structname = struct_name(typelib_, service_, message_name_, message_type_) ;
   typelib_.demarshal_to_binary(structname, j["body"], message_proto_) ;
 
   mode_ = READING_MESSAGE ;

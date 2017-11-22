@@ -89,22 +89,22 @@ void NiceJSON::add_struct_lookaside(const t_type_id id, const std::string& fqcpp
   xtra_types[id] = tt ;
 }
 
-std::string NiceJSON::program_cpp_prefix(const t_struct& ts, const t_program_id program_id) {
+std::string NiceJSON::program_cpp_prefix(const t_program_id program_id, const std::string& name) {
   auto pp = program_lookaside_.find(program_id) ;
   if (pp == program_lookaside_.end()) {
     std::string msg = str(boost::format{"malformed typelib: struct %s found but missing t_program %ld"} %
-			  ts.metadata.name % program_id) ;
+			  name % program_id) ;
     std::cerr << msg << std::endl ;
     throw NiceJSONError(msg) ;
   }
   auto nn = pp->second.namespaces.find("cpp") ;
   if (nn == pp->second.namespaces.end()) {
     std::string msg = str(boost::format{"malformed typelib: struct %s has no (required!) cpp namespace"} %
-			  ts.metadata.name) ;
+			  name) ;
     std::cerr << msg << std::endl ;
     throw NiceJSONError(msg) ;
   }
-  return nn->second ;
+  return nn->second + "::" + name ;
 }
 
 void NiceJSON::initialize() {
@@ -167,7 +167,7 @@ void NiceJSON::initialize() {
 	
 	std::string fqcppname = ts_result.metadata.name;
 	if (tser.metadata.program_id != program_id_) {
-	  fqcppname = program_cpp_prefix(ts_result, tser.metadata.program_id) + "::" + fqcppname ;
+	  fqcppname = program_cpp_prefix(tser.metadata.program_id, fqcppname) ;
 	}
 	add_struct_lookaside(nextid++, fqcppname, ts_result) ;
       }
@@ -183,7 +183,7 @@ void NiceJSON::initialize() {
 	
 	std::string fqcppname = ts_real_args.metadata.name;
 	if (tser.metadata.program_id != program_id_) {
-	  fqcppname = program_cpp_prefix(ts_real_args, tser.metadata.program_id) + "::" + fqcppname ;
+	  fqcppname = program_cpp_prefix(tser.metadata.program_id, fqcppname) ;
 	}
 	add_struct_lookaside(nextid++, fqcppname, ts_real_args) ;
       }
@@ -211,7 +211,7 @@ void NiceJSON::initialize() {
 
       std::string fqcppname = ts.metadata.name ;
       if (ts.metadata.program_id != program_id_) {
-	  fqcppname = program_cpp_prefix(ts, ts.metadata.program_id) + "::" + fqcppname ;
+	fqcppname = program_cpp_prefix(ts.metadata.program_id, fqcppname) ;
       }
 
       if (structs_by_name.find(fqcppname) != structs_by_name.end()) {
@@ -233,6 +233,52 @@ void NiceJSON::initialize() {
 	p.byi32[ii->value] = ii->name ;
       }
     }
+  }
+  for (auto ii = allservices.begin(); ii != allservices.end() ; ++ii) {
+    const t_service_id id= ii->first ;
+    const t_service& tser = ii->second ;
+    service_lookaside_[tser.metadata.name] = {} ;
+    add_service_lookasides(id, id) ;
+  }
+
+#if 0
+  for (auto aa = service_lookaside_.begin() ; aa != service_lookaside_.end() ; ++aa) {
+    std::cout << "service " << aa->first << std::endl ;
+    for (auto bb = aa->second.begin() ; bb != aa->second.end() ; ++bb) {
+      auto fname = bb->first ;
+      auto args = bb->second.first ;
+      auto result = bb->second.second ;
+      std::cout << "\t" << fname << ": " << args << ", " << result << std::endl ;
+    }
+  }
+#endif
+}
+
+void NiceJSON::add_service_lookasides(t_service_id dst, t_service_id svc) {
+  auto dd = it().type_registry.services.find(dst) ;
+  if (dd == it().type_registry.services.end()) {
+    throw NiceJSONError("bad typelib(1)") ;
+  }
+  const t_service& dstser =dd->second ;
+  auto ee = it().type_registry.services.find(svc) ;
+  if (ee == it().type_registry.services.end()) {
+    throw NiceJSONError("bad typelib(2)") ;
+  }
+  const t_service& svcser = ee->second ;
+
+  for (auto ff = svcser.functions.begin() ; ff != svcser.functions.end() ; ++ff) {
+    std::string name = svcser.metadata.name + "_" + ff->name ;
+    if (svcser.metadata.program_id != program_id_) {
+      service_lookaside_[dstser.metadata.name][ff->name] =
+	{ program_cpp_prefix(svcser.metadata.program_id, name + "_args") ,
+	  program_cpp_prefix(svcser.metadata.program_id, name + "_result") } ;
+    } else {
+      service_lookaside_[dstser.metadata.name][ff->name] =
+	{ name + "_args" , name + "_result" } ;
+    }
+  }
+  if (svcser.__isset.extends_) {
+    add_service_lookasides(dst, svcser.extends_) ;
   }
 }
 

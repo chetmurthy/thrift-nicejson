@@ -133,7 +133,8 @@ public:
   }
 
   void initialize() ;
-  std::string program_cpp_prefix(const t_struct& ts, const t_program_id program_id) ;
+  std::string program_cpp_prefix(const t_program_id program_id, const std::string& name) ;
+  void add_service_lookasides(t_service_id dst, t_service_id svc) ;
   void add_struct_lookaside(const t_type_id id, const std::string& fqcppname, const t_struct& ts) ;
 
  public:
@@ -253,6 +254,17 @@ public:
     return ii->second ;
   }
 
+  const std::pair<std::string, std::string>& service_struct_names(const std::string& service, const std::string& operation) const {
+    auto aa = service_lookaside_.find(service) ;
+    if (aa == service_lookaside_.end()) {
+      throw NiceJSONError("unknown service") ;
+    }
+    auto bb = aa->second.find(operation) ;
+    if (bb == aa->second.end()) {
+      throw NiceJSONError("unknown operation") ;
+    }
+    return bb->second ;
+  }
 
   static void register_typelib(const string& package, const string& name, const NiceJSON *p) ;
   static void register_typelib(const string& key, NiceJSON const * const p) ;
@@ -272,9 +284,10 @@ public:
   t_program_id program_id_ ;
   map<t_program_id, t_program> program_lookaside_ ;
   map<t_type_id, t_struct_lookaside> struct_lookaside ;
-  map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<string, t_type_id> structs_by_name ;
+  map<t_type_id, t_enum_lookaside> enum_lookaside ;
   map<t_type_id, t_type> xtra_types;
+  map<std::string, map<std::string, std::pair<std::string, std::string> > > service_lookaside_ ;
 
   static type_library_t *type_library_() {
     static type_library_t *type_library = new type_library_t() ;

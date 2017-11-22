@@ -1,8 +1,9 @@
-#include <string>
 #include <fstream>
 #include <iostream>
-#include <streambuf>
 #include <iostream>
+#include <streambuf>
+#include <string>
+#include <tuple>
 
 #define BOOST_TEST_MODULE NiceJSONStaticTest
 #include <boost/test/included/unit_test.hpp>
@@ -31,6 +32,7 @@ using boost::shared_ptr;
 using std::cout;
 using std::endl;
 using std::string;
+using std::pair;
 using std::map;
 using std::list;
 using std::set;
@@ -475,4 +477,23 @@ BOOST_AUTO_TEST_CASE( shared_SharedStruct )
 
   RoundTrip2<shared::SharedStruct>("shared::SharedStruct", x, "tutorial.tutorial") ;
   RoundTrip2<shared::SharedStruct>("SharedStruct", x, "shared.shared") ;
+}
+
+BOOST_AUTO_TEST_CASE( service_struct_names )
+{
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("tutorial.tutorial")) ;
+
+  BOOST_CHECK( (tt.service_struct_names("Calculator", "add") ==
+		pair<string, string>{ "Calculator_add_args", "Calculator_add_result" }) ) ;
+
+  BOOST_CHECK( (tt.service_struct_names("Calculator", "getStruct") ==
+		pair<string, string>{ "shared::SharedService_getStruct_args", "shared::SharedService_getStruct_result" }) ) ;
+}
+
+BOOST_AUTO_TEST_CASE( service_struct_names_2 )
+{
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib("shared.shared")) ;
+
+  BOOST_CHECK( (tt.service_struct_names("SharedService", "getStruct") ==
+		pair<string, string>{ "SharedService_getStruct_args", "SharedService_getStruct_result" }) ) ;
 }
