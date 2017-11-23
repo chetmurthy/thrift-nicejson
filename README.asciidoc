@@ -59,6 +59,12 @@ The adapted Thrift C\++ Tutorial example can be found in
 demonstrates most of the capabilities of the library.  All the tests
 can be automatically built and run with `make check`.
 
+[[tutorial-faq-links]]
+== Tutorial and FAQ
+
+link:docs/tutorial.asciidoc[A Tutorial for using this library can be found here.]
+link:docs/faq.asciidoc[A FAQ can be found here.]
+
 [[why-does-thrift-need-nice-json-serialization]]
 == Why does Thrift need "nice JSON" serialization?
 

@@ -1,0 +1,7 @@
+[[faq]]
+thrift-nicejson Frequently Asked Questions
+================================================
+:toc:
+:toc-placement: preamble
+
+None yet, sadly.
