@@ -30,14 +30,14 @@ instance) we assume various files are already installed).
    IDL file declares -- you'll use it later.
 
 3. Generate C++ files as usual:
-   ....
-   thrift -r --gen cpp tutorial.thrift
-   ....
+....
+thrift -r --gen cpp tutorial.thrift
+....
 
 4. Generate C++ typelib files (using the nicejson typelib plugin)
-   ....
-   thrift -r --gen typelib:cpp,typelib tutorial.thrift
-   ....
+....
+thrift -r --gen typelib:cpp,typelib tutorial.thrift
+....
 
    The latter command generates C++ typelib files into
    `gen-cpp-typelib` and binary and JSON typelib files into
@@ -75,9 +75,9 @@ instance) we assume various files are already installed).
    `boost_thread).
 
 8. You should be able to run the examples just like like the
-unmodified ones.  But of course, you can't tell that they're talking
-JSON-over-HTTP without (e.g.) a packet-sniffer.  But you *can* invoke
-them with JSON-over-HTTP:
+   unmodified ones.  But of course, you can't tell that they're
+   talking JSON-over-HTTP without (e.g.) a packet-sniffer.  But you
+   *can* invoke them with JSON-over-HTTP:
 
 ....
 % POST -c 'application/x-thrift' http://localhost:9090/
