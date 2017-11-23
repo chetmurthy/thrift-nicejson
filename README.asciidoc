@@ -26,7 +26,7 @@ replies with
 {"body":{"success":2},"name":"add","seqid":0,"type":"reply"}
 ....
 
-The implementation is in C++, and via FFI it can be made available to
+The implementation is in C\++, and via FFI it can be made available to
 other Thrift languages, e.g. currently Python and Ocaml.
 
 [[installation]]
@@ -53,8 +53,8 @@ nonstandard location, e.g. `$HOME/tmp/thrift-nicejson` via
 % ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here>
 ....
 
-The adapted Thrift C++ Tutorial example can be found in
-`src/examples/cpp` and tests in C++, Python, and Ocaml can be found in
+The adapted Thrift C\++ Tutorial example can be found in
+`src/examples/cpp` and tests in C\++, Python, and Ocaml can be found in
 `src/test/{cpp,python,ocaml}`. In particular, `src/test/cpp`
 demonstrates most of the capabilities of the library.  All the tests
 can be automatically built and run with `make check`.
@@ -67,7 +67,7 @@ I'm a big fan of Apache Thrift, for many reasons:
 1.  modular, so you can modify bits of the underlying infrastructure
 without forking the entire thing. I've
 
-* ported (C++) Thrift to run on Infiniband ibverbs
+* ported (C\++) Thrift to run on Infiniband ibverbs
 * modified the way server- and client-side wrappers are initialized, so
 that a connection established from process P1 to process P2, can be used
 by process P2 to send RPCs to process P1
@@ -120,7 +120,7 @@ as-is, b/c as far as I'm concerned, I'm happy to cede ownership of this
 code to Apache, with the following exceptions:
 
 * The file "json.hpp" was copied with permission from
-https://github.com/nlohmann/json[JSON for Modern C++] created by Neils
+https://github.com/nlohmann/json[JSON for Modern C\++] created by Neils
 Lohmann, and he continues to own it. He licenses that file under the MIT
 license (included in the source). This thing is bloody lovely marvel.
 * And of course, there are a bunch of GNU files, owned by their
