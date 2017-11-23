@@ -119,5 +119,6 @@ AC_CONFIG_FILES([Makefile
                  src/test/cpp/Makefile
                  src/test/py/Makefile
                  src/test/ocaml/Makefile
+                 src/examples/cpp/Makefile
 		 src/tools/cpp/Makefile])
 AC_OUTPUT

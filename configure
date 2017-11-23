@@ -21664,7 +21664,7 @@ _ACEOF
 
 # Checks for library functions.
 
-ac_config_files="$ac_config_files Makefile src/lib/cpp/Makefile src/lib/py/Makefile src/lib/ocaml/Makefile src/plugins/cpp/Makefile src/plugins/ocaml/Makefile src/test/cpp/Makefile src/test/py/Makefile src/test/ocaml/Makefile src/tools/cpp/Makefile"
+ac_config_files="$ac_config_files Makefile src/lib/cpp/Makefile src/lib/py/Makefile src/lib/ocaml/Makefile src/plugins/cpp/Makefile src/plugins/ocaml/Makefile src/test/cpp/Makefile src/test/py/Makefile src/test/ocaml/Makefile src/examples/cpp/Makefile src/tools/cpp/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -22804,6 +22804,7 @@ do
     "src/test/cpp/Makefile") CONFIG_FILES="$CONFIG_FILES src/test/cpp/Makefile" ;;
     "src/test/py/Makefile") CONFIG_FILES="$CONFIG_FILES src/test/py/Makefile" ;;
     "src/test/ocaml/Makefile") CONFIG_FILES="$CONFIG_FILES src/test/ocaml/Makefile" ;;
+    "src/examples/cpp/Makefile") CONFIG_FILES="$CONFIG_FILES src/examples/cpp/Makefile" ;;
     "src/tools/cpp/Makefile") CONFIG_FILES="$CONFIG_FILES src/tools/cpp/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

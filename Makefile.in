@@ -394,7 +394,9 @@ AUTOMAKE_OPTIONS = foreign
 LIB_SUBDIRS = src/lib/cpp $(am__append_1) $(am__append_3)
 PLUGIN_SUBDIRS = src/plugins/cpp $(am__append_4)
 TEST_SUBDIRS = src/test/cpp $(am__append_2) $(am__append_5)
-SUBDIRS = $(LIB_SUBDIRS) $(PLUGIN_SUBDIRS) $(TEST_SUBDIRS)
+EXAMPLES_SUBDIR = src/examples/cpp
+TOOLS_SUBDIR = src/tools/cpp
+SUBDIRS = $(LIB_SUBDIRS) $(PLUGIN_SUBDIRS) $(TEST_SUBDIRS) $(EXAMPLES_SUBDIRS) $(TOOLS_SUBDIRS)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
