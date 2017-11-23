@@ -30,8 +30,7 @@ The implementation is in C++, and via FFI it can be made available to
 other Thrift languages, e.g. currently Python and Ocaml.
 
 [[installation]]
-Installation
-~~~~~~~~~~~~
+== Installation
 
 This library requires a relatively recent Thrift installation (version
 0.10.0 or newer) and _also_ a Thrift source-tree (for access to a few
@@ -59,8 +58,7 @@ particular, `src/test/cpp` demonstrates most of the capabilities of the
 library.
 
 [[why-does-thrift-need-nice-json-serialization]]
-Why does Thrift need "nice JSON" serialization?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== Why does Thrift need "nice JSON" serialization?
 
 I'm a big fan of Apache Thrift, for many reasons:
 
@@ -97,16 +95,14 @@ protocol.
 This library provides those facilities.
 
 [[what-this-library-does-not-do]]
-What this library does *not* do
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== What this library does *not* do
 
 This library supports de/serializing Thrift objects to JSON, in a format
 that is strictly determined by the IDL. So there's no flexibility of
 naming fields, nor of data-types (though one might imagine adding that).
 
 [[licensing]]
-Licensing
-~~~~~~~~~
+== Licensing
 
 All files are governed by the Apache license (included herein in file
 LICENSE) except for json.hpp, which is governed by the MIT License, and
@@ -114,8 +110,7 @@ a number of GNU autotools files, which are all governed by their own
 licenses, typically GPL.
 
 [[credits-and-thanks]]
-Credits and Thanks
-~~~~~~~~~~~~~~~~~~
+== Credits and Thanks
 
 First, this code is descended by modification from code and examples
 found in Apache Thrift. In many filies I've left the copyright headers
