@@ -16,41 +16,51 @@ thrift-nicejson, and are building a project separately.  In
 from source (hence, via autotools).  The difference is that (for
 instance) we assume various files are already installed).
 
-1. The thrift `tutorial.thrift` file declares a C++ namespace
-`tutorial`.  The way this nicejson support works, is that a "type
-libary" is generated, and stored under a "key" of the form
-`<namespace>,<flie-basename>`.  In this case `tutorial.tutorial`.  In
-the unit-tests, we use a file `test.thrift`, which declares a
-namespace `thrift_test`.  The key there would be `thrift_test.test`.
-Make a note of the namespace that your Thrift IDL file declares --
-you'll use it later.
+1. Start off by making sure you can build and run the example, just so
+   you know thrift is installed correctly and you have all your paths
+   straight.
 
-2. Generate C++ files as usual:
-....
-thrift -r --gen cpp tutorial.thrift
-....
+2. The thrift file `tutorial.thrift` declares a C++ namespace
+   `tutorial`.  The way this nicejson support works, is that a "type
+   libary" is generated, and stored under a "key" of the form
+   `<namespace>.<file-basename>`.  In this case `tutorial.tutorial`.
+   In the unit-tests, we use a file `test.thrift`, which declares a
+   namespace `thrift_test`.  The key there would be
+   `thrift_test.test`.  Make a note of the namespace that your Thrift
+   IDL file declares -- you'll use it later.
 
-3. Generate C++ typelib files (using the nicejson typelib plugin)
-....
-thrift -r --gen typelib:cpp,typelib tutorial.thrift
-....
+3. Generate C++ files as usual:
+   ....
+   thrift -r --gen cpp tutorial.thrift
+   ....
 
-The latter command generates C++ typelib files into `gen-cpp-typelib`
-and binary and JSON typelib files into `gen-typelib`.  Since
-`tutorial.thrift` uses another thrift file `shared.thrift`, it
-generates two sets of files (`tutorial_*` and `shared_*`), just as for
-`cpp` generation above.
+4. Generate C++ typelib files (using the nicejson typelib plugin)
+   ....
+   thrift -r --gen typelib:cpp,typelib tutorial.thrift
+   ....
 
-4. The C++ typelib files must be compiled, just like the C++
-`gen-cpp` files.
+   The latter command generates C++ typelib files into
+   `gen-cpp-typelib` and binary and JSON typelib files into
+   `gen-typelib`.  Since `tutorial.thrift` uses another thrift file
+   `shared.thrift`, it generates two sets of files (`tutorial_*` and
+   `shared_*`), just as for `cpp` generation above.
 
-5. Instead of a `TBinaryProtocolFactory()` in CppClient.cpp and
-CppServer.cpp, you need to use
-`TNiceJSONProtocolFactory("tutorial.tutorial", "Calculator")`.  Let's
-unpack this: we're specifying that a NiceJSON protocol be used, and
-supplying the typelib-name (`tutorial.tutorial`) and the service-name
-(`Calculator`).  This will allow the runtime to lookup type metadata
-for the specified service in the specified typelib.
+   NOTE: this command uses the plugin command `thrift-gen-typelib`
+   which should have been built and installed by your install of this
+   project.  Again, in `src/examples/cpp` the assumption is that the
+   example is being built _without being installed_ so the invocation
+   is run with a modified `$PATH`.
+
+5. The C++ typelib files must be compiled, just like the C++
+   `gen-cpp` files.
+
+6. Instead of a `TBinaryProtocolFactory()` in CppClient.cpp and
+   CppServer.cpp, you need to use
+   `TNiceJSONProtocolFactory("tutorial.tutorial", "Calculator")`.
+   Let's unpack this: we're specifying that a NiceJSON protocol be
+   used, and supplying the typelib-name (`tutorial.tutorial`) and the
+   service-name (`Calculator`).  This will allow the runtime to lookup
+   type metadata for the specified service in the specified typelib.
 
 We also replaced `TBufferedTransportFactory()` with
 `THttpServerTransportFactory()` (in the server) and
