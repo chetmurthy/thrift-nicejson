@@ -144,14 +144,6 @@ int main() {
     boost::make_shared<THttpServerTransportFactory>(),
     boost::make_shared<TNiceJSONProtocolFactory>(kTestTypelib, "Calculator"));
 
-#if 0
-  TThreadedServer server(
-    boost::make_shared<CalculatorProcessorFactory>(boost::make_shared<CalculatorCloneFactory>()),
-    boost::make_shared<TServerSocket>(9090), //port
-    boost::make_shared<TBufferedTransportFactory>(),
-    boost::make_shared<TBinaryProtocolFactory>());
-#endif
-
   /*
   // if you don't need per-connection state, do the following instead
   TThreadedServer server(
