@@ -1,6 +1,6 @@
 [[thrift-nicejson-a-nice-json-protocol-for-thrift]]
 thrift-nicejson: A Nice JSON protocol for Thrift
-------------------------------------------------
+================================================
 :toc:
 :toc-placement: preamble
 
