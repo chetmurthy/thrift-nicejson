@@ -3,14 +3,14 @@
 :toc:
 :toc-placement: preamble
 
-== The Thrift C\++ Tutorial Example
+== The Thrift C++ Tutorial Example
 
-The first example will be modify the Thrift C\++ tutorial example.
+The first example will be modify the Thrift C++ tutorial example.
 Further below you'll find the diffs, and below you'll find an
 explanation of the steps required.  You'll also find the
 fully-worked-out example in `src/examples/cpp`.
 
-1. The thrift `tutorial.thrift` file declares a C\++ namespace
+1. The thrift `tutorial.thrift` file declares a C++ namespace
 `tutorial`.  The way this nicejson support works, is that a "type
 libary" is generated, and stored under a "key" of the form
 `<namespace>,<flie-basename>`.  In this case `tutorial.tutorial`.  In
@@ -19,23 +19,23 @@ namespace `thrift_test`.  The key there would be `thrift_test.test`.
 Make a note of the namespace that your Thrift IDL file declares --
 you'll use it later.
 
-2. Generate C\++ files as usual:
+2. Generate C++ files as usual:
 ....
 thrift -r --gen cpp tutorial.thrift
 ....
 
-3. Generate C\++ typelib files (using the nicejson typelib plugin)
+3. Generate C++ typelib files (using the nicejson typelib plugin)
 ....
 thrift -r --gen typelib:cpp,typelib tutorial.thrift
 ....
 
-The latter command generates C\++ typelib files into `gen-cpp-typelib`
+The latter command generates C++ typelib files into `gen-cpp-typelib`
 and binary and JSON typelib files into `gen-typelib`.  Since
 `tutorial.thrift` uses another thrift file `shared.thrift`, it
 generates two sets of files (`tutorial_*` and `shared_*`), just as for
 `cpp` generation above.
 
-4. The C\++ typelib files must be compiled, just like the C\++
+4. The C++ typelib files must be compiled, just like the C++
 `gen-cpp` files.
 
 5. Instead of a `TBinaryProtocolFactory()` in CppClient.cpp and
