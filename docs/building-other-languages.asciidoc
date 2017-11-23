@@ -1,8 +1,5 @@
 [[building-other-languages]]
-Building Other Languages
-================================================
-:toc:
-:toc-placement: preamble
+= Building Other Languages
 
 == Overview
 
