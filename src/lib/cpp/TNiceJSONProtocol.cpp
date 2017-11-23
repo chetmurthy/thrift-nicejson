@@ -191,8 +191,6 @@ uint32_t TNiceJSONProtocol::writeMessageEnd() {
   msg["seqid"] = message_seqid_ ;
   std::string js = msg.dump() ;
   trans_->write(reinterpret_cast<const uint8_t*>(js.data()), js.length()) ;
-  trans_->writeEnd() ;
-  trans_->flush() ;
 
   mode_ = NONE ;
   return 0l ;

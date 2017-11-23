@@ -17,6 +17,8 @@
 #include <thrift/transport/TTransport.h>
 #include <thrift/transport/TTransportUtils.h>
 #include <thrift/transport/TBufferTransports.h>
+#include <thrift/transport/THttpServer.h>
+#include <thrift/transport/THttpClient.h>
 #include <thrift/transport/TFileTransport.h>
 #include "thrift/transport/TFDTransport.h"
 #include <thrift/transport/TServerSocket.h>
@@ -140,19 +142,6 @@ void base_client(thrift_test::S2Client& client) {
 
 }
 
-void client0() {
-  boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
-  boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
-  boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
-  thrift_test::S2Client client(protocol);
-
-  {
-    transport->open();
-    base_client(client) ;
-    transport->close();
-  }
-}
-
 BOOST_AUTO_TEST_CASE( RPC0 )
 {
   TThreadedServer server(
@@ -166,23 +155,18 @@ BOOST_AUTO_TEST_CASE( RPC0 )
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
   sleep(1) ;
-  client0() ;
-  server.stop();
-  thread.join() ;
-}
-
-
-void client1() {
-  boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9091));
-  boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
-  boost::shared_ptr<TProtocol> protocol(new TNiceJSONProtocol(kTestTypelib, "S2", transport));
-  thrift_test::S2Client client(protocol);
-
   {
+    boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
+    boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
+    boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
+    thrift_test::S2Client client(protocol);
+
     transport->open();
     base_client(client) ;
     transport->close();
   }
+  server.stop();
+  thread.join() ;
 }
 
 BOOST_AUTO_TEST_CASE( RPC1 )
@@ -198,8 +182,97 @@ BOOST_AUTO_TEST_CASE( RPC1 )
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
   sleep(1) ;
-  client1() ;
+  {
+    boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9091));
+    boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
+    boost::shared_ptr<TProtocol> protocol(new TNiceJSONProtocol(kTestTypelib, "S2", transport));
+    thrift_test::S2Client client(protocol);
+
+    transport->open();
+    base_client(client) ;
+    transport->close();
+  }
   server.stop();
   thread.join() ;
 }
 
+BOOST_AUTO_TEST_CASE( RPC2 )
+{
+  TThreadedServer server(
+    boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
+    boost::make_shared<TServerSocket>(9092), //port
+    boost::make_shared<THttpServerTransportFactory>(),
+    boost::make_shared<TBinaryProtocolFactory>());
+
+  cerr << "Starting the server..." << endl;
+  RPC0ThreadClass t(server) ;
+  boost::thread thread(&RPC0ThreadClass::Run, &t);
+
+  sleep(1) ;
+  {
+    boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9092));
+    boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));
+    boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
+    thrift_test::S2Client client(protocol);
+
+    transport->open();
+    base_client(client) ;
+    transport->close();
+  }
+  server.stop();
+  thread.join() ;
+}
+
+BOOST_AUTO_TEST_CASE( RPC2b )
+{
+  TThreadedServer server(
+    boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
+    boost::make_shared<TServerSocket>(9092), //port
+    boost::make_shared<THttpServerTransportFactory>(),
+    boost::make_shared<TJSONProtocolFactory>());
+
+  cerr << "Starting the server..." << endl;
+  RPC0ThreadClass t(server) ;
+  boost::thread thread(&RPC0ThreadClass::Run, &t);
+
+  sleep(1) ;
+  {
+    boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9092));
+    boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));
+    boost::shared_ptr<TProtocol> protocol(new TJSONProtocol(transport));
+    thrift_test::S2Client client(protocol);
+
+    transport->open();
+    base_client(client) ;
+    transport->close();
+  }
+  server.stop();
+  thread.join() ;
+}
+
+BOOST_AUTO_TEST_CASE( RPC3 )
+{
+  TThreadedServer server(
+    boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
+    boost::make_shared<TServerSocket>(9092), //port
+    boost::make_shared<THttpServerTransportFactory>(),
+    boost::make_shared<TNiceJSONProtocolFactory>(kTestTypelib, "S2"));
+
+  cerr << "Starting the server..." << endl;
+  RPC0ThreadClass t(server) ;
+  boost::thread thread(&RPC0ThreadClass::Run, &t);
+
+  sleep(1) ;
+  {
+    boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9092));
+    boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));
+    boost::shared_ptr<TProtocol> protocol(new TNiceJSONProtocol(kTestTypelib, "S2", transport));
+    thrift_test::S2Client client(protocol);
+
+    transport->open();
+    base_client(client) ;
+    transport->close();
+  }
+  server.stop();
+  thread.join() ;
+}

@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE( JSON1 )
 
 BOOST_AUTO_TEST_CASE( JSON2 )
 {
-  BOOST_CHECK_THROW( parse_via_transport("{") , nlohmann::detail::parse_error ) ;
+  BOOST_CHECK_THROW( parse_via_transport("{") , apache::thrift::transport::TTransportException ) ;
 }
 
 BOOST_AUTO_TEST_CASE( JSON5 )

@@ -38,7 +38,7 @@ public:
 
   int get_character() override {
     uint8_t c ;
-    if (1 != xprt_->read(&c, 1)) {
+    if (1 != xprt_->readAll(&c, 1)) {
       return std::char_traits<char>::eof() ;
     } else {
       buf.push_back(static_cast<char>(c)) ;

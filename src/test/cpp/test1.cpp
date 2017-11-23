@@ -445,6 +445,22 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_5 )
   TMessageType read_messageType ;
   int32_t read_seqid ;
   BOOST_CHECK_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
+		     apache::thrift::transport::TTransportException );
+}
+
+BOOST_AUTO_TEST_CASE( S2_foo_args_6 )
+{
+  thrift_test::S2_foo_args args ;
+  const std::string msg = R"FOO(
+{"body":{"n":1,"w":{"a":10,"b":"fooasdfasdfasfasdsaasdfasd":1,"type":"call"}
+)FOO" ;
+
+  boost::shared_ptr<TMemoryBuffer> trans(new_memory_buffer_with_contents(msg)) ;
+  boost::shared_ptr<TNiceJSONProtocol> proto(new TNiceJSONProtocol(kTestTypelib, "S2", trans)) ;
+  string read_operation ;
+  TMessageType read_messageType ;
+  int32_t read_seqid ;
+  BOOST_CHECK_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
 		     apache::thrift::protocol::TProtocolException );
 }
 
