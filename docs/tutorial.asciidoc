@@ -10,6 +10,12 @@ Further below you'll find the diffs, and below you'll find an
 explanation of the steps required.  You'll also find the
 fully-worked-out example in `src/examples/cpp`.
 
+NOTE WELL: below, we'll pretend that you've already _installed_
+thrift-nicejson, and are building a project separately.  In
+`src/examples/cpp`, we assume it's being built as part of the project
+from source (hence, via autotools).  The difference is that (for
+instance) we assume various files are already installed).
+
 1. The thrift `tutorial.thrift` file declares a C++ namespace
 `tutorial`.  The way this nicejson support works, is that a "type
 libary" is generated, and stored under a "key" of the form
