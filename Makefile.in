@@ -176,8 +176,8 @@ DIST_SUBDIRS = src/lib/cpp src/lib/py src/lib/ocaml src/plugins/cpp \
 	src/plugins/ocaml src/test/cpp src/test/py src/test/ocaml \
 	src/examples/cpp src/tools/cpp
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
-	ChangeLog INSTALL NEWS README compile config.guess config.sub \
-	depcomp install-sh ltmain.sh missing mkinstalldirs
+	ChangeLog INSTALL NEWS compile config.guess config.sub depcomp \
+	install-sh ltmain.sh missing mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)

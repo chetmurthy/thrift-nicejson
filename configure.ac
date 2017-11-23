@@ -50,7 +50,7 @@ AC_ARG_VAR([PY_PREFIX], [Prefix for installing Python modules.
 AS_IF([test "x$PY_PREFIX" = x], [PY_PREFIX="/usr"])
 # Find python regardless of with_python value, because it's needed by make cross
 AM_PATH_PYTHON(2.6,, :)
-AX_THRIFT_LIB(python, [Python], yes)
+AX_THRIFT_LIB(python, [Python], no)
 if test "$with_python" = "yes";  then
   if test -n "$PYTHON"; then
     have_python="yes"
@@ -86,7 +86,7 @@ fi
 fi
 
 
-AX_THRIFT_LIB(ocaml, [Ocaml], yes)
+AX_THRIFT_LIB(ocaml, [Ocaml], no)
 if test "$with_ocaml" = "yes";  then
   if test "$OCAMLC" != "no"; then
     have_ocaml="yes"

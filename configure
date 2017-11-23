@@ -1535,8 +1535,8 @@ Optional Packages:
                           --with-boost-program-options=boost_program_options-gcc-mt-1_33_1
   --with-thrift-srcdir    Directory to the (required) out-of-tree Thrift
                           source
-  --with-python           build the Python library [default=yes]
-  --with-ocaml            build the Ocaml library [default=yes]
+  --with-python           build the Python library [default=no]
+  --with-ocaml            build the Ocaml library [default=no]
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -20149,7 +20149,7 @@ $as_echo "$am_cv_python_pyexecdir" >&6; }
 if test "${with_python+set}" = set; then :
   withval=$with_python; with_python="$withval"
 else
-  with_python=yes
+  with_python=no
 
 fi
 
@@ -21425,7 +21425,7 @@ fi
 if test "${with_ocaml+set}" = set; then :
   withval=$with_ocaml; with_ocaml="$withval"
 else
-  with_ocaml=yes
+  with_ocaml=no
 
 fi
 
