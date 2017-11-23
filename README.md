@@ -1,9 +1,29 @@
 # thrift-nicejson: A Nice JSON wire-format for Thrift
 
-This library provides a "nice" JSON serialization format for
-Thrift-defined objects.  The implementation is in C++, and via FFI it
-can be made available to other Thrift languages, e.g. currently
-Python and Ocaml.
+This library provides a "nice" JSON serialization format for Thrift.
+That means you can define data-types/messages in Thrift, turn a crank,
+and get out de/marshallers and a protocol stack that talk all of
+Thrift's protocols, and also talk *idiomatic* JSON.
+
+For example, the (comes with) Thrift Calcualtor tutorial example has
+an `i32 add(1:i32 num1, 2:i32 num2)` method, which the client invokes
+as `add(1, 1)`.  With this libray, you can do that with POST:
+
+```
+% POST -c 'application/x-thrift' http://localhost:9090/
+Please enter content (application/x-thrift) to be POSTed:
+{"body":{"num1":1,"num2":1},"name":"add","seqid":0,"type":"call"}
+<EOF>
+```
+
+replies with
+
+```
+{"body":{"success":2},"name":"add","seqid":0,"type":"reply"}
+```
+
+The implementation is in C++, and via FFI it can be made available to
+other Thrift languages, e.g. currently Python and Ocaml.
 
 ## Installation
 
