@@ -62,6 +62,25 @@ service S1 {
 
 service S2 {
   void ping(),
-  i32 foo(1:i32 logid, 2:Bar w) throws (1:InvalidOperation ouch, 2:InvalidOperation2 ouch2),
+  i32 foo(1:i32 n, 2:Bar w) throws (1:InvalidOperation ouch, 2:InvalidOperation2 ouch2),
   Bar goo()
+}
+ 
+// test out TApplicationException marshalling
+enum TApplicationExceptionType {
+  UNKNOWN = 0,
+  UNKNOWN_METHOD = 1,
+  INVALID_MESSAGE_TYPE = 2,
+  WRONG_METHOD_NAME = 3,
+  BAD_SEQUENCE_ID = 4,
+  MISSING_RESULT = 5,
+  INTERNAL_ERROR = 6,
+  PROTOCOL_ERROR = 7,
+  INVALID_TRANSFORM = 8,
+  INVALID_PROTOCOL = 9,
+  UNSUPPORTED_CLIENT_TYPE = 10
+}
+exception TApplicationException {
+  1: string message,
+  2: TApplicationExceptionType type
 }

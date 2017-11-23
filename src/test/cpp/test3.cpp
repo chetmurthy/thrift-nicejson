@@ -1,3 +1,4 @@
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <iostream>
@@ -31,6 +32,7 @@
 
 using boost::shared_ptr;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
 using std::pair;
@@ -43,11 +45,7 @@ using namespace apache::thrift::transport;
 using namespace apache::thrift::server;
 using namespace apache::thrift::nicejson;
 
-BOOST_AUTO_TEST_CASE( mt )
-{
-}
-
-const std::string kTutTypelib = "tutorial.tutorial" ;
+const std::string kTestTypelib = "thrift_test.test" ;
 
 bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
   if (this->a != that.a) return this->a < that.a ;
@@ -55,14 +53,40 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
   return false ;
 }
 
+class myexception: public std::exception
+{
+  virtual const char* what() const throw()
+  {
+    return "My exception happened";
+  }
+};
+
 class S2Handler : public thrift_test::S2If {
 public:
   S2Handler() {}
 
-  void ping() override { cout << "ping()" << endl; }
-  int32_t foo(const int32_t logid, const thrift_test::Bar& w) override {
-    cout << "foo(" << logid << ", ...)" << endl;
-    return logid;
+  void ping() override { cerr << "ping()" << endl; }
+  int32_t foo(const int32_t n, const thrift_test::Bar& w) override {
+    cerr << "foo(" << n << ", ...)" << endl;
+    switch (n) {
+    case 0: {
+      thrift_test::InvalidOperation e ;
+      e.whatOp = 84 ;
+      e.why = "argle" ;
+      throw e ;
+    }
+    case 1: {
+      thrift_test::InvalidOperation2 e ;
+      e.whatOp = 42 ;
+      e.why = "gurgle" ;
+      throw e ;
+    }
+    case 2: {
+      throw myexception() ;
+    }
+    default:
+      return n ;
+    }
   }
   void goo(thrift_test::Bar& bar) override {
   }
@@ -74,11 +98,11 @@ class S2CloneFactory : virtual public thrift_test::S2IfFactory {
   virtual thrift_test::S2If* getHandler(const ::apache::thrift::TConnectionInfo& connInfo)
   {
     boost::shared_ptr<TSocket> sock = boost::dynamic_pointer_cast<TSocket>(connInfo.transport);
-    cout << "Incoming connection\n";
-    cout << "\tSocketInfo: "  << sock->getSocketInfo() << "\n";
-    cout << "\tPeerHost: "    << sock->getPeerHost() << "\n";
-    cout << "\tPeerAddress: " << sock->getPeerAddress() << "\n";
-    cout << "\tPeerPort: "    << sock->getPeerPort() << "\n";
+    cerr << "Incoming connection\n";
+    cerr << "\tSocketInfo: "  << sock->getSocketInfo() << "\n";
+    cerr << "\tPeerHost: "    << sock->getPeerHost() << "\n";
+    cerr << "\tPeerAddress: " << sock->getPeerAddress() << "\n";
+    cerr << "\tPeerPort: "    << sock->getPeerPort() << "\n";
     return new S2Handler;
   }
   virtual void releaseHandler( thrift_test::S2If* handler) {
@@ -97,26 +121,35 @@ void Run() {
  TThreadedServer& server_ ;
 } ;
 
-void client() {
+void base_client(thrift_test::S2Client& client) {
+  cerr << "Starting the client..." << endl;
+
+  client.ping();
+
+  BOOST_CHECK( client.foo(42l, thrift_test::Bar()) == 42l ) ;
+
+  thrift_test::Bar b ;
+  client.goo(b) ;
+
+  BOOST_CHECK_THROW( client.foo(0l, thrift_test::Bar()),
+		     thrift_test::InvalidOperation ) ;
+  BOOST_CHECK_THROW( client.foo(1l, thrift_test::Bar()),
+		     thrift_test::InvalidOperation2 ) ;
+  BOOST_CHECK_THROW( client.foo(2l, thrift_test::Bar()),
+		     apache::thrift::TApplicationException ) ;
+
+}
+
+void client0() {
   boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
   boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
   boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
   thrift_test::S2Client client(protocol);
 
-  try {
+  {
     transport->open();
-
-    client.ping();
-
-    int32_t rv = client.foo(42l, thrift_test::Bar()) ;
-    BOOST_CHECK( rv == 42l ) ;
-
-    thrift_test::Bar b ;
-    client.goo(b) ;
-
+    base_client(client) ;
     transport->close();
-  } catch (TException& tx) {
-    cout << "ERROR: " << tx.what() << endl;
   }
 }
 
@@ -128,12 +161,44 @@ BOOST_AUTO_TEST_CASE( RPC0 )
     boost::make_shared<TBufferedTransportFactory>(),
     boost::make_shared<TBinaryProtocolFactory>());
 
-  cout << "Starting the server..." << endl;
+  cerr << "Starting the server..." << endl;
   RPC0ThreadClass t(server) ;
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
-  cout << "Done." << endl;
-  client() ;
+  sleep(1) ;
+  client0() ;
+  server.stop();
+  thread.join() ;
+}
+
+
+void client1() {
+  boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9091));
+  boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
+  boost::shared_ptr<TProtocol> protocol(new TNiceJSONProtocol(kTestTypelib, "S2", transport));
+  thrift_test::S2Client client(protocol);
+
+  {
+    transport->open();
+    base_client(client) ;
+    transport->close();
+  }
+}
+
+BOOST_AUTO_TEST_CASE( RPC1 )
+{
+  TThreadedServer server(
+    boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
+    boost::make_shared<TServerSocket>(9091), //port
+    boost::make_shared<TBufferedTransportFactory>(),
+    boost::make_shared<TNiceJSONProtocolFactory>(kTestTypelib, "S2"));
+
+  cerr << "Starting the server..." << endl;
+  RPC0ThreadClass t(server) ;
+  boost::thread thread(&RPC0ThreadClass::Run, &t);
+
+  sleep(1) ;
+  client1() ;
   server.stop();
   thread.join() ;
 }

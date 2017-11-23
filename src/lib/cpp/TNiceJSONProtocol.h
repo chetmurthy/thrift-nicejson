@@ -60,10 +60,10 @@ public:
 class convenient_transport_input_adapter : public nlohmann::detail::input_adapter_protocol {
  public:
  convenient_transport_input_adapter(const std::string ser) :
-  mem_(new TMemoryBuffer((uint8_t*)ser.data(),
-			 static_cast<uint32_t>(ser.length()))),
+  mem_(new TMemoryBuffer()),
     ia_(mem_.get())
       {
+	mem_->resetBuffer((uint8_t*)ser.data(), static_cast<uint32_t>(ser.length()), TMemoryBuffer::COPY) ;
       }
 
   int get_character() override { return ia_.get_character() ; }
@@ -208,14 +208,17 @@ private:
  */
 class TNiceJSONProtocolFactory : public TProtocolFactory {
 public:
-  TNiceJSONProtocolFactory() {}
+  TNiceJSONProtocolFactory(const std::string typelib, const std::string service)
+    : typelib_(typelib), service_(service) {}
 
   virtual ~TNiceJSONProtocolFactory() {}
 
-  boost::shared_ptr<TProtocol> getProtocol(const std::string typelib, const std::string service,
-					   boost::shared_ptr<TTransport> trans) {
-    return boost::shared_ptr<TProtocol>(new TNiceJSONProtocol(typelib, service, trans));
+  boost::shared_ptr<TProtocol> getProtocol(boost::shared_ptr<TTransport> trans) {
+    return boost::shared_ptr<TProtocol>(new TNiceJSONProtocol(typelib_, service_, trans));
   }
+ private:
+  std::string typelib_ ;
+  std::string service_ ;
 };
 }
 }

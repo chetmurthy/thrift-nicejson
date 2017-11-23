@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE( Bar )
       shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
       shared_ptr<TJSONProtocol> p(new TJSONProtocol(buf)); 
     
-      buf->resetBuffer((uint8_t*)serialized.data(), static_cast<uint32_t>(serialized.length()));
+      buf->resetBuffer((uint8_t*)serialized.data(), static_cast<uint32_t>(serialized.length()), TMemoryBuffer::COPY);
       bar2.read(p.get());
 
     }
@@ -324,8 +324,8 @@ BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
 BOOST_AUTO_TEST_CASE( S2_foo_args )
 {
   thrift_test::S2_foo_args args ;
-  args.logid = 1 ;
-  args.__isset.logid = true ;
+  args.n = 1 ;
+  args.__isset.n = true ;
   thrift_test::Bar v;
   v.a = 10 ;
   v.b = "foo" ;
@@ -345,7 +345,7 @@ std::string memory_buffer_contents(boost::shared_ptr<TMemoryBuffer>& mem) {
 
 TMemoryBuffer* new_memory_buffer_with_contents(const std::string& contents) {
   TMemoryBuffer* mem = new TMemoryBuffer() ;
-  mem->resetBuffer((uint8_t*)(contents.data()), contents.length()) ;
+  mem->resetBuffer((uint8_t*)(contents.data()), contents.length(), TMemoryBuffer::COPY) ;
   return mem ;
 }
 
@@ -379,8 +379,8 @@ void MessageRoundTrip2(const string& service, const string& operation,
 BOOST_AUTO_TEST_CASE( S2_foo_args_2 )
 {
   thrift_test::S2_foo_args args ;
-  args.logid = 1 ;
-  args.__isset.logid = true ;
+  args.n = 1 ;
+  args.__isset.n = true ;
   thrift_test::Bar v;
   v.a = 10 ;
   v.b = "foo" ;
@@ -401,8 +401,8 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_2 )
 BOOST_AUTO_TEST_CASE( S2_foo_args_3 )
 {
   thrift_test::S2_foo_args args ;
-  args.logid = 1 ;
-  args.__isset.logid = true ;
+  args.n = 1 ;
+  args.__isset.n = true ;
   thrift_test::Bar v;
   v.a = 10 ;
   v.b = "foo" ;
@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_4 )
 {
   thrift_test::S2_foo_args args ;
   const std::string msg = R"FOO(
-{"body":{"logid":1,"w":{"a":10,"b":"foo"}},"name":"foo","seqid":1,"type":"call"}
+{"body":{"n":1,"w":{"a":10,"b":"foo"}},"name":"foo","seqid":1,"type":"call"}
 )FOO" ;
 
   boost::shared_ptr<TMemoryBuffer> trans(new_memory_buffer_with_contents(msg)) ;
@@ -436,7 +436,7 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_5 )
 {
   thrift_test::S2_foo_args args ;
   const std::string msg = R"FOO(
-{"body":{"logid":1,"w":{"a":10,"b":
+{"body":{"n":1,"w":{"a":10,"b":
 )FOO" ;
 
   boost::shared_ptr<TMemoryBuffer> trans(new_memory_buffer_with_contents(msg)) ;
@@ -496,4 +496,21 @@ BOOST_AUTO_TEST_CASE( service_struct_names_2 )
 
   BOOST_CHECK( (tt.service_struct_names("SharedService", "getStruct") ==
 		pair<string, string>{ "SharedService_getStruct_args", "SharedService_getStruct_result" }) ) ;
+}
+
+BOOST_AUTO_TEST_CASE( TApplicationException_0 )
+{
+  const NiceJSON& tt = *(NiceJSON::lookup_typelib(kTestTypelib)) ;
+  ::apache::thrift::TApplicationException x(::apache::thrift::TApplicationException::UNKNOWN, "eh?") ;
+
+  json j = tt.marshal("TApplicationException", x) ;
+  std::cout << j.dump() << std::endl ;
+
+  ::apache::thrift::TApplicationException x2 ;
+  tt.demarshal("TApplicationException", j, &x2) ;
+  BOOST_CHECK( x.getType() == x2.getType() ) ;
+  BOOST_CHECK( std::string(x.what()) == std::string(x2.what()) ) ;
+  json j2 = tt.marshal("TApplicationException", x2) ;
+  BOOST_CHECK( j == j2 ) ;
+
 }

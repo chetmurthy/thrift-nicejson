@@ -37,7 +37,9 @@ using namespace apache::thrift::transport;
 json parse_via_transport(const std::string& s) {
   using nlohmann::detail::input_adapter ;
   using nlohmann::detail::input_adapter_protocol ;
-  json j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new convenient_transport_input_adapter(s)))) ;
+  auto i = input_adapter(std::shared_ptr<input_adapter_protocol>(new convenient_transport_input_adapter(s))) ;
+  json j ;
+  nlohmann::json::parser(i, nullptr, true).parse(false, j);
   return j ;
 }
 
@@ -124,7 +126,7 @@ std::string json_message_type(TMessageType messageType) {
     break ;
   }
   case T_EXCEPTION: {
-    assert(false) ;
+    return "exception" ;
     break ;
   }
   default:
@@ -132,14 +134,56 @@ std::string json_message_type(TMessageType messageType) {
   }
 }
 
+using ::apache::thrift::TApplicationException ;
+
+TApplicationException::TApplicationExceptionType string_to_TApplicationExceptionType(const std::string& s) {
+  if ("UNKNOWN" == s) return TApplicationException::UNKNOWN ;
+  if ("UNKNOWN_METHOD" == s) return TApplicationException::UNKNOWN_METHOD ;
+  if ("INVALID_MESSAGE_TYPE" == s) return TApplicationException::INVALID_MESSAGE_TYPE ;
+  if ("WRONG_METHOD_NAME" == s) return TApplicationException::WRONG_METHOD_NAME ;
+  if ("BAD_SEQUENCE_ID" == s) return TApplicationException::BAD_SEQUENCE_ID ;
+  if ("MISSING_RESULT" == s) return TApplicationException::MISSING_RESULT ;
+  if ("INTERNAL_ERROR" == s) return TApplicationException::INTERNAL_ERROR ;
+  if ("PROTOCOL_ERROR" == s) return TApplicationException::PROTOCOL_ERROR ;
+  if ("INVALID_TRANSFORM" == s) return TApplicationException::INVALID_TRANSFORM ;
+  if ("INVALID_PROTOCOL" == s) return TApplicationException::INVALID_PROTOCOL ;
+  if ("UNSUPPORTED_CLIENT_TYPE" == s) return TApplicationException::UNSUPPORTED_CLIENT_TYPE ;
+  return TApplicationException::UNKNOWN ;
+}
+
+std::string TApplicationExceptionType_to_string(TApplicationException::TApplicationExceptionType t) {
+  switch (t) {
+  case TApplicationException::UNKNOWN: return "UNKNOWN" ;
+  case TApplicationException::UNKNOWN_METHOD: return "UNKNOWN_METHOD" ;
+  case TApplicationException::INVALID_MESSAGE_TYPE: return "INVALID_MESSAGE_TYPE" ;
+  case TApplicationException::WRONG_METHOD_NAME: return "WRONG_METHOD_NAME" ;
+  case TApplicationException::BAD_SEQUENCE_ID: return "BAD_SEQUENCE_ID" ;
+  case TApplicationException::MISSING_RESULT: return "MISSING_RESULT" ;
+  case TApplicationException::INTERNAL_ERROR: return "INTERNAL_ERROR" ;
+  case TApplicationException::PROTOCOL_ERROR: return "PROTOCOL_ERROR" ;
+  case TApplicationException::INVALID_TRANSFORM: return "INVALID_TRANSFORM" ;
+  case TApplicationException::INVALID_PROTOCOL: return "INVALID_PROTOCOL" ;
+  case TApplicationException::UNSUPPORTED_CLIENT_TYPE: return "UNSUPPORTED_CLIENT_TYPE" ;
+  default:
+    return "UNKNOWN" ;
+  }
+}
+
 uint32_t TNiceJSONProtocol::writeMessageEnd() {
   must_be_writing() ;
   mode_ = BROKEN ; // so if we fail, the transport is marked broken ;
 
-  std::string structname = struct_name(typelib_, service_, message_name_, message_type_) ;
   std::string json_msgType = json_message_type(message_type_) ;
   
-  json j = typelib_.marshal_from_binary(structname, message_buffer_) ;
+  json j;
+  if (message_type_ == T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x ;
+    x.read(message_proto_.get()) ;
+    j = { { "message", x.what() }, { "type" , TApplicationExceptionType_to_string(x.getType()) } } ;
+  } else {
+    std::string structname = struct_name(typelib_, service_, message_name_, message_type_) ;
+    j = typelib_.marshal_from_binary(structname, message_buffer_) ;
+  }
   json msg ;
   msg["body"] = j ;
   msg["name"] = message_name_ ;
@@ -266,7 +310,8 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
   using nlohmann::detail::input_adapter_protocol ;
   json j ;
   try {
-    j = nlohmann::json::parse(input_adapter(std::shared_ptr<input_adapter_protocol>(new transport_input_adapter(trans_)))) ;
+    auto ia = input_adapter(std::shared_ptr<input_adapter_protocol>(new transport_input_adapter(trans_))) ;
+    nlohmann::json::parser(ia, nullptr, true).parse(false, j);
   } catch (nlohmann::detail::parse_error e) {
     throw TProtocolException(str(boost::format{"TNiceJSONProtocol: parse error: %s"} % e.what())) ;
   }
@@ -279,6 +324,7 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
     std::string s_messageType = j_messageType.get<std::string>() ;
     if (s_messageType == "call") message_type_ = T_CALL ;
     else if (s_messageType == "reply") message_type_ = T_REPLY ;
+    else if (s_messageType == "exception") message_type_ = T_EXCEPTION ;
     else
       throw TProtocolException("TNiceJSONProtocol: bad JSON, type element must be either call or reply") ;
   }
@@ -310,8 +356,21 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
   message_buffer_.swap(newbuf) ;
   message_proto_.swap(newproto) ;
 
-  std::string structname = struct_name(typelib_, service_, message_name_, message_type_) ;
-  typelib_.demarshal_to_binary(structname, j["body"], message_proto_) ;
+  if (message_type_ != T_EXCEPTION) {
+    std::string structname = struct_name(typelib_, service_, message_name_, message_type_) ;
+    typelib_.demarshal_to_binary(structname, j["body"], message_proto_) ;
+  } else {
+    json body = j["body"] ;
+    if (body.count("message") == 0 || body.count("type") == 0) {
+      ::apache::thrift::TApplicationException x(::apache::thrift::TApplicationException::UNKNOWN, "malformed exception " + body.dump()) ;
+      x.write(message_proto_.get()) ;
+    } else {
+      auto ty = string_to_TApplicationExceptionType(body["type"].get<std::string>()) ;
+      auto message = body["message"].get<std::string>() ;
+	::apache::thrift::TApplicationException x(ty, message) ;
+	x.write(message_proto_.get()) ;
+    }
+  }
 
   mode_ = READING_MESSAGE ;
 
@@ -323,7 +382,6 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
 
 uint32_t TNiceJSONProtocol::readMessageEnd() {
   must_be_reading() ;
-  uint32_t n = message_proto_->readMessageEnd() ;
 
   boost::shared_ptr<TMemoryBuffer> newbuf ;
   boost::shared_ptr<TBinaryProtocol> newproto ;
@@ -332,7 +390,7 @@ uint32_t TNiceJSONProtocol::readMessageEnd() {
   message_proto_.swap(newproto) ;
 
   mode_ = NONE ;
-  return n ;
+  return 0l ;
 }
 
 uint32_t TNiceJSONProtocol::readStructBegin(std::string& name) {

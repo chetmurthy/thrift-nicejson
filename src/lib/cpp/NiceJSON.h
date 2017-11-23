@@ -128,7 +128,7 @@ public:
     shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
     shared_ptr<TJSONProtocol> p(new TJSONProtocol(buf)); 
     
-    buf->resetBuffer(const_cast<uint8_t *>(serialized), static_cast<uint32_t>(length));
+    buf->resetBuffer(const_cast<uint8_t *>(serialized), static_cast<uint32_t>(length), TMemoryBuffer::COPY);
     x_.read(p.get());
   }
 
@@ -166,7 +166,7 @@ public:
 
   json marshal_from_binary(const string name, const uint8_t *serialized, const size_t length, const bool permissive = false) const {
     boost::shared_ptr<TMemoryBuffer> buf(new TMemoryBuffer());
-    buf->resetBuffer(const_cast<uint8_t *>(serialized), static_cast<uint32_t>(length));
+    buf->resetBuffer(const_cast<uint8_t *>(serialized), static_cast<uint32_t>(length), TMemoryBuffer::COPY);
     return marshal_from_binary(name, buf, permissive) ;
   }
 
