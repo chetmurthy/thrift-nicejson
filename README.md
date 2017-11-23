@@ -69,20 +69,26 @@ I'm a big fan of Apache Thrift, for many reasons:
 2. Supports my favorite programming language (Objective Caml)
 
 But there's *one* big, big missing feature (for me): Thrift doesn't
+have a human-readable wire-protocol:
 
-1. have a human-readable wire-representation like Protocol Buffers'
-"Compact Text Format", or (with Protocol Buffers 3) JSON.
+1. like Protocol Buffers' "Compact Text Format", or (with Protocol
+   Buffers 3) JSON.
 
-2. And furthermore, if you have a (binary) serialized thrift message,
-there's no quick, simple way to dump it in a format where all the
-fields are there
+2. if you have a (binary) serialized thrift message, there's no quick,
+   simple way to dump it in a human-readable format where all the
+   fields are there (again, protobufs has this)
 
 3. and where the format is one that can be re-marshaled back into
    Thrift's binary serialized format.
    
-In short, Thrift needs a human-readable wire-format, and a "type
+4. And of course, we want this not just for "data at rest" but also
+   for our RPCs.  So we can use other JSON RPC tooling to talk to
+   Thrift.
+
+In short, Thrift needs a human-readable wire-protocol, a "type
 library" facility so that one can use to "disassemble"
-binary-serialized messages to that format.
+binary-serialized messages to that format, and full RPC stack support
+(client & server) for that protocol.
 
 This library provides those facilities.
 
@@ -113,6 +119,6 @@ ownership of this code to Apache, with the following exceptions:
   under the MIT license (included in the source). This thing is bloody
   lovely marvel.
 
-* And of course, there aare a bunch of GNU files, owned by their
+* And of course, there are a bunch of GNU files, owned by their
   respective owners.
 
