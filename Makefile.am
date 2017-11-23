@@ -2,8 +2,8 @@ AUTOMAKE_OPTIONS = foreign
 LIB_SUBDIRS = src/lib/cpp
 PLUGIN_SUBDIRS = src/plugins/cpp
 TEST_SUBDIRS = src/test/cpp
-EXAMPLES_SUBDIR = src/examples/cpp
-TOOLS_SUBDIR = src/tools/cpp
+EXAMPLES_SUBDIRS = src/examples/cpp
+TOOLS_SUBDIRS = src/tools/cpp
 
 if WITH_PYTHON
 LIB_SUBDIRS +=  src/lib/py

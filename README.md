@@ -3,14 +3,15 @@
 This library provides a "nice" JSON serialization format for
 Thrift-defined objects.  The implementation is in C++, and via FFI it
 can be made available to other Thrift languages, e.g. currently
-Python.
+Python and Ocaml.
 
 ## Installation
 
 This library requires a relatively recent Thrift installation (version
-0.10.0 or newer) and *also* a Thrift source-tree.  I've only tested
-the build against source that matches the binary Thrift installation,
-but perhaps it'll work if there's a mismatch.
+0.10.0 or newer) and *also* a Thrift source-tree (for access to a few
+files from the compiler).  I've only tested the build against source
+that matches the binary Thrift installation, but perhaps it'll work if
+there's a mismatch.
 
 Build/install is straightforward, and is fully autotool-ized:
 
