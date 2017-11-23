@@ -53,9 +53,11 @@ nonstandard location, e.g. `$HOME/tmp/thrift-nicejson` via
 % ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here>
 ....
 
-Examples can be found in `src/test/cpp` and `src/test/py`. In
-particular, `src/test/cpp` demonstrates most of the capabilities of the
-library.
+The adapted Thrift C++ Tutorial example can be found in
+`src/examples/cpp` and tests in C++, Python, and Ocaml can be found in
+`src/test/{cpp,python,ocaml}`. In particular, `src/test/cpp`
+demonstrates most of the capabilities of the library.  All the tests
+can be automatically built and run with `make check`.
 
 [[why-does-thrift-need-nice-json-serialization]]
 == Why does Thrift need "nice JSON" serialization?
