@@ -1,0 +1,7 @@
+[[building-python-support]]
+Building Python Support
+================================================
+:toc:
+:toc-placement: preamble
+
+Nothing yet.  But soon!
