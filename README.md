@@ -1,13 +1,13 @@
-# thrift-nicejson: A Nice JSON wire-format for Thrift
+# thrift-nicejson: A Nice JSON protocol for Thrift
 
-This library provides a "nice" JSON serialization format for Thrift.
+This library provides a "nice" JSON wire-protocol for Thrift.
 That means you can define data-types/messages in Thrift, turn a crank,
 and get out de/marshallers and a protocol stack that talk all of
 Thrift's protocols, and also talk *idiomatic* JSON.
 
-For example, the (comes with) Thrift Calcualtor tutorial example has
+For example, the (comes with) Thrift Calculator tutorial example has
 an `i32 add(1:i32 num1, 2:i32 num2)` method, which the client invokes
-as `add(1, 1)`.  With this libray, you can do that with POST:
+as `add(1, 1)`.  With this library, you can do that with POST:
 
 ```
 % POST -c 'application/x-thrift' http://localhost:9090/
@@ -88,18 +88,10 @@ This library provides those facilities.
 
 ## What this library does **not** do
 
-There are two things that a "wire format" could mean:
-
-* It could mean a format such that Thrift messages (== "structs")
-  could be de/marshaled from/to that format
-  
-* It could mean a runtime stack that allows Thrift services to be
-  invoked and return responses, using this format.
-  
-This library currently supports the former, and **not** the latter.
-It's possible that in the fullness of time, I'll figure out a way to
-hack Thrift's generated code to make it possible to support the latter
-capability, but not anytime soon.
+This library supports de/serializing Thrift objects to JSON, in a
+format that is strictly determined by the IDL.  So there's no
+flexibility of naming fields, nor of data-types (though one might
+imagine adding that).
 
 ## Licensing
 
@@ -111,16 +103,16 @@ own licenses, typically GPL.
 ## Credits and Thanks
 
 First, this code is descended by modification from code and examples
-found in Apache Thrift.  In many filies I've leaft the copyright
+found in Apache Thrift.  In many filies I've left the copyright
 headers as-is, b/c as far as I'm concerned, I'm happy to cede
 ownership of this code to Apache, with the following exceptions:
 
-The file "json.hpp" was copied with permission from
-[JSON for Modern C++](https://github.com/nlohmann/json) created by
-Neils Lohmann, and he continues to own it.  He licenses that file
-under the MIT license (included in the source). This thing is bloody
-lovely marvel.
+* The file "json.hpp" was copied with permission from
+  [JSON for Modern C++](https://github.com/nlohmann/json) created by
+  Neils Lohmann, and he continues to own it.  He licenses that file
+  under the MIT license (included in the source). This thing is bloody
+  lovely marvel.
 
-And of course, there aare a bunch of GNU files, owned by their
-respective owners.
+* And of course, there aare a bunch of GNU files, owned by their
+  respective owners.
 
