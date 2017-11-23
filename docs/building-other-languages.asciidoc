@@ -4,6 +4,8 @@ Building Other Languages
 :toc:
 :toc-placement: preamble
 
+== Overview
+
 Enabling support for other languages is straightforward.  Currently
 `thrift-nicejson` support Python and ocaml.  To enable, just configure:
 
