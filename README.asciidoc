@@ -62,9 +62,8 @@ demonstrates most of the capabilities of the library.  All the tests
 can be automatically built and run with `make check`.
 
 Instructions for building
-link:docs/building-python-support.asciidoc[Python support] and
-link:docs/building-ocaml-support.asciidoc[Ocaml support] are
-available.
+link:docs/building-other-languages.asciidoc[other languages (Python
+and Ocaml)] are available.
 
 [[tutorial-faq-links]]
 == Tutorial and FAQ

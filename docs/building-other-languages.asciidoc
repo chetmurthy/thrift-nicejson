@@ -1,0 +1,31 @@
+[[building-other-languages]]
+Building Other Languages
+================================================
+:toc:
+:toc-placement: preamble
+
+Enabling support for other languages is straightforward.  Currently
+`thrift-nicejson` support Python and ocaml.  To enable, just configure:
+
+....
+% ./configure <other args> --with-python=yes --with-ocaml=yes
+....
+
+Then `make all` and `make check` work as expected.  For each of these
+languages, prerequisites must be installed.  Obviously, the Thrift
+language-specific library must already have been built and installed.
+
+=== Python Prerequisites
+
+There are no specific Python prerequisites, but this library has only
+been tested with Python version 2.7.12 on Ubuntu 16.04.1.
+
+=== Ocaml Prerequisites
+
+This library has been tested with the following required libraries:
+
+* Ocaml 4.04.2
+* opam 1.2.2
+* ocamlfind 1.7.3
+* yojson 1.4.0
+* ounit 2.0.6 (only for tests)
