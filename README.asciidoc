@@ -1,6 +1,8 @@
 [[thrift-nicejson-a-nice-json-protocol-for-thrift]]
 thrift-nicejson: A Nice JSON protocol for Thrift
 ------------------------------------------------
+:toc:
+:toc-placement: preamble
 
 This library provides a "nice" JSON wire-protocol for Thrift. That means
 you can define data-types/messages in Thrift, turn a crank, and get out
