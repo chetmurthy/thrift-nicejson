@@ -51,10 +51,7 @@ instance) we assume various files are already installed).
    example is being built _without being installed_ so the invocation
    is run with a modified `$PATH`.
 
-5. The C++ typelib files must be compiled, just like the C++
-   `gen-cpp` files.
-
-6. Instead of a `TBinaryProtocolFactory()` in CppClient.cpp and
+5. Instead of a `TBinaryProtocolFactory()` in CppClient.cpp and
    CppServer.cpp, you need to use
    `TNiceJSONProtocolFactory("tutorial.tutorial", "Calculator")`.
    Let's unpack this: we're specifying that a NiceJSON protocol be
@@ -62,11 +59,41 @@ instance) we assume various files are already installed).
    service-name (`Calculator`).  This will allow the runtime to lookup
    type metadata for the specified service in the specified typelib.
 
-We also replaced `TBufferedTransportFactory()` with
-`THttpServerTransportFactory()` (in the server) and
-`THttpClient(socket, "localhost", "/service")` (in the client) in
-order to use HTTP instead of raw TCP (though that works too).  Later
-we'll be able to use command-line tools to invoke the server via HTTP.
+   We also replaced `TBufferedTransportFactory()` with
+   `THttpServerTransportFactory()` (in the server) and
+   `TBufferedTransport(socket)` with `THttpClient(socket, "localhost",
+   "/service")` (in the client) in order to use HTTP instead of raw
+   TCP (though that works too).  Later we'll be able to use
+   command-line tools to invoke the server via HTTP.
+
+6. The C++ typelib files must be compiled, just like the C++ `gen-cpp`
+   (and Cpp{Client,Server}.cpp).  When compiling, we'll need to make
+   sure `NiceJSON.h` (which should be installed) is on the include-path.
+
+7. When linking, we'll need to link with `libnicejson.a` and a few
+   Boost libraries (typically, `boost_system`, `boost_filesystem`,
+   `boost_thread).
+
+8. You should be able to run the examples just like like the
+unmodified ones.  But of course, you can't tell that they're talking
+JSON-over-HTTP without (e.g.) a packet-sniffer.  But you *can* invoke
+them with JSON-over-HTTP:
+
+....
+% POST -c 'application/x-thrift' http://localhost:9090/
+Please enter content (application/x-thrift) to be POSTed:
+{"body":{"num1":1,"num2":1},"name":"add","seqid":0,"type":"call"}
+<EOF>
+....
+
+replies with
+
+....
+{"body":{"success":2},"name":"add","seqid":0,"type":"reply"}
+....
+
+And that's really it!  The detailed diffs (between the Thrift C++
+Calculator example and our modified version) are below.
 
 === The Diffs (Server and Client)
 ....
