@@ -1,6 +1,5 @@
 [[thrift-nicejson-tutorial]]
-thrift-nicejson Tutorial
-================================================
+= thrift-nicejson Tutorial
 :toc:
 :toc-placement: preamble
 
