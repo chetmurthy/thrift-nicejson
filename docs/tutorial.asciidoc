@@ -74,7 +74,7 @@ tools to invoke the server via HTTP.
 
 7:: When linking, we'll need to link with `libnicejson.a` and a few
 Boost libraries (typically, `boost_system`, `boost_filesystem`,
-`boost_thread).
+`boost_thread`).
 
 8:: You should be able to run these examples just like the unmodified
 ones.  But of course, you can't tell that they're talking
