@@ -35,16 +35,18 @@ from idiomatic JSON.  It include type-information, and element-counts.
 
 === How does the "nice JSON" get produced?
 
-For serialization, Thrift already knows how to produce a Thrift object
-that contains all the information in the `.thrift` IDL file.  It uses
-this to communicate with "plugins".  This Thrift object's type is
-described in `plugin.thrift` in the Thrift source-distribution.  Let's
-call this a "type library" (typelib).  Thrift can de/marshal to a
-binary potocol (`TBinaryProtocol`).  To produce the equivalent JSON,
-we merely take the result of binary-protocol marshaling, and demarshal
-that using the typelib to guide us (called "interpretive marshaling")
-and build a JSON object.  This is all done in C++, and for other
-languages, we jsut convert that JSON into a string.
+Thrift already knows how to produce a Thrift object that contains all
+the information in the `.thrift` IDL file.  It uses this to
+communicate with "plugins".  This Thrift object's type is described in
+`plugin.thrift` in the Thrift source-distribution.  Let's call this a
+"type library" (typelib).
+
+For serialization, Thrift can marshal to a binary potocol
+(`TBinaryProtocol`).  To produce the equivalent JSON, we merely take
+the result of binary-protocol marshaling, and demarshal that using the
+typelib to guide us (called "interpretive marshaling") and build a
+JSON object.  This is all done in C++, and for other languages, we
+jsut convert that JSON into a string.
 
 The inverse process (deserializing JSON into a Thrift object) is
 similar: we start with a C++ JSON object, and, using type-library
