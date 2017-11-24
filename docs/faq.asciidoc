@@ -20,7 +20,7 @@ struct Bar {
 ....
 
 with `a=32, b="foo"` produces a JSON like `{"1":32,"2":"foo"}`.  To
-wit, the fields are _field-ids_, not _field-names_.  This makes the
+wit, the _keys_ are _field-ids_, not _field-names_.  This makes the
 JSON effectively unreadable and unwritable (to humans).  And
 completely useless for interoperating with any other JSON-capable
 system (b/c none of them use such a field-naming convention).
