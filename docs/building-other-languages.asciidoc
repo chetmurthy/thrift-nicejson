@@ -4,7 +4,7 @@
 == Overview
 
 Enabling support for other languages is straightforward.  Currently
-`thrift-nicejson` support Python and ocaml.  To enable, just configure:
+`thrift-nicejson` supports Python and ocaml.  To enable, just configure:
 
 ....
 % ./configure <other args> --with-python=yes --with-ocaml=yes
@@ -21,7 +21,7 @@ been tested with Python version 2.7.12 on Ubuntu 16.04.1.
 
 === Ocaml Prerequisites
 
-This library has been tested with the following required libraries:
+This library has been tested with the following required packages:
 
 * Ocaml 4.04.2
 * opam 1.2.2
