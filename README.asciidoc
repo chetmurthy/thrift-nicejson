@@ -128,7 +128,7 @@ licenses, typically GPL.
 == Credits and Thanks
 
 First, this code is descended by modification from code and examples
-found in Apache Thrift. In many filies I've left the copyright headers
+found in Apache Thrift. In many files I've left the copyright headers
 as-is, b/c as far as I'm concerned, I'm happy to cede ownership of this
 code to Apache, with the following exceptions:
 
