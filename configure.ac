@@ -94,7 +94,6 @@ if test "$with_ocaml" = "yes";  then
 fi
 AM_CONDITIONAL(WITH_OCAML, [test "$have_ocaml" = "yes"])
 
-
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.

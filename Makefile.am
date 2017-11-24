@@ -12,7 +12,7 @@ endif
 
 if WITH_OCAML
 LIB_SUBDIRS +=  src/lib/ocaml
-PLUGIN_SUBDIRS +=  src/plugins/ocaml
+# PLUGIN_SUBDIRS +=  src/plugins/ocaml
 TEST_SUBDIRS +=  src/test/ocaml
 endif
 

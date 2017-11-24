@@ -90,8 +90,8 @@ host_triplet = @host@
 @WITH_PYTHON_TRUE@am__append_1 = src/lib/py
 @WITH_PYTHON_TRUE@am__append_2 = src/test/py
 @WITH_OCAML_TRUE@am__append_3 = src/lib/ocaml
-@WITH_OCAML_TRUE@am__append_4 = src/plugins/ocaml
-@WITH_OCAML_TRUE@am__append_5 = src/test/ocaml
+# PLUGIN_SUBDIRS +=  src/plugins/ocaml
+@WITH_OCAML_TRUE@am__append_4 = src/test/ocaml
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ax_boost_base.m4 \
@@ -173,8 +173,8 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = src/lib/cpp src/lib/py src/lib/ocaml src/plugins/cpp \
-	src/plugins/ocaml src/test/cpp src/test/py src/test/ocaml \
-	src/examples/cpp src/tools/cpp
+	src/test/cpp src/test/py src/test/ocaml src/examples/cpp \
+	src/tools/cpp
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
 	ChangeLog INSTALL NEWS compile config.guess config.sub depcomp \
 	install-sh ltmain.sh missing mkinstalldirs
@@ -393,8 +393,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 LIB_SUBDIRS = src/lib/cpp $(am__append_1) $(am__append_3)
-PLUGIN_SUBDIRS = src/plugins/cpp $(am__append_4)
-TEST_SUBDIRS = src/test/cpp $(am__append_2) $(am__append_5)
+PLUGIN_SUBDIRS = src/plugins/cpp
+TEST_SUBDIRS = src/test/cpp $(am__append_2) $(am__append_4)
 EXAMPLES_SUBDIRS = src/examples/cpp
 TOOLS_SUBDIRS = src/tools/cpp
 SUBDIRS = $(LIB_SUBDIRS) $(PLUGIN_SUBDIRS) $(TEST_SUBDIRS) $(EXAMPLES_SUBDIRS) $(TOOLS_SUBDIRS)
