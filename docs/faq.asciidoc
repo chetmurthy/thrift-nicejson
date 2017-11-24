@@ -22,7 +22,7 @@ JSON effectively unreadable and unwritable (to humans).  And
 completely useless for interoperating with any other JSON-capable
 system (b/c none of them use such a field-naming convention).
 
-2.. It doesn't support any variation in the white-spacing of the JSON.
+2. It doesn't support any variation in the white-spacing of the JSON.
 
 3. It doesn't produce correct JSON when applied to Thrift types like `map[list<i32>]string`.
 
