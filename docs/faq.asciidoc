@@ -1,8 +1,11 @@
 [[faq]]
 = thrift-nicejson Frequently Asked Questions
-
 :toc:
-:toc-placement: preamble
+:toc-placement!:
+
+Thrift NiceJSON FAQ
+
+toc::[]
 
 === What's the difference between `TJSONProtocol` and `TNiceJSONProtocol` ?
 
