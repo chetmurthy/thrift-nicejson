@@ -28,3 +28,4 @@ This library has been tested with the following required packages:
 * ocamlfind 1.7.3
 * yojson 1.4.0
 * ounit 2.0.6 (only for tests)
+* https://github.com/chetmurthy/ocaml-cppffigen[ocaml-cppffigen (version 0.001)]
