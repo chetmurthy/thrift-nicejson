@@ -4,5 +4,25 @@
 :toc:
 :toc-placement: preamble
 
-=== What's the difference between `TJSONProtocol` and TNiceJSONProtocol` ?
+=== What's the difference between `TJSONProtocol` and `TNiceJSONProtocol` ?
+
+`TJSONProtocol` is a JSON protocol in name only:
+
+1. a Thrift IDL type like
+....
+struct Bar {
+  1: required i32 a ,
+  2: required string b,
+}
+....
+
+with `a=32, b="foo"` produces a JSON like `{"1":32,"2":"foo"}`.  To
+wit, the fields are _field-ids_, not _field-names_.  This makes the
+JSON effectively unreadable and unwritable (to humans).  And
+completely useless for interoperating with any other JSON-capable
+system (b/c none of them use such a field-naming convention).
+
+2.. It doesn't support any variation in the white-spacing of the JSON.
+
+3. It doesn't produce correct JSON when applied to Thrift types like `map[list<i32>]string`.
 
