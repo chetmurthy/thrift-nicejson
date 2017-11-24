@@ -76,8 +76,8 @@ tools to invoke the server via HTTP.
 Boost libraries (typically, `boost_system`, `boost_filesystem`,
 `boost_thread).
 
-8:: You should be able to run the examples just like like the
-unmodified ones.  But of course, you can't tell that they're talking
+8:: You should be able to run these examples just like the unmodified
+ones.  But of course, you can't tell that they're talking
 JSON-over-HTTP without (e.g.) a packet-sniffer.  But you *can* invoke
 them with JSON-over-HTTP:
 
