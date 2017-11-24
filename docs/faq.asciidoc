@@ -8,7 +8,7 @@
 
 `TJSONProtocol` is a JSON protocol in name only:
 
-1. a Thrift IDL type like
+1:: a Thrift IDL type like
 ....
 struct Bar {
   1: required i32 a ,
@@ -22,7 +22,35 @@ JSON effectively unreadable and unwritable (to humans).  And
 completely useless for interoperating with any other JSON-capable
 system (b/c none of them use such a field-naming convention).
 
-2. It doesn't support any variation in the white-spacing of the JSON.
+2. The serialization of all containers (map/list/set) is different
+from idiomatic JSON.  It include type-information, and element-counts.
 
-3. It doesn't produce correct JSON when applied to Thrift types like `map[list<i32>]string`.
+2:: It doesn't support any variation in the white-spacing of the JSON.
 
+3:: It doesn't produce correct JSON when applied to Thrift types like
+`map[list<i32>]string`.
+
+=== How does the "nice JSON" get produced?
+
+Thrift already knows how to produce a Thrift object that contains all
+the information in the `.thrift` IDL file.  It uses this to
+communicate with "plugins".  This Thrift object's type is described in
+`plugin.thrift` in the Thrift source-distribution.  Let's call this a
+"type library" (typelib).  Thrift can de/marshal to a binary potocol
+(`TBinaryProtocol`).  To produce the equivalent JSON, we merely take
+the result of binary-protocol marshaling, and demarshal that using the
+typelib to guide us (called "interpretive marshaling") and build a
+JSON object.  This is all done in C++, and for other languages, we
+jsut convert that JSON into a string.
+
+The inverse process is similar: we start with a C++ JSON object, and,
+using type-library information, serialize it in the binary protocol
+format.
+
+This method has intrinsic performance limitations, but it has the
+signal advantage that it can work with any Thrift data-types.  That's
+quite difficult to do with any method that didn't use typelib
+information for many different reasons, the most important of which is
+that in all Thrift protocols, containers (maps/sets/lists) carry with
+them bits of meta-information (e.g. # of elements) that one would
+_never_ want to have present in any JSON serialization of a container.
