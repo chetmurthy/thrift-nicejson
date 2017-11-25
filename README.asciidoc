@@ -63,10 +63,11 @@ can be automatically built and run with `make check`.
 
 Instructions for building
 link:docs/building-other-languages.asciidoc[other languages (Python
-and Ocaml)] are available.  The TL;DR is
+and Ocaml)] are available.  The TL;DR (if all prereqs are already installed) is
 
 ....
-% ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here> --with-python=yes --with-ocaml=yes
+% ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here> \
+  	      --with-python=yes --with-ocaml=yes
 ....
 
 
