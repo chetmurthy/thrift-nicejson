@@ -11,6 +11,7 @@
 #include <boost/test/included/unit_test.hpp>
 #include <boost/thread.hpp>
 
+#include <thrift/concurrency/Monitor.h>
 #include <thrift/protocol/TDebugProtocol.h>
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/protocol/TJSONProtocol.h>
@@ -92,6 +93,9 @@ public:
   }
   void goo(thrift_test::Bar& bar) override {
   }
+  void hoo() {
+    cerr << "hoo()" << std::endl ;
+ }
 };
 
 class S2CloneFactory : virtual public thrift_test::S2IfFactory {
@@ -123,6 +127,39 @@ void Run() {
  TThreadedServer& server_ ;
 } ;
 
+using apache::thrift::concurrency::Monitor;
+using apache::thrift::concurrency::Mutex;
+using apache::thrift::concurrency::Synchronized;
+
+// copied from Thrift source !!
+class TServerReadyEventHandler : public TServerEventHandler, public Monitor {
+
+public:
+  TServerReadyEventHandler() : isListening_(false), accepted_(0) {}
+  virtual ~TServerReadyEventHandler() {}
+  virtual void preServe() {
+    Synchronized sync(*this);
+    isListening_ = true;
+    notify();
+  }
+  virtual void* createContext(boost::shared_ptr<TProtocol> input,
+                              boost::shared_ptr<TProtocol> output) {
+    Synchronized sync(*this);
+    ++accepted_;
+    notify();
+
+    (void)input;
+    (void)output;
+    return NULL;
+  }
+  bool isListening() const { return isListening_; }
+  uint64_t acceptedCount() const { return accepted_; }
+
+private:
+  bool isListening_;
+  uint64_t accepted_;
+};
+
 void base_client(thrift_test::S2Client& client) {
   cerr << "Starting the client..." << endl;
 
@@ -132,6 +169,8 @@ void base_client(thrift_test::S2Client& client) {
 
   thrift_test::Bar b ;
   client.goo(b) ;
+  client.hoo() ;
+  client.ping();
 
   BOOST_CHECK_THROW( client.foo(0l, thrift_test::Bar()),
 		     thrift_test::InvalidOperation ) ;
@@ -142,7 +181,7 @@ void base_client(thrift_test::S2Client& client) {
 
 }
 
-BOOST_AUTO_TEST_CASE( RPC0 )
+BOOST_AUTO_TEST_CASE( Binary_TCP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -150,11 +189,20 @@ BOOST_AUTO_TEST_CASE( RPC0 )
     boost::make_shared<TBufferedTransportFactory>(),
     boost::make_shared<TBinaryProtocolFactory>());
 
+  boost::shared_ptr<TServerReadyEventHandler> pEventHandler(new TServerReadyEventHandler) ;
+  server.setServerEventHandler(pEventHandler);
+
   cerr << "Starting the server..." << endl;
   RPC0ThreadClass t(server) ;
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
-  sleep(1) ;
+  {
+    Synchronized sync(*(pEventHandler.get()));
+    while (!pEventHandler->isListening()) {
+      pEventHandler->wait();
+    }
+  }
+
   {
     boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
     boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
@@ -169,7 +217,7 @@ BOOST_AUTO_TEST_CASE( RPC0 )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( RPC1 )
+BOOST_AUTO_TEST_CASE( NiceJSON_TCP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -177,11 +225,20 @@ BOOST_AUTO_TEST_CASE( RPC1 )
     boost::make_shared<TBufferedTransportFactory>(),
     boost::make_shared<TNiceJSONProtocolFactory>(kTestTypelib, "S2"));
 
+  boost::shared_ptr<TServerReadyEventHandler> pEventHandler(new TServerReadyEventHandler) ;
+  server.setServerEventHandler(pEventHandler);
+
   cerr << "Starting the server..." << endl;
   RPC0ThreadClass t(server) ;
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
-  sleep(1) ;
+  {
+    Synchronized sync(*(pEventHandler.get()));
+    while (!pEventHandler->isListening()) {
+      pEventHandler->wait();
+    }
+  }
+
   {
     boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9091));
     boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
@@ -196,7 +253,7 @@ BOOST_AUTO_TEST_CASE( RPC1 )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( RPC2 )
+BOOST_AUTO_TEST_CASE( Binary_HTTP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -204,11 +261,20 @@ BOOST_AUTO_TEST_CASE( RPC2 )
     boost::make_shared<THttpServerTransportFactory>(),
     boost::make_shared<TBinaryProtocolFactory>());
 
+  boost::shared_ptr<TServerReadyEventHandler> pEventHandler(new TServerReadyEventHandler) ;
+  server.setServerEventHandler(pEventHandler);
+
   cerr << "Starting the server..." << endl;
   RPC0ThreadClass t(server) ;
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
-  sleep(1) ;
+  {
+    Synchronized sync(*(pEventHandler.get()));
+    while (!pEventHandler->isListening()) {
+      pEventHandler->wait();
+    }
+  }
+
   {
     boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9092));
     boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));
@@ -223,7 +289,7 @@ BOOST_AUTO_TEST_CASE( RPC2 )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( RPC2b )
+BOOST_AUTO_TEST_CASE( JSON_HTTP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -231,11 +297,20 @@ BOOST_AUTO_TEST_CASE( RPC2b )
     boost::make_shared<THttpServerTransportFactory>(),
     boost::make_shared<TJSONProtocolFactory>());
 
+  boost::shared_ptr<TServerReadyEventHandler> pEventHandler(new TServerReadyEventHandler) ;
+  server.setServerEventHandler(pEventHandler);
+
   cerr << "Starting the server..." << endl;
   RPC0ThreadClass t(server) ;
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
-  sleep(1) ;
+  {
+    Synchronized sync(*(pEventHandler.get()));
+    while (!pEventHandler->isListening()) {
+      pEventHandler->wait();
+    }
+  }
+
   {
     boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9092));
     boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));
@@ -250,7 +325,7 @@ BOOST_AUTO_TEST_CASE( RPC2b )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( RPC3 )
+BOOST_AUTO_TEST_CASE( NiceJSON_HTTP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -258,11 +333,20 @@ BOOST_AUTO_TEST_CASE( RPC3 )
     boost::make_shared<THttpServerTransportFactory>(),
     boost::make_shared<TNiceJSONProtocolFactory>(kTestTypelib, "S2"));
 
+  boost::shared_ptr<TServerReadyEventHandler> pEventHandler(new TServerReadyEventHandler) ;
+  server.setServerEventHandler(pEventHandler);
+
   cerr << "Starting the server..." << endl;
   RPC0ThreadClass t(server) ;
   boost::thread thread(&RPC0ThreadClass::Run, &t);
 
-  sleep(1) ;
+  {
+    Synchronized sync(*(pEventHandler.get()));
+    while (!pEventHandler->isListening()) {
+      pEventHandler->wait();
+    }
+  }
+
   {
     boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9092));
     boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));

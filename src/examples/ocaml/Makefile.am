@@ -64,3 +64,4 @@ gen-ocaml/Calculator.cmo: gen-ocaml/tutorial_types.cmi gen-ocaml/SharedService.c
 gen-ocaml/SharedService.cmi: gen-ocaml/shared_types.cmi
 gen-ocaml/SharedService.cmo: gen-ocaml/SharedService.cmi
 gen-ocaml/tutorial_consts.cmo: gen-ocaml/tutorial_types.cmi
+gen-ocaml/shared_consts.cmo: gen-ocaml/shared_types.cmi

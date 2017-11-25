@@ -99,7 +99,9 @@ uint32_t TNiceJSONProtocol::writeMessageBegin(const std::string& name,
 
 std::string struct_name(const NiceJSON& typelib, const std::string service, const std::string name, TMessageType messageType) {
   switch (messageType) {
-  case T_CALL: {
+  case T_CALL: 
+  case T_ONEWAY: 
+    {
     return typelib.service_struct_names(service, name).first ;
     break ;
   }
@@ -128,6 +130,9 @@ std::string json_message_type(TMessageType messageType) {
   case T_EXCEPTION: {
     return "exception" ;
     break ;
+  }
+  case T_ONEWAY: {
+    return "oneway" ;
   }
   default:
     assert(false) ;
@@ -323,6 +328,7 @@ uint32_t TNiceJSONProtocol::readMessageBegin(std::string& name,
     if (s_messageType == "call") message_type_ = T_CALL ;
     else if (s_messageType == "reply") message_type_ = T_REPLY ;
     else if (s_messageType == "exception") message_type_ = T_EXCEPTION ;
+    else if (s_messageType == "oneway") message_type_ = T_ONEWAY ;
     else
       throw TProtocolException("TNiceJSONProtocol: bad JSON, type element must be either call or reply") ;
   }

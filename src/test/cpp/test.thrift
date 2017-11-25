@@ -63,7 +63,8 @@ service S1 {
 service S2 {
   void ping(),
   i32 foo(1:i32 n, 2:Bar w) throws (1:InvalidOperation ouch, 2:InvalidOperation2 ouch2),
-  Bar goo()
+  Bar goo(),
+  oneway void hoo()
 }
  
 // test out TApplicationException marshalling
