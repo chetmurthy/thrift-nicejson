@@ -19,3 +19,9 @@ def json_from_binary(typelib, ty, ser):
 def binary_from_json(typelib, ty, j):
     js = json.dumps(j)
     return thrift_nicejson_binary.binary_from_json(typelib,ty, js)
+
+def service_struct_name_args(typelib, service, op):
+    return thrift_nicejson_binary.service_struct_name_args(typelib, service, op)
+
+def service_struct_name_result(typelib, service, op):
+    return thrift_nicejson_binary.service_struct_name_result(typelib, service, op)

@@ -8,6 +8,7 @@ TOOLS_SUBDIRS = src/tools/cpp
 if WITH_PYTHON
 LIB_SUBDIRS +=  src/lib/py
 TEST_SUBDIRS +=  src/test/py
+EXAMPLES_SUBDIRS += src/examples/py
 endif
 
 if WITH_OCAML

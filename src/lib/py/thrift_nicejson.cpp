@@ -1,5 +1,6 @@
 #include <exception>
 #include <string>
+#include <tuple>
 
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
@@ -63,6 +64,22 @@ void require_typelib(const std::string& key) {
   NiceJSON::require_typelib(key) ;
 }
 
+const std::string
+  service_struct_name_args(const std::string key,
+			   const std::string& service,
+			   const std::string& operation) {
+  NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
+  return nj->service_struct_names(service, operation).first ;
+}
+
+const std::string
+  service_struct_name_result(const std::string key,
+			   const std::string& service,
+			   const std::string& operation) {
+  NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
+  return nj->service_struct_names(service, operation).second ;
+}
+
 BOOST_PYTHON_MODULE(thrift_nicejson_binary)
 {
   using namespace boost::python;
@@ -77,4 +94,6 @@ BOOST_PYTHON_MODULE(thrift_nicejson_binary)
   def("binary_from_json", binary_from_json);
   def("prepend_typelib_directory", prepend_typelib_directory);
   def("append_typelib_directory", append_typelib_directory);
+  def("service_struct_name_args", service_struct_name_args);
+  def("service_struct_name_result", service_struct_name_result);
 }
