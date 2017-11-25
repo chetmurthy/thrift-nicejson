@@ -350,4 +350,10 @@ end)
       proto#skip typ
   end
 
+class factory typelib service =
+object
+  inherit P.factory
+  method getProtocol tr = new t tr typelib service
+end
+
 end

@@ -71,11 +71,14 @@ object (self)
 
 end
 
+open Nicejson
+
 let doserver () =
+  Nicejson.prepend_typelib_directory "./gen-typelib" ;
   let h = new calc_handler in
   let proc = new Calculator.processor h in
   let port = 9090 in
-  let pf = new TBinaryProtocol.factory in
+  let pf = new TNiceJSONProtocol.factory "tutorial.tutorial" "Calculator" in
   let server = new TThreadedServer.t
 		 proc
 		 (new TServerSocket.t port)

@@ -33,15 +33,18 @@ type connection = {
   calc : Calculator.client ;
 }
 
+open Nicejson
+
 let connect ~host port =
   let tx = new TSocket.t host port in
-  let proto = new TBinaryProtocol.t tx in
+  let proto = new TNiceJSONProtocol.t tx "tutorial.tutorial" "Calculator" in
   let calc = new Calculator.client proto proto in
     tx#opn;
     { trans = tx ; proto = proto; calc = calc }
 ;;
 
 let doclient () =
+  Nicejson.prepend_typelib_directory "./gen-typelib" ;
   let cli = connect ~host:"127.0.0.1" 9090 in
   try
     cli.calc#ping ;
