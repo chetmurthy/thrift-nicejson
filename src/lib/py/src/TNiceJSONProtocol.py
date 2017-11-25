@@ -13,7 +13,8 @@ READING_MESSAGE = 2
 BROKEN = 3
 
 def struct_name(typelib, service, name, messageType):
-    if messageType == TMessageType.CALL: return NiceJSON.service_struct_name_args(typelib, service, str(name))
+    if messageType == TMessageType.CALL or messageType == TMessageType.ONEWAY:
+        return NiceJSON.service_struct_name_args(typelib, service, str(name))
     elif messageType == TMessageType.REPLY: return NiceJSON.service_struct_name_result(typelib, service, str(name))
     else: raise TException("struct_name: unexpected type %d" % messageType)
         
@@ -21,6 +22,7 @@ def json_message_type(messageType):
     if messageType == TMessageType.CALL: return "call"
     elif messageType == TMessageType.REPLY: return "reply"
     elif messageType == TMessageType.EXCEPTION: return "exception"
+    elif messageType == TMessageType.ONEWAY: return "oneway"
     else: raise TException("json_message_type: unexpected type %d" % messageType)
 
 def string_to_TApplicationExceptionType(s):
@@ -215,6 +217,7 @@ class TNiceJSONProtocol(TProtocolBase):
         if j_messageType == 'call': self.message_type_ = TMessageType.CALL
         elif j_messageType == 'reply': self.message_type_ = TMessageType.REPLY
         elif j_messageType == 'exception': self.message_type_ = TMessageTyye.EXCEPTION
+        elif j_messageType == 'oneway': self.message_type_ = TMessageTyye.ONEWAY
         else: raise TProtocolException("TNiceJSONProtocol: bad JSON, type element must be either call or reply")
         if 'name' not in j: raise TProtocolException("TNiceJSONProtocol: bad JSON, missing name element")
         j_name = j['name']

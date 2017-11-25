@@ -28,7 +28,7 @@ from tutorial.ttypes import InvalidOperation, Operation, Work
 
 from thrift import Thrift
 from thrift.transport import TSocket
-from thrift.transport import TTransport
+from thrift.transport import TTransport, THttpClient
 from thrift.protocol import TBinaryProtocol
 from thrift_nicejson import TNiceJSONProtocol, NiceJSON
 
@@ -38,11 +38,14 @@ kTypelib = "tutorial.tutorial"
 kService = "Calculator"
 
 def main():
-    # Make socket
-    transport = TSocket.TSocket('localhost', 9090)
-
-    # Buffering is critical. Raw sockets are very slow
-    transport = TTransport.TBufferedTransport(transport)
+    if len(sys.argv) > 1 and sys.argv[1] == 'http':
+        transport = THttpClient.THttpClient('localhost', 9090, '/service')
+        transport = TTransport.TBufferedTransport(transport)
+    else:
+        # Make socket
+        transport = TSocket.TSocket('localhost', 9090)
+        # Buffering is critical. Raw sockets are very slow
+        transport = TTransport.TBufferedTransport(transport)
 
     # Wrap in a protocol
     protocol = TNiceJSONProtocol.TNiceJSONProtocol(transport, kTypelib, kService)
@@ -55,6 +58,9 @@ def main():
 
     client.ping()
     print('ping()')
+
+    client.zip()
+    print('zip()')
 
     sum_ = client.add(1, 1)
     print('1+1=%d' % sum_)
