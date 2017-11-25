@@ -25,7 +25,7 @@ nicejson_tests.byte: $(BUILT_OBJECTS) nicejson_tests.cmo
 	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o nicejson_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml $^ -cclib -lstdc++
 
 clean-local:
-	rm -rf oUnit* *.cm* *.byte
+	rm -rf oUnit* *.cm* *.byte gen-ocaml/*.cm*
 
 THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT=$(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift

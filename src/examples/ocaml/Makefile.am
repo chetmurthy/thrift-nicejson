@@ -38,7 +38,7 @@ CalcClient.byte: $(BUILT_OBJECTS) CalcClient.cmo
 	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o $@ ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml $^ -cclib -lstdc++
 
 clean-local:
-	rm -rf oUnit* *.cm* *.byte
+	rm -rf oUnit* *.cm* *.byte gen-ocaml/*.cm*
 
 THRIFT=$(thrift_EXEC_PREFIX)/bin/thrift
 TUTORIAL_THRIFT=$(THRIFT_SRC_ROOT)/tutorial/tutorial.thrift
