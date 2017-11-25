@@ -5,12 +5,16 @@ RESULT = ocaml_nicejson
 GENOCAML_test = \
 	gen-ocaml/test_types.ml \
 	gen-ocaml/test_consts.ml \
-	gen-ocaml/test_types.mli
+	gen-ocaml/test_types.mli \
+	gen-ocaml/S1.ml \
+	gen-ocaml/S2.ml
 
 BUILT_SOURCES = $(GENOCAML_test)
 BUILT_OBJECTS = \
 	gen-ocaml/test_types.cmo \
-	gen-ocaml/test_consts.cmo
+	gen-ocaml/test_consts.cmo \
+	gen-ocaml/S1.cmo \
+	gen-ocaml/S2.cmo
 
 check-local: all-local
 	./nicejson_tests.byte
@@ -28,6 +32,7 @@ PLUGIN_THRIFT=$(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 
 $(GENOCAML_test): ../cpp/test.thrift
 	$(THRIFT) --gen ocaml -r ../cpp/test.thrift
+	rm -f gen-ocaml/S?.mli
 
 .ml.cmo:
 	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<

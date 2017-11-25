@@ -100,17 +100,17 @@ end)
     inherit P.t trans
     val mutable mode_ = MODE_NONE
 
-    method must_be_none =
+    method private must_be_none =
       match mode_ with
 	MODE_NONE -> ()
       | _ -> raise (P.E(P.UNKNOWN, "mode mismatch: must be NONE"))
 
-    method must_be_writing =
+    method private must_be_writing =
       match mode_ with
 	WRITING_MESSAGE (a,b,c,d,e) -> (a,b,c,d,e)
       | _ -> raise (P.E(P.UNKNOWN, "mode mismatch: must be WRITING"))
 
-    method must_be_reading =
+    method private must_be_reading =
       match mode_ with
 	READING_MESSAGE (a,b,c,d,e) -> (a,b,c,d,e)
       | _ -> raise (P.E(P.UNKNOWN, "mode mismatch: must be READING"))
@@ -134,8 +134,14 @@ end)
 	else
 	  let structname = struct_name typelib service name ty in
 	  json_from_binary typelib structname (Buffer.contents buf) in
-      let js = Yojson.Safe.to_string j in
-      trans#write js 0 (String.length js) ;
+      let msg = `Assoc [
+	"body", j ;
+	"name", `String name ;
+	"type", `String(messageType_to_string ty) ;
+	"seqid", `Int seqid ;
+      ] in
+      let msgs = Yojson.Safe.to_string msg in
+      trans#write msgs 0 (String.length msgs) ;
       mode_ <- MODE_NONE
 
     method writeStructBegin x =

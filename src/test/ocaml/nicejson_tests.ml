@@ -51,6 +51,7 @@ open Thrift
 open Test_types
 open TBytesTransport
 open SerDes
+open Nicejson
 
 module Bar : (SERDES_SIG with type t = bar) = T(struct
   type t = bar
@@ -118,8 +119,64 @@ let yojson_tests = "yojson_tests" >:::
       ) ;
   ]
 
+module SerDes_ping_args = SerDes.T(struct
+  type t = S2.ping_args
+  let writer wr proto = wr#write proto
+    let reader = S2.read_ping_args
+end)
+
+let readtest1 typelib service msg desfun =
+  let trans = new TBytesTransport.read_t msg in
+  let proto = new TNiceJSONProtocol.t trans typelib service in
+  let (name, type_,seqid) = proto#readMessageBegin in
+  let obj = desfun proto in
+  proto#readMessageEnd ;
+  ((name, type_, seqid), obj)
+
+let writetest1 typelib service msgname msgty seqid obj =
+  let buf = Buffer.create 23 in
+  let transport = new TBytesTransport.write_t buf in
+  let proto = new TNiceJSONProtocol.t transport typelib service in
+  proto#writeMessageBegin(msgname, msgty, seqid) ;
+  obj#write proto ;
+  proto#writeMessageEnd ;
+  transport#flush ;
+  Buffer.contents buf
+
 let proto_tests = "proto_tests" >:::
   [
+    "ping_args/read" >::
+      (fun ctxt ->
+	let r, obj = readtest1 "thrift_test.test" "S2"
+	  {|{"body":{},"name":"ping","seqid":0,"type":"call"}|} S2.read_ping_args in
+	assert_equal ("ping", Protocol.CALL, 0) r ;
+	  ()
+      ) ;
+    "ping_args/write" >::
+      (fun ctxt ->
+	let obj = new S2.ping_args in
+	let j1 = Yojson.Safe.from_string {|
+{"body":{},"name":"ping","seqid":0,"type":"call"}
+|} in
+	let j2 = Yojson.Safe.from_string (writetest1 "thrift_test.test" "S2" "ping" Protocol.CALL 0 obj) in
+	assert_equal (Yojson.Safe.sort j1) (Yojson.Safe.sort j2)
+      ) ;
+    "foo_args/write" >::
+      (fun ctxt ->
+	let obj = new S2.foo_args in
+	obj#set_n 42l ;
+	obj#set_w (
+	  let w = new bar in
+	  w#set_a 32l ;
+	  w#set_b "ugh" ;
+	  w) ;
+	let j1 = Yojson.Safe.from_string {|
+{"body":{"n":42,"w":{"a":32,"b":"ugh"}},"name":"foo","type":"call","seqid":0}
+|} in
+	let j2 = Yojson.Safe.from_string (writetest1 "thrift_test.test" "S2" "foo" Protocol.CALL 0 obj) in
+	assert_equal (Yojson.Safe.sort j1) (Yojson.Safe.sort j2)
+      ) ;
+
   ]
 
 (* Run the tests in test suite *)
