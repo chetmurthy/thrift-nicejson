@@ -78,7 +78,47 @@ let ser_tests = "ser_tests" >:::
       )
   ]
 
+module Refiller = struct
+type t =
+  {
+    buf : string ;
+    mutable ofs : int ;
+  }
+let mk s = { buf = s ; ofs = 0 }
+let refill r =
+  fun dst max ->
+  assert (Bytes.length dst >= 1) ;
+  if r.ofs >= String.length r.buf then 0 else begin
+    Bytes.set dst 0 (String.get r.buf r.ofs) ;
+    r.ofs <- 1 + r.ofs ;
+    1
+  end
+let rest r =
+  let buflen = String.length r.buf in
+  String.sub r.buf r.ofs (buflen - r.ofs)
+end
+
+let yojson_tests = "yojson_tests" >:::
+  [
+    "simple" >::
+      (fun ctxt ->
+	let lb = Lexing.from_string "{}argle" in
+	let lst = Yojson.init_lexer () in
+	let j = Yojson.Safe.from_lexbuf lst ~stream:true lb in
+	assert_equal (`Assoc[]) j
+      ) ;
+    "refiller" >::
+      (fun ctxt ->
+	let r = Refiller.mk "{}argle" in
+	let lb= Lexing.from_function (Refiller.refill r) in
+	let lst = Yojson.init_lexer () in
+	let j = Yojson.Safe.from_lexbuf lst ~stream:true lb in
+	assert_equal (`Assoc[]) j ;
+	assert_equal "argle" (Refiller.rest r) ;
+      ) ;
+  ]
+
 (* Run the tests in test suite *)
 let _ = 
-  run_test_tt_main ("all_tests" >::: [ basic_tests ; ser_tests ])
+  run_test_tt_main ("all_tests" >::: [ basic_tests ; ser_tests ; yojson_tests ])
 ;;
