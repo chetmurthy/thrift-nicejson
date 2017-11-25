@@ -140,7 +140,7 @@ code to Apache, with the following exceptions:
 
 * The file "json.hpp" was copied with permission from
 https://github.com/nlohmann/json[JSON for Modern C++] created by Neils
-Lohmann, and he continues to own it. He licenses that file under the MIT
-license (included in the source). This thing is bloody lovely marvel.
-* And of course, there are a bunch of GNU files, owned by their
-respective owners.
+Lohmann, and he continues to own it. He licenses that file under the
+MIT license (included in the source). This thing is a bloody lovely
+marvel.  * And of course, there are a bunch of GNU files, owned by
+their respective owners.
