@@ -17,7 +17,7 @@ check-local: all-local
 
 all-local: nicejson_tests.byte
 
-nicejson_tests.byte: $(BUILT_OBJECTS) TBytesTransport.cmo SerDes.cmo nicejson_tests.cmo
+nicejson_tests.byte: $(BUILT_OBJECTS) nicejson_tests.cmo
 	$(OCAMLFIND) ocamlc -custom $(OCAMLCFLAGS) $(PACKAGES) -linkpkg -linkall -o nicejson_tests.byte ../../lib/ocaml/$(RESULT).cma  -cclib -L../../lib/ocaml $^ -cclib -lstdc++
 
 clean-local:
@@ -40,8 +40,5 @@ $(GENOCAML_test): ../cpp/test.thrift
 
 gen-ocaml/test_types.cmi: gen-ocaml/test_types.mli
 gen-ocaml/test_types.cmx gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi
-nicejson_tests.cmo: TBytesTransport.cmo SerDes.cmo
-SerDes.cmo SerDes.cmx: TBytesTransport.cmo TBytesTransport.cmi
-TBytesTransport.cmi: TBytesTransport.ml
 
 .NOTPARALLEL:

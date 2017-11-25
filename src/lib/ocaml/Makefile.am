@@ -11,12 +11,12 @@ RESULT = ocaml_nicejson
 BUILT_SOURCES = $(RESULT).ml $(RESULT).mli  $(RESULT)_stubs.cc
 cleanfiles = $(BUILT_SOURCES)
 
-ML = $(RESULT).ml nicejson.ml
+ML = $(RESULT).ml TBytesTransport.ml SerDes.ml nicejson.ml
 MLI = $(RESULT).mli
 
-CMO= $(RESULT).cmo nicejson.cmo
-CMX= $(RESULT).cmx nicejson.cmx
-CMI= $(RESULT).cmi nicejson.cmi
+CMO= $(RESULT).cmo TBytesTransport.cmo SerDes.cmo nicejson.cmo
+CMX= $(RESULT).cmx TBytesTransport.cmx SerDes.cmx nicejson.cmx
+CMI= $(RESULT).cmi TBytesTransport.cmi SerDes.cmi nicejson.cmi
 OBJECTS = $(CMO) $(CMX) $(CMI)
 
 
@@ -24,7 +24,6 @@ all-local: $(RESULT).cma $(RESULT).cmxa dll$(RESULT).so
 
 $(RESULT).cma $(RESULT).cmxa dll$(RESULT).so: $(OBJECTS) $(RESULT)_stubs.o nicejson_intf.o
 	    $(OCAMLMKLIB) -verbose -o $(RESULT) $(CMO) $(CMX) $(RESULT)_stubs.o nicejson_intf.o $(OCAMLMKLIB_FLAGS)
-
 
 $(RESULT)_stubs.o: $(RESULT)_stubs.cc
 	g++ -c -fPIC ${CXXFLAGS} -DPIC -o $(RESULT)_stubs.o $(RESULT)_stubs.cc

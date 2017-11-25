@@ -309,11 +309,11 @@ PACKAGES = -package result,threads,oUnit,thrift,yojson
 RESULT = ocaml_nicejson
 BUILT_SOURCES = $(RESULT).ml $(RESULT).mli  $(RESULT)_stubs.cc
 cleanfiles = $(BUILT_SOURCES)
-ML = $(RESULT).ml nicejson.ml
+ML = $(RESULT).ml TBytesTransport.ml SerDes.ml nicejson.ml
 MLI = $(RESULT).mli
-CMO = $(RESULT).cmo nicejson.cmo
-CMX = $(RESULT).cmx nicejson.cmx
-CMI = $(RESULT).cmi nicejson.cmi
+CMO = $(RESULT).cmo TBytesTransport.cmo SerDes.cmo nicejson.cmo
+CMX = $(RESULT).cmx TBytesTransport.cmx SerDes.cmx nicejson.cmx
+CMI = $(RESULT).cmi TBytesTransport.cmi SerDes.cmi nicejson.cmi
 OBJECTS = $(CMO) $(CMX) $(CMI)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
