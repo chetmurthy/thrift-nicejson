@@ -32,7 +32,7 @@ module TNiceJSONProtocol = struct
   module P = Protocol
 
   let struct_name typelib service name ty =
-    if ty == P.CALL then service_struct_name_args typelib service name
+    if (ty == P.CALL) || (ty == P.ONEWAY) then service_struct_name_args typelib service name
     else if ty == P.REPLY then service_struct_name_result typelib service name
     else raise (P.E(P.UNKNOWN, "struct_name: unexpected messageType"))
 
@@ -40,12 +40,13 @@ module TNiceJSONProtocol = struct
     | P.CALL -> "call"
     | P.REPLY -> "reply"
     | P.EXCEPTION -> "exception"
-    | _ -> assert false
+    | P.ONEWAY -> "oneway"
 
   let string_to_messageType = function
     | "call" -> P.CALL
     | "reply" -> P.REPLY
     | "exception" -> P.EXCEPTION
+    | "oneway" -> P.ONEWAY
     | _ -> assert false
 
 module AE = Application_Exn

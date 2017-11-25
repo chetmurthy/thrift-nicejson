@@ -49,6 +49,8 @@ let doclient () =
   try
     cli.calc#ping ;
     Printf.printf "ping()\n" ; flush stdout ;
+    cli.calc#zip ;
+    Printf.printf "zip()\n" ; flush stdout ;
     (let sum = cli.calc#add (Int32.of_int 1) (Int32.of_int 1) in
        Printf.printf "1+1=%ld\n" sum ;
        flush stdout) ;
