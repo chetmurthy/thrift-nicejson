@@ -118,7 +118,11 @@ let yojson_tests = "yojson_tests" >:::
       ) ;
   ]
 
+let proto_tests = "proto_tests" >:::
+  [
+  ]
+
 (* Run the tests in test suite *)
 let _ = 
-  run_test_tt_main ("all_tests" >::: [ basic_tests ; ser_tests ; yojson_tests ])
+  run_test_tt_main ("all_tests" >::: [ basic_tests ; ser_tests ; yojson_tests ; proto_tests ])
 ;;
