@@ -68,13 +68,16 @@ class TNiceJSONProtocol(TProtocolBase):
     """Nice JSON implementation of the Thrift protocol driver."""
 
     def must_be_none(self):
-        return (self.mode_ == MODE_NONE)
+        if not(self.mode_ == MODE_NONE):
+            raise TProtocolException("TNiceJSONProtocol: mode mismatch (was not NONE)")
 
     def must_be_writing(self):
-        return (self.mode_ == WRITING_MESSAGE)
+        if not(self.mode_ == WRITING_MESSAGE):
+            raise TProtocolException("TNiceJSONProtocol: mode mismatch (was not WRITING)")
 
     def must_be_reading(self):
-        return (self.mode_ == READING_MESSAGE)
+        if not(self.mode_ == READING_MESSAGE):
+            raise TProtocolException("TNiceJSONProtocol: mode mismatch (was not READING)")
 
     def __init__(self, trans, typelib, service):
         TProtocolBase.__init__(self, trans)
