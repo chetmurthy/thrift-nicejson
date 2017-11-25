@@ -15,6 +15,7 @@ if WITH_OCAML
 LIB_SUBDIRS +=  src/lib/ocaml
 # PLUGIN_SUBDIRS +=  src/plugins/ocaml
 TEST_SUBDIRS +=  src/test/ocaml
+EXAMPLES_SUBDIRS += src/examples/ocaml
 endif
 
 SUBDIRS = $(LIB_SUBDIRS) $(PLUGIN_SUBDIRS) $(TEST_SUBDIRS) $(EXAMPLES_SUBDIRS) $(TOOLS_SUBDIRS)
