@@ -23,3 +23,6 @@ let binary_from_json key ty js =
   let rv, ser = Ocaml_nicejson.binary_from_json key ty jss in
   if rv <> "" then failwith rv ;
   ser
+
+let service_struct_name_args k s o = Ocaml_nicejson.service_struct_name_args k s o
+let service_struct_name_result k s o = Ocaml_nicejson.service_struct_name_result k s o

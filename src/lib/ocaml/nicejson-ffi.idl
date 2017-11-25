@@ -60,6 +60,19 @@
     binary_from_json
     (((ID std::string) key) ((ID std::string) type) ((ID std::string) jss))
      "_res0 = ocaml::nicejson::binary_from_json(key, type, jss, &_res1); ")
+
+   (FOREIGN
+    ((ID std::string))
+    service_struct_name_args
+    (((ID std::string) key) ((ID std::string) service) ((ID std::string) operation))
+     "_res0 = ocaml::nicejson::service_struct_name_args(key, service, operation); ")
+
+   (FOREIGN
+    ((ID std::string))
+    service_struct_name_result
+    (((ID std::string) key) ((ID std::string) service) ((ID std::string) operation))
+     "_res0 = ocaml::nicejson::service_struct_name_result(key, service, operation); ")
+
    )
   )
  )

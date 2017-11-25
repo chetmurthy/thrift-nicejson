@@ -29,6 +29,15 @@ std::string binary_from_json(const std::string& key, const std::string& type, co
 
 std::string require_typelib(const std::string& key) ;
 
+const std::string
+  service_struct_name_args(const std::string key,
+			   const std::string& service,
+			   const std::string& operation) ;
+
+const std::string
+  service_struct_name_result(const std::string key,
+			   const std::string& service,
+			     const std::string& operation) ;
 } // namespace nicejson
 } // namespace ocaml
 

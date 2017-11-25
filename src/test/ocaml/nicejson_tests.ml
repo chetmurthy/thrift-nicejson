@@ -38,6 +38,13 @@ let basic_tests = "basic_tests" >:::
         Nicejson.require_typelib "apache.thrift.plugin.plugin" ;
         Nicejson.require_typelib "apache.thrift.plugin.plugin" ;
       ) ;
+    
+    "struct_names" >::
+      (fun ctxt ->
+	Nicejson.prepend_typelib_directory "../cpp/gen-typelib" ;
+	assert_equal "S2_foo_args" (Nicejson.service_struct_name_args "thrift_test.test" "S2" "foo") ;
+	assert_equal "Calculator_add_args" (Nicejson.service_struct_name_args "tutorial.tutorial" "Calculator" "add") ;
+      )
   ]
 
 open Thrift

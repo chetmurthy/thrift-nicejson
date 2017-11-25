@@ -73,5 +73,22 @@ std::string require_typelib(const std::string& key) {
   }
 }
 
+const std::string
+  service_struct_name_args(const std::string key,
+			   const std::string& service,
+			   const std::string& operation) {
+  NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
+  return nj->service_struct_names(service, operation).first ;
+}
+
+const std::string
+  service_struct_name_result(const std::string key,
+			   const std::string& service,
+			   const std::string& operation) {
+  NiceJSON const * const nj = NiceJSON::require_typelib(key) ;
+  return nj->service_struct_names(service, operation).second ;
+}
+
+
 } // namespace nicejson
 } // namespace ocaml
