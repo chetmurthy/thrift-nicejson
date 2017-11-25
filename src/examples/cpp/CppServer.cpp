@@ -137,48 +137,22 @@ class CalculatorCloneFactory : virtual public CalculatorIfFactory {
 
 const std::string kTestTypelib = "tutorial.tutorial" ;
 
-int main() {
+int main(int ac, char **av) {
+  bool http = (ac > 1 && string(av[1]) == "http") ;
+
+  boost::shared_ptr<TTransportFactory> xprt_factory;
+
+  if (http) {
+    xprt_factory = boost::make_shared<THttpServerTransportFactory>() ;
+  } else {
+    xprt_factory = boost::make_shared<TBufferedTransportFactory>() ;
+  }
+
   TThreadedServer server(
     boost::make_shared<CalculatorProcessorFactory>(boost::make_shared<CalculatorCloneFactory>()),
     boost::make_shared<TServerSocket>(9090), //port
-    boost::make_shared<THttpServerTransportFactory>(),
+    xprt_factory,
     boost::make_shared<TNiceJSONProtocolFactory>(kTestTypelib, "Calculator"));
-
-  /*
-  // if you don't need per-connection state, do the following instead
-  TThreadedServer server(
-    boost::make_shared<CalculatorProcessor>(boost::make_shared<CalculatorHandler>()),
-    boost::make_shared<TServerSocket>(9090), //port
-    boost::make_shared<TBufferedTransportFactory>(),
-    boost::make_shared<TBinaryProtocolFactory>());
-  */
-
-  /**
-   * Here are some alternate server types...
-
-  // This server only allows one connection at a time, but spawns no threads
-  TSimpleServer server(
-    boost::make_shared<CalculatorProcessor>(boost::make_shared<CalculatorHandler>()),
-    boost::make_shared<TServerSocket>(9090),
-    boost::make_shared<TBufferedTransportFactory>(),
-    boost::make_shared<TBinaryProtocolFactory>());
-
-  const int workerCount = 4;
-
-  boost::shared_ptr<ThreadManager> threadManager =
-    ThreadManager::newSimpleThreadManager(workerCount);
-  threadManager->threadFactory(
-    boost::make_shared<PlatformThreadFactory>());
-  threadManager->start();
-
-  // This server allows "workerCount" connection at a time, and reuses threads
-  TThreadPoolServer server(
-    boost::make_shared<CalculatorProcessorFactory>(boost::make_shared<CalculatorCloneFactory>()),
-    boost::make_shared<TServerSocket>(9090),
-    boost::make_shared<TBufferedTransportFactory>(),
-    boost::make_shared<TBinaryProtocolFactory>(),
-    threadManager);
-  */
 
   cout << "Starting the server..." << endl;
   server.serve();

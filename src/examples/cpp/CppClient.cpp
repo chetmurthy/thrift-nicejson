@@ -39,9 +39,17 @@ using namespace shared;
 
 const std::string kTestTypelib = "tutorial.tutorial" ;
 
-int main() {
+int main(int ac, char **av) {
+  bool http = (ac > 1 && string(av[1]) == "http") ;
+
   boost::shared_ptr<TTransport> socket(new TSocket("localhost", 9090));
-  boost::shared_ptr<TTransport> transport(new THttpClient(socket, "localhost", "/service"));
+  boost::shared_ptr<TTransport> transport;
+
+  if (http) {
+    transport.reset(new THttpClient(socket, "localhost", "/service"));
+  } else {
+    transport.reset(new TBufferedTransport(socket));
+  }
   boost::shared_ptr<TProtocol> protocol(new TNiceJSONProtocol(kTestTypelib, "Calculator", transport));
   CalculatorClient client(protocol);
 
@@ -50,6 +58,9 @@ int main() {
 
     client.ping();
     cout << "ping()" << endl;
+
+    client.zip();
+    cout << "zip()" << endl;
 
     cout << "1 + 1 = " << client.add(1, 1) << endl;
 
