@@ -30,7 +30,12 @@ from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
+from thrift_nicejson import TNiceJSONProtocol, NiceJSON
 
+NiceJSON.prepend_typelib_directory("./gen-typelib")
+
+kTypelib = "tutorial.tutorial"
+kService = "Calculator"
 
 def main():
     # Make socket
@@ -40,7 +45,7 @@ def main():
     transport = TTransport.TBufferedTransport(transport)
 
     # Wrap in a protocol
-    protocol = TBinaryProtocol.TBinaryProtocol(transport)
+    protocol = TNiceJSONProtocol.TNiceJSONProtocol(transport, kTypelib, kService)
 
     # Create a client to use the protocol encoder
     client = Calculator.Client(protocol)

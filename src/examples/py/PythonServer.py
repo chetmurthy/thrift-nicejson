@@ -31,8 +31,10 @@ from shared.ttypes import SharedStruct
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
+from thrift_nicejson import TNiceJSONProtocol, NiceJSON
 from thrift.server import TServer
 
+NiceJSON.prepend_typelib_directory("./gen-typelib")
 
 class CalculatorHandler:
     def __init__(self):
@@ -81,12 +83,15 @@ class CalculatorHandler:
     def zip(self):
         print('zip()')
 
+kTypelib = "tutorial.tutorial"
+kService = "Calculator"
+
 if __name__ == '__main__':
     handler = CalculatorHandler()
     processor = Calculator.Processor(handler)
     transport = TSocket.TServerSocket(port=9090)
     tfactory = TTransport.TBufferedTransportFactory()
-    pfactory = TBinaryProtocol.TBinaryProtocolFactory()
+    pfactory = TNiceJSONProtocol.TNiceJSONProtocolFactory(kTypelib, kService)
 
     server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 

@@ -54,7 +54,6 @@ def TApplicationExceptionType_to_string(ty):
 def readjson(trans):
     while True:
         rbuf = trans.cstringio_buf
-        print ("readjson: [len=%d] %s" % (len(rbuf.getvalue()), rbuf.getvalue()))
         pos = rbuf.tell()
         all = rbuf.getvalue()
         try:
@@ -207,7 +206,6 @@ class TNiceJSONProtocol(TProtocolBase):
     def readMessageBegin(self):
         self.must_be_none()
         j = readjson(self.trans)
-        print ("readMessageBegin: json=%s"  % j)
         if 'type' not in j: raise TProtocolException("TNiceJSONProtocol: bad JSON, missing type element")
         j_messageType = j['type']
         if (type(j_messageType) is not unicode): raise TProtocolException("TNiceJSONProtocol: bad JSON, type element must be string")
@@ -333,3 +331,11 @@ class TNiceJSONProtocol(TProtocolBase):
     def skip(self, ttype):
         self.must_be_reading()
         return self.message_proto_.skip(ttype)
+
+class TNiceJSONProtocolFactory(object):
+    def __init__(self, typelib, service):
+        self.typelib_ = typelib
+        self.service_ = service
+
+    def getProtocol(self, trans):
+        return TNiceJSONProtocol(trans, self.typelib_, self.service_)
