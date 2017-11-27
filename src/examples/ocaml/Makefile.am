@@ -60,8 +60,6 @@ $(GENTYPELIB_tutorial): $(TUTORIAL_THRIFT)
 
 .NOTPARALLEL:
 
-gen-ocaml/Calculator.cmo: gen-ocaml/tutorial_types.cmi gen-ocaml/SharedService.cmi gen-ocaml/Calculator.cmi
-gen-ocaml/SharedService.cmi: gen-ocaml/shared_types.cmi
-gen-ocaml/SharedService.cmo: gen-ocaml/SharedService.cmi
-gen-ocaml/tutorial_consts.cmo: gen-ocaml/tutorial_types.cmi
-gen-ocaml/shared_consts.cmo: gen-ocaml/shared_types.cmi
+.depend: *.ml* gen-ocaml/*.ml*
+	ocamldep -I gen-ocaml $^ > .depend.NEW && mv .depend.NEW .depend
+-include .depend

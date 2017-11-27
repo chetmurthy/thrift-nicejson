@@ -43,7 +43,8 @@ $(GENOCAML_test): ../cpp/test.thrift
 .mli.cmi:
 	$(OCAMLFIND) ocamlc $(OCAMLCFLAGS) $(PACKAGES) -c $<
 
-gen-ocaml/test_types.cmi: gen-ocaml/test_types.mli
-gen-ocaml/test_types.cmx gen-ocaml/test_types.cmo: gen-ocaml/test_types.cmi
-
 .NOTPARALLEL:
+
+.depend: *.ml* gen-ocaml/*.ml*
+	ocamldep -I gen-ocaml $^ > .depend.NEW && mv .depend.NEW .depend
+-include .depend

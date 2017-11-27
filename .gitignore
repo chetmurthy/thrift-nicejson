@@ -22,3 +22,4 @@ oUnit*.cache
 *.so
 *.a
 *.byte
+.depend

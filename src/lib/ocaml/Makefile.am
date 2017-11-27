@@ -49,10 +49,8 @@ clean-local:
 	rm -f *.a *.cma *.cmi *.cmo *.cmx *.cmxa *.o *.so \
 		$(RESULT).ml $(RESULT).mli $(RESULT)_stubs.cc
 
-ocaml_nicejson.cmi: ocaml_nicejson.mli
-ocaml_nicejson.cmo: ocaml_nicejson.cmi
-ocaml_nicejson.cmx: ocaml_nicejson.cmi
-nicejson.cmo nicejson.cmx: ocaml_nicejson.cmi
-nicejson.cmi: nicejson.ml
-
 .NOTPARALLEL:
+
+.depend: *.ml*
+	ocamldep $^ > .depend.NEW && mv .depend.NEW .depend
+-include .depend
