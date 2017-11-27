@@ -17,11 +17,13 @@ libnicejson_a_CXXFLAGS = -fPIC $(thrift_CFLAGS) $(AM_CXXFLAGS)
 check_PROGRAMS = jsontest iatest
 
 jsontest_SOURCES = jsontest.cpp
+jsontest_CXXFLAGS = -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
+jsontest_LDADD = ../../gtest/libgtestmain.a -L../../gtest -lgtest -lpthread
 
 iatest_SOURCES = iatest.cpp
 iatest_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-iatest_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-iatest_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+iatest_LDADD =  ../../gtest/libgtestmain.a ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) -L../../gtest -lgtest -lpthread
+iatest_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 
 TESTS = jsontest iatest
 

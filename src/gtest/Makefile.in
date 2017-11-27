@@ -395,7 +395,7 @@ AM_CXXFLAGS = -g -Wall -Wextra -pthread
 GTESTHEADERS = /usr/include/gtest/*.h \
                 /usr/include/gtest/internal/*.h
 
-BUILT_SOURCES = gtest-all.cc
+BUILT_SOURCES = gtest-all.cc gtest_main.cc
 CLEANFILES = $(BUILT_SOURCES)
 lib_LIBRARIES = libgtest.a libgtestmain.a
 libgtest_a_SOURCES = gtest-all.cc

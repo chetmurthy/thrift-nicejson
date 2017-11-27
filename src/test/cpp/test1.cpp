@@ -5,8 +5,7 @@
 #include <string>
 #include <tuple>
 
-#define BOOST_TEST_MODULE NiceJSONStaticTest
-#include <boost/test/included/unit_test.hpp>
+#include "gtest/gtest.h"
 #include <boost/smart_ptr.hpp>
 
 #include <thrift/protocol/TDebugProtocol.h>
@@ -56,8 +55,8 @@ void RoundTrip(const string& structname, const json& json1, const std::string& t
   T obj ;
   tt.demarshal(structname, json1, &obj) ;
   json json2 = tt.marshal(structname, obj) ;
-  BOOST_CHECK_MESSAGE( json1 == json2,
-		       "JSON not equal: should be " << json1.dump() << "\nbut instead " << json2.dump());
+  ASSERT_EQ( json1, json2)
+    << "JSON not equal: should be " << json1.dump() << "\nbut instead " << json2.dump() ;
 }
 
 template<typename T>
@@ -67,7 +66,7 @@ void RoundTrip2(const string& structname, const T& arg, const std::string& typel
   json j = tt.marshal(structname, arg) ;
   T rv ;
   tt.demarshal(structname, j, &rv) ;
-  BOOST_CHECK( rv == arg );
+  ASSERT_EQ( rv, arg );
 }
 
 template<typename T>
@@ -78,11 +77,11 @@ void Mismatch(const string& structname, const json& startjson,const NiceJSON& ol
 
   boost::shared_ptr<TMemoryBuffer> mem = apache::thrift::marshalToMemoryBuffer(obj) ;
   json actual = oldtt.marshal_from_binary(structname, mem, permissive) ;
-  BOOST_CHECK_MESSAGE( actual == expected,
-		       "JSON not equal: should be " << expected.dump() << "\nbut instead " << actual.dump());
+  ASSERT_EQ( actual, expected)
+    << "JSON not equal: should be " << expected.dump() << "\nbut instead " << actual.dump() ;
 }
 
-BOOST_AUTO_TEST_CASE( Bar0 )
+TEST( Bar, Ser )
 {
   {
     thrift_test::Bar bar ;
@@ -93,7 +92,7 @@ BOOST_AUTO_TEST_CASE( Bar0 )
   }
 }
 
-BOOST_AUTO_TEST_CASE( Bar )
+TEST( Bar, RoundTrip )
 {
   {
     thrift_test::Bar bar ;
@@ -112,11 +111,11 @@ BOOST_AUTO_TEST_CASE( Bar )
 
     }
 
-    BOOST_CHECK(bar == bar2) ;
+    ASSERT_EQ(bar, bar2) ;
   }
 }
 
-BOOST_AUTO_TEST_CASE( Ha1 )
+TEST( Ha, RoundTrip )
 {
   thrift_test::Ha ha ;
   ha.__set_e(thrift_test::E::C) ;
@@ -124,7 +123,7 @@ BOOST_AUTO_TEST_CASE( Ha1 )
   RoundTrip2<thrift_test::Ha>("Ha", ha) ;
 }
 
-BOOST_AUTO_TEST_CASE( IO1 )
+TEST( Typelib, Lookup )
 {
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin.plugin")) ;
     {
@@ -133,7 +132,7 @@ BOOST_AUTO_TEST_CASE( IO1 )
     }
 }
 
-BOOST_AUTO_TEST_CASE( Bar1 )
+TEST( Bar, DebugSer )
 {
   json bar_json = { { "a", 1 }, { "b", "ugh" } } ;
   std::cout << bar_json << std::endl ;
@@ -159,37 +158,37 @@ BOOST_AUTO_TEST_CASE( Bar1 )
   cout << apache::thrift::ThriftDebugString(bar) << std::endl ;
 }
 
-BOOST_AUTO_TEST_CASE( Bar2 )
+TEST( Bar, RoundTrips )
 {
   
-  BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 } }), std::exception );
+  ASSERT_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 } }), std::exception );
  ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", 1 + (int)std::numeric_limits<int8_t>::max() } }), std::exception ) ;
+ ASSERT_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", 1 + (int)std::numeric_limits<int8_t>::max() } }), std::exception ) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::max() } }) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f6", std::numeric_limits<int8_t>::min() } }) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", 1 + (int)std::numeric_limits<int16_t>::max() } }), std::exception ) ;
+ ASSERT_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", 1 + (int)std::numeric_limits<int16_t>::max() } }), std::exception ) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::max() } }) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f7", std::numeric_limits<int16_t>::min() } }) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", 1ll + (int64_t)std::numeric_limits<int32_t>::max() } }), std::exception ) ;
+ ASSERT_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", 1ll + (int64_t)std::numeric_limits<int32_t>::max() } }), std::exception ) ;
 
  RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::max() } }) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "b", "ugh" }, { "a", std::numeric_limits<int32_t>::min() } }) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", 1 } }), std::exception ) ;
+ ASSERT_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", 1 } }), std::exception ) ;
 
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::max()) } }) ;
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(std::numeric_limits<int64_t>::min()) } }) ;
 
- BOOST_CHECK_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(2.0 * (double)std::numeric_limits<int64_t>::max()) } }),
+ ASSERT_THROW( RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f8", std::to_string(2.0 * (double)std::numeric_limits<int64_t>::max()) } }),
 		    std::out_of_range );
 
  RoundTrip<thrift_test::Bar>("Bar", { { "a", 1 }, { "b", "ugh" }, { "f9", 3.1415 } }) ;
 }
 
-BOOST_AUTO_TEST_CASE( BarMismatch )
+TEST( Bar, Mismatch )
 {
   const NiceJSON& oldtt = *(NiceJSON::lookup_typelib("thrift_test0.test0")) ;
 
@@ -234,31 +233,31 @@ BOOST_AUTO_TEST_CASE( BarMismatch )
 
 }
 
-BOOST_AUTO_TEST_CASE( Boo )
+TEST( Boo, RoundTrip )
 {
   RoundTrip<thrift_test::Boo>("Boo", { { "l", "[]"_json } }) ;
   RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[]]]"_json } }) ;
   RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[1, 2]]]"_json } }) ;
 
-  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[[]]]]"_json } }),
+  ASSERT_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[[[[]]]]"_json } }),
 		      std::exception ) ;
-  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[1]"_json } }),
+  ASSERT_THROW ( RoundTrip<thrift_test::Boo>("Boo", { { "l", "[1]"_json } }),
 		      std::exception ) ;
 }
 
-BOOST_AUTO_TEST_CASE( Goo )
+TEST( Goo, RoundTrip )
 {
   RoundTrip<thrift_test::Goo>("Goo", { { "l", "[]"_json } }) ;
   RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[]]]"_json } }) ;
   RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[1, 2]]]"_json } }) ;
 
-  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[[]]]]"_json } }),
+  ASSERT_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[[[[]]]]"_json } }),
 		      std::exception ) ;
-  BOOST_CHECK_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[1]"_json } }),
+  ASSERT_THROW ( RoundTrip<thrift_test::Goo>("Goo", { { "l", "[1]"_json } }),
 		      std::exception ) ;
 }
 
-BOOST_AUTO_TEST_CASE( Foo )
+TEST( Foo, RoundTrip )
 {
   json j = R"foo(
 { "a": 10,
@@ -275,7 +274,7 @@ BOOST_AUTO_TEST_CASE( Foo )
   //  RoundTrip<thrift_test::Foo>("Foo", j) ;
 }
 
-BOOST_AUTO_TEST_CASE( Boo2 )
+TEST( Boo, RoundTrip2 )
 {
   thrift_test::Boo boo ;
   boo.l = {} ;
@@ -288,7 +287,7 @@ BOOST_AUTO_TEST_CASE( Boo2 )
   RoundTrip2<thrift_test::Boo>("Boo", boo) ;
 }
 
-BOOST_AUTO_TEST_CASE( Boo3 )
+TEST( Boo, RoundTrip3 )
 {
   json j = R"foo(
 { "l": [[[1, 2, 3]]],
@@ -300,7 +299,7 @@ BOOST_AUTO_TEST_CASE( Boo3 )
   RoundTrip<thrift_test::Boo>("Boo", j) ;
 }
 
-BOOST_AUTO_TEST_CASE( Plugin1 )
+TEST( Plugin, RoundTrip )
 {
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin.plugin")) ;
 
@@ -309,10 +308,10 @@ BOOST_AUTO_TEST_CASE( Plugin1 )
   json j = tt.marshal("GeneratorInput", tt.it()) ;
   apache::thrift::plugin::GeneratorInput x ;
   tt.demarshal("GeneratorInput", j, &x) ;
-  BOOST_CHECK( tt.it() == x ) ;
+  ASSERT_EQ( tt.it(), x ) ;
 }
 
-BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
+TEST( Plugin, ToJSON )
 {
   const NiceJSON& testtt = *(NiceJSON::lookup_typelib(kTestTypelib)) ;
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("apache.thrift.plugin.plugin")) ;
@@ -321,7 +320,7 @@ BOOST_AUTO_TEST_CASE( TestIDLAsJSON )
   std::cout << j << std::endl ;
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_args )
+TEST( S2_foo_args, RoundTrip )
 {
   thrift_test::S2_foo_args args ;
   args.n = 1 ;
@@ -370,13 +369,13 @@ void MessageRoundTrip2(const string& service, const string& operation,
   T rv ;
   rv.read(proto.get()) ;
   proto->readMessageEnd() ;
-  BOOST_CHECK( read_operation == operation ) ;
-  BOOST_CHECK( read_messageType == messageType ) ;
-  BOOST_CHECK( read_seqid == seqid ) ;
-  BOOST_CHECK( rv == arg);
+  ASSERT_EQ( read_operation, operation ) ;
+  ASSERT_EQ( read_messageType, messageType ) ;
+  ASSERT_EQ( read_seqid, seqid ) ;
+  ASSERT_EQ( rv, arg);
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_args_2 )
+TEST( S2_foo_args, RoundTrip2 )
 {
   thrift_test::S2_foo_args args ;
   args.n = 1 ;
@@ -398,7 +397,7 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_2 )
   std::cout << memory_buffer_contents(trans) ;
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_args_3 )
+TEST( S2_foo_args, RoundTrip3 )
 {
   thrift_test::S2_foo_args args ;
   args.n = 1 ;
@@ -412,7 +411,7 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_3 )
   MessageRoundTrip2<thrift_test::S2_foo_args>("S2", "foo", T_CALL, 1l, args) ;
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_args_4 )
+TEST( S2_foo_args, RoundTrip4 )
 {
   thrift_test::S2_foo_args args ;
   const std::string msg = R"FOO(
@@ -427,12 +426,12 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_4 )
   proto->readMessageBegin(read_operation, read_messageType, read_seqid) ;
   args.read(proto.get()) ;
   proto->readMessageEnd() ;
-  BOOST_CHECK( read_operation == "foo" ) ;
-  BOOST_CHECK( read_messageType == T_CALL ) ;
-  BOOST_CHECK( read_seqid == 1l ) ;
+  ASSERT_EQ( read_operation, "foo" ) ;
+  ASSERT_EQ( read_messageType, T_CALL ) ;
+  ASSERT_EQ( read_seqid, 1l ) ;
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_args_5 )
+TEST( S2_foo_args, RoundTrip5 )
 {
   thrift_test::S2_foo_args args ;
   const std::string msg = R"FOO(
@@ -444,11 +443,11 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_5 )
   string read_operation ;
   TMessageType read_messageType ;
   int32_t read_seqid ;
-  BOOST_CHECK_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
+  ASSERT_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
 		     apache::thrift::transport::TTransportException );
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_args_6 )
+TEST( S2_foo_args, RoundTrip6 )
 {
   thrift_test::S2_foo_args args ;
   const std::string msg = R"FOO(
@@ -460,11 +459,11 @@ BOOST_AUTO_TEST_CASE( S2_foo_args_6 )
   string read_operation ;
   TMessageType read_messageType ;
   int32_t read_seqid ;
-  BOOST_CHECK_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
+  ASSERT_THROW( proto->readMessageBegin(read_operation, read_messageType, read_seqid) ,
 		     apache::thrift::protocol::TProtocolException );
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_result )
+TEST( S2_foo_result, RoundTrip )
 {
   thrift_test::S2_foo_result result ;
   result.success = 42 ;
@@ -473,7 +472,7 @@ BOOST_AUTO_TEST_CASE( S2_foo_result )
   RoundTrip2<thrift_test::S2_foo_result>("S2_foo_result", result) ;
 }
 
-BOOST_AUTO_TEST_CASE( S2_foo_result_2 )
+TEST( S2_foo_result, RoundTrip2 )
 {
   thrift_test::S2_foo_result result ;
   thrift_test::InvalidOperation2 ouch2;
@@ -485,7 +484,7 @@ BOOST_AUTO_TEST_CASE( S2_foo_result_2 )
   RoundTrip2<thrift_test::S2_foo_result>("S2_foo_result", result) ;
 }
 
-BOOST_AUTO_TEST_CASE( shared_SharedStruct )
+TEST( shared_SharedStruct, RoundTrip )
 {
   shared::SharedStruct x ;
   x.__set_key(42) ;
@@ -495,26 +494,26 @@ BOOST_AUTO_TEST_CASE( shared_SharedStruct )
   RoundTrip2<shared::SharedStruct>("SharedStruct", x, "shared.shared") ;
 }
 
-BOOST_AUTO_TEST_CASE( service_struct_names )
+TEST( service_struct_names, generate )
 {
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("tutorial.tutorial")) ;
 
-  BOOST_CHECK( (tt.service_struct_names("Calculator", "add") ==
-		pair<string, string>{ "Calculator_add_args", "Calculator_add_result" }) ) ;
+  ASSERT_EQ( tt.service_struct_names("Calculator", "add"),
+	     (pair<string, string>{ "Calculator_add_args", "Calculator_add_result" }) ) ;
 
-  BOOST_CHECK( (tt.service_struct_names("Calculator", "getStruct") ==
-		pair<string, string>{ "shared::SharedService_getStruct_args", "shared::SharedService_getStruct_result" }) ) ;
+  ASSERT_EQ( tt.service_struct_names("Calculator", "getStruct"),
+	      (pair<string, string>{ "shared::SharedService_getStruct_args", "shared::SharedService_getStruct_result" }) ) ;
 }
 
-BOOST_AUTO_TEST_CASE( service_struct_names_2 )
+TEST( service_struct_names, generate_2 )
 {
   const NiceJSON& tt = *(NiceJSON::lookup_typelib("shared.shared")) ;
 
-  BOOST_CHECK( (tt.service_struct_names("SharedService", "getStruct") ==
-		pair<string, string>{ "SharedService_getStruct_args", "SharedService_getStruct_result" }) ) ;
+  ASSERT_EQ( tt.service_struct_names("SharedService", "getStruct"),
+	     (pair<string, string>{ "SharedService_getStruct_args", "SharedService_getStruct_result" }) ) ;
 }
 
-BOOST_AUTO_TEST_CASE( TApplicationException_0 )
+TEST( TApplicationException_0, JSON )
 {
   const NiceJSON& tt = *(NiceJSON::lookup_typelib(kTestTypelib)) ;
   ::apache::thrift::TApplicationException x(::apache::thrift::TApplicationException::UNKNOWN, "eh?") ;
@@ -524,9 +523,9 @@ BOOST_AUTO_TEST_CASE( TApplicationException_0 )
 
   ::apache::thrift::TApplicationException x2 ;
   tt.demarshal("TApplicationException", j, &x2) ;
-  BOOST_CHECK( x.getType() == x2.getType() ) ;
-  BOOST_CHECK( std::string(x.what()) == std::string(x2.what()) ) ;
+  ASSERT_EQ( x.getType(), x2.getType() ) ;
+  ASSERT_EQ( std::string(x.what()), std::string(x2.what()) ) ;
   json j2 = tt.marshal("TApplicationException", x2) ;
-  BOOST_CHECK( j == j2 ) ;
+  ASSERT_EQ( j, j2 ) ;
 
 }

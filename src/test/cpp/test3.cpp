@@ -6,9 +6,8 @@
 #include <string>
 #include <tuple>
 
-#define BOOST_TEST_MODULE NiceJSONRPCTest
+#include "gtest/gtest.h"
 #include <boost/smart_ptr.hpp>
-#include <boost/test/included/unit_test.hpp>
 #include <boost/thread.hpp>
 
 #include <thrift/concurrency/Monitor.h>
@@ -165,23 +164,23 @@ void base_client(thrift_test::S2Client& client) {
 
   client.ping();
 
-  BOOST_CHECK( client.foo(42l, thrift_test::Bar()) == 42l ) ;
+  ASSERT_EQ( client.foo(42l, thrift_test::Bar()), 42l ) ;
 
   thrift_test::Bar b ;
   client.goo(b) ;
   client.hoo() ;
   client.ping();
 
-  BOOST_CHECK_THROW( client.foo(0l, thrift_test::Bar()),
+  ASSERT_THROW( client.foo(0l, thrift_test::Bar()),
 		     thrift_test::InvalidOperation ) ;
-  BOOST_CHECK_THROW( client.foo(1l, thrift_test::Bar()),
+  ASSERT_THROW( client.foo(1l, thrift_test::Bar()),
 		     thrift_test::InvalidOperation2 ) ;
-  BOOST_CHECK_THROW( client.foo(2l, thrift_test::Bar()),
+  ASSERT_THROW( client.foo(2l, thrift_test::Bar()),
 		     apache::thrift::TApplicationException ) ;
 
 }
 
-BOOST_AUTO_TEST_CASE( Binary_TCP )
+TEST( RPC, Binary_TCP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -217,7 +216,7 @@ BOOST_AUTO_TEST_CASE( Binary_TCP )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( NiceJSON_TCP )
+TEST( RPC, NiceJSON_TCP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -253,7 +252,7 @@ BOOST_AUTO_TEST_CASE( NiceJSON_TCP )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( Binary_HTTP )
+TEST( RPC, Binary_HTTP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -289,7 +288,7 @@ BOOST_AUTO_TEST_CASE( Binary_HTTP )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( JSON_HTTP )
+TEST( RPC, JSON_HTTP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -325,7 +324,7 @@ BOOST_AUTO_TEST_CASE( JSON_HTTP )
   thread.join() ;
 }
 
-BOOST_AUTO_TEST_CASE( NiceJSON_HTTP )
+TEST( RPC, NiceJSON_HTTP )
 {
   TThreadedServer server(
     boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
@@ -398,7 +397,7 @@ class TBlockableBufferedTransport : public TBufferedTransport {
   bool blocked_ ;
 } ;
 
-BOOST_AUTO_TEST_CASE( JSON_BufferedHTTP )
+TEST( RPC, JSON_BufferedHTTP )
 {
   auto ss =     boost::make_shared<TServerSocket>(0) ;
   TThreadedServer server(
@@ -440,14 +439,14 @@ BOOST_AUTO_TEST_CASE( JSON_BufferedHTTP )
     uint32_t size1 = blockable_transport->write_buffer_length() ;
     client.send_hoo() ;
     uint32_t size2 = blockable_transport->write_buffer_length() ;
-    BOOST_CHECK((size1 - size0) == (size2 - size1)) ;
+    ASSERT_EQ((size1 - size0), (size2 - size1)) ;
     blockable_transport->unblock() ;
     client.send_ping();
     blockable_transport->flush() ;
     try {
     client.recv_ping();
     } catch (TTransportException e) {
-      BOOST_ERROR( "we should not get a transport exception -- this means we failed: " + std::string(e.what()) ) ;
+      FAIL() << "we should not get a transport exception -- this means we failed: " + std::string(e.what()) ;
     }
     transport->close();
   }

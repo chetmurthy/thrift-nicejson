@@ -10,6 +10,7 @@ thrift_gen_typelib_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
 check_PROGRAMS = ns_utils_test
 
 ns_utils_test_SOURCES = ns_utils_test.cpp ns_utils.cpp ns_utils.h
-ns_utils_test_LDADD = $(thrift_LIBS)
+ns_utils_test_CXXFLAGS = -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
+ns_utils_test_LDADD = $(thrift_LIBS) ../../gtest/libgtestmain.a -L../../gtest -lgtest -lpthread
 
 TESTS = ns_utils_test

@@ -157,9 +157,9 @@ libnicejson_a_OBJECTS = $(am_libnicejson_a_OBJECTS)
 am_iatest_OBJECTS = iatest-iatest.$(OBJEXT)
 iatest_OBJECTS = $(am_iatest_OBJECTS)
 am__DEPENDENCIES_1 =
-iatest_DEPENDENCIES = ../../lib/cpp/libnicejson.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+iatest_DEPENDENCIES = ../../gtest/libgtestmain.a \
+	../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -167,9 +167,12 @@ am__v_lt_1 =
 iatest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(iatest_CXXFLAGS) \
 	$(CXXFLAGS) $(iatest_LDFLAGS) $(LDFLAGS) -o $@
-am_jsontest_OBJECTS = jsontest.$(OBJEXT)
+am_jsontest_OBJECTS = jsontest-jsontest.$(OBJEXT)
 jsontest_OBJECTS = $(am_jsontest_OBJECTS)
-jsontest_LDADD = $(LDADD)
+jsontest_DEPENDENCIES = ../../gtest/libgtestmain.a
+jsontest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(jsontest_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -615,10 +618,12 @@ libnicejson_a_SOURCES = NiceJSON.cpp NiceJSON.h TNiceJSONProtocol.h TNiceJSONPro
 pkginclude_HEADERS = json.hpp NiceJSON.h
 libnicejson_a_CXXFLAGS = -fPIC $(thrift_CFLAGS) $(AM_CXXFLAGS)
 jsontest_SOURCES = jsontest.cpp
+jsontest_CXXFLAGS = -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
+jsontest_LDADD = ../../gtest/libgtestmain.a -L../../gtest -lgtest -lpthread
 iatest_SOURCES = iatest.cpp
 iatest_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-iatest_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-iatest_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+iatest_LDADD = ../../gtest/libgtestmain.a ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) -L../../gtest -lgtest -lpthread
+iatest_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 all: $(BUILT_SOURCES)
@@ -717,7 +722,7 @@ iatest$(EXEEXT): $(iatest_OBJECTS) $(iatest_DEPENDENCIES) $(EXTRA_iatest_DEPENDE
 
 jsontest$(EXEEXT): $(jsontest_OBJECTS) $(jsontest_DEPENDENCIES) $(EXTRA_jsontest_DEPENDENCIES) 
 	@rm -f jsontest$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(jsontest_OBJECTS) $(jsontest_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(jsontest_LINK) $(jsontest_OBJECTS) $(jsontest_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -727,7 +732,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iatest-iatest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsontest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jsontest-jsontest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-NiceJSON.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libnicejson_a-TNiceJSONProtocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gen-cpp/$(DEPDIR)/libnicejson_a-plugin_constants.Po@am__quote@
@@ -826,6 +831,20 @@ iatest-iatest.obj: iatest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='iatest.cpp' object='iatest-iatest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iatest_CXXFLAGS) $(CXXFLAGS) -c -o iatest-iatest.obj `if test -f 'iatest.cpp'; then $(CYGPATH_W) 'iatest.cpp'; else $(CYGPATH_W) '$(srcdir)/iatest.cpp'; fi`
+
+jsontest-jsontest.o: jsontest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(jsontest_CXXFLAGS) $(CXXFLAGS) -MT jsontest-jsontest.o -MD -MP -MF $(DEPDIR)/jsontest-jsontest.Tpo -c -o jsontest-jsontest.o `test -f 'jsontest.cpp' || echo '$(srcdir)/'`jsontest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jsontest-jsontest.Tpo $(DEPDIR)/jsontest-jsontest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='jsontest.cpp' object='jsontest-jsontest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(jsontest_CXXFLAGS) $(CXXFLAGS) -c -o jsontest-jsontest.o `test -f 'jsontest.cpp' || echo '$(srcdir)/'`jsontest.cpp
+
+jsontest-jsontest.obj: jsontest.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(jsontest_CXXFLAGS) $(CXXFLAGS) -MT jsontest-jsontest.obj -MD -MP -MF $(DEPDIR)/jsontest-jsontest.Tpo -c -o jsontest-jsontest.obj `if test -f 'jsontest.cpp'; then $(CYGPATH_W) 'jsontest.cpp'; else $(CYGPATH_W) '$(srcdir)/jsontest.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jsontest-jsontest.Tpo $(DEPDIR)/jsontest-jsontest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='jsontest.cpp' object='jsontest-jsontest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(jsontest_CXXFLAGS) $(CXXFLAGS) -c -o jsontest-jsontest.obj `if test -f 'jsontest.cpp'; then $(CYGPATH_W) 'jsontest.cpp'; else $(CYGPATH_W) '$(srcdir)/jsontest.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

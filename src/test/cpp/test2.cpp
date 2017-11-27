@@ -4,8 +4,7 @@
 #include <streambuf>
 #include <iostream>
 
-#define BOOST_TEST_MODULE NiceJSONDynamicTest
-#include <boost/test/included/unit_test.hpp>
+#include "gtest/gtest.h"
 #include <boost/smart_ptr.hpp>
 
 #include <thrift/protocol/TDebugProtocol.h>
@@ -44,7 +43,7 @@ bool thrift_test::Bar::operator<(thrift_test::Bar const& that) const {
 const string kTypelib = "thrift_test.test" ;
 const string kType = "Bar" ;
 
-BOOST_AUTO_TEST_CASE( Bar0 )
+TEST( Bar, Dynamic0 )
 {
   thrift_test::Bar bar ;
   bar.__set_a(1) ;
@@ -55,10 +54,9 @@ BOOST_AUTO_TEST_CASE( Bar0 )
   NiceJSON const * const nj = NiceJSON::require_typelib(kTypelib) ;
   json actual = nj->marshal_from_binary(kType, (uint8_t*)serialized.data(), serialized.size(), false) ;
   json expected = {{ "a", 1}, {"b", "ugh"}} ;
-  BOOST_CHECK( actual == expected ) ;
+  ASSERT_EQ( actual, expected ) ;
 
   string bin = nj->demarshal_to_binary(kType, actual) ;
   json actual2 = nj->marshal_from_binary(kType, (uint8_t*)bin.data(), bin.size(), false) ;
-  BOOST_CHECK( actual2 == expected ) ;
-  
+  ASSERT_EQ( actual2, expected ) ;
 }

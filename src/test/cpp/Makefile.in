@@ -135,7 +135,8 @@ am__objects_9 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 am_test1_OBJECTS = test1-test1.$(OBJEXT) $(am__objects_9)
 test1_OBJECTS = $(am_test1_OBJECTS)
 am__DEPENDENCIES_1 =
-test1_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
+test1_DEPENDENCIES = ../../gtest/libgtestmain.a \
+	../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -149,7 +150,8 @@ am__objects_10 = gen-cpp/test2-test_constants.$(OBJEXT) \
 	gen-cpp/test2-S2.$(OBJEXT)
 am_test2_OBJECTS = test2-test2.$(OBJEXT) $(am__objects_10)
 test2_OBJECTS = $(am_test2_OBJECTS)
-test2_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
+test2_DEPENDENCIES = ../../gtest/libgtestmain.a \
+	../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 test2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(test2_CXXFLAGS) \
@@ -176,7 +178,8 @@ am__objects_18 = $(am__objects_11) $(am__objects_12) $(am__objects_13) \
 	$(am__objects_8)
 am_test3_OBJECTS = test3-test3.$(OBJEXT) $(am__objects_18)
 test3_OBJECTS = $(am_test3_OBJECTS)
-test3_DEPENDENCIES = ../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
+test3_DEPENDENCIES = ../../gtest/libgtestmain.a \
+	../../lib/cpp/libnicejson.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 test3_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -704,25 +707,16 @@ $(GENJSON_plugin)
 CLEANFILES = $(BUILT_SOURCES)
 test1_SOURCES = test1.cpp $(BUILT_SOURCES)
 test1_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test1_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-test1_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+test1_LDADD = ../../gtest/libgtestmain.a  ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) -L../../gtest -lgtest -lpthread
+test1_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 test2_SOURCES = test2.cpp $(GENCPP_test)
 test2_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test2_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-test2_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+test2_LDADD = ../../gtest/libgtestmain.a ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) -L../../gtest -lgtest -lpthread
+test2_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 test3_SOURCES = test3.cpp $(BUILT_SOURCES)
 test3_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test3_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD)
-test3_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
-GTEST_DIR = /usr/src/gtest
-test4_SOURCES = test4.cpp $(GENCPP_test)
-test4_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test4_LDADD = ../../gtest/libgtest.a $(thrift_LIBS) -lglog -lgflags $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD)
-test4_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) \
-		-isystem $(GTEST_DIR)/include \
-		-g -Wall -Wextra -pthread \
-		 -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0 
-
+test3_LDADD = ../../gtest/libgtestmain.a ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD) -L../../gtest -lgtest -lpthread
+test3_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 TUTORIAL_THRIFT = $(THRIFT_SRC_ROOT)/tutorial/tutorial.thrift

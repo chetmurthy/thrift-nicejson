@@ -1,6 +1,7 @@
-#define BOOST_TEST_MODULE JSONTest
-#include <boost/test/included/unit_test.hpp>
+#include <list>
 #include <boost/smart_ptr.hpp>
+
+#include "gtest/gtest.h"
 
 #include "json.hpp"
 
@@ -14,41 +15,41 @@ using std::set;
 
 using nlohmann::json;
 
-BOOST_AUTO_TEST_CASE( JSON1 )
+TEST( JSON, ParseEmpty )
 {
   json j = "{}"_json ;
-  BOOST_CHECK( j.empty() );
-  BOOST_CHECK( !j.is_null() );
-  BOOST_CHECK( j.is_object() );
+  ASSERT_TRUE( j.empty() );
+  ASSERT_FALSE( j.is_null() );
+  ASSERT_TRUE( j.is_object() );
 }
 
-BOOST_AUTO_TEST_CASE( JSON2 )
+TEST( JSON, Null )
 {
   json j;
-  BOOST_CHECK( j.empty() );
-  BOOST_CHECK( j.is_null() );
-  BOOST_CHECK( !j.is_object() );
+  ASSERT_TRUE( j.empty() );
+  ASSERT_TRUE( j.is_null() );
+  ASSERT_FALSE( j.is_object() );
 }
 
-BOOST_AUTO_TEST_CASE( JSON3 )
+TEST( JSON, Array )
 {
   json j = std::vector<int>{} ;
-  BOOST_CHECK( j.empty() );
-  BOOST_CHECK( !j.is_null() );
-  BOOST_CHECK( j.is_array() );
-  BOOST_CHECK( j.size() == 0 );
+  ASSERT_TRUE( j.empty() );
+  ASSERT_FALSE( j.is_null() );
+  ASSERT_TRUE( j.is_array() );
+  ASSERT_TRUE( j.size() == 0 );
 }
 
-BOOST_AUTO_TEST_CASE( JSON4 )
+TEST( JSON, ParseArray )
 {
   json j = "[]"_json ;
-  BOOST_CHECK( j.empty() );
-  BOOST_CHECK( !j.is_null() );
-  BOOST_CHECK( j.is_array() );
-  BOOST_CHECK( j.size() == 0 );
+  ASSERT_TRUE( j.empty() );
+  ASSERT_FALSE( j.is_null() );
+  ASSERT_TRUE( j.is_array() );
+  ASSERT_TRUE( j.size() == 0 );
 }
 
-BOOST_AUTO_TEST_CASE( JSON5 )
+TEST( JSON, Object )
 {
   json j = R"foo(
 { "a": 10,
@@ -57,10 +58,10 @@ BOOST_AUTO_TEST_CASE( JSON5 )
 )foo"_json ;
 
   json j2 = { { "a", 10 }, { "b", "bar" } } ;
-  BOOST_CHECK( j == j2) ;
+  ASSERT_TRUE( j == j2) ;
 }
 
-BOOST_AUTO_TEST_CASE( JSON6 )
+TEST( JSON, Object2 )
 {
   json j = R"foo(
 { "1": 10,
@@ -68,22 +69,22 @@ BOOST_AUTO_TEST_CASE( JSON6 )
 }
 )foo"_json ;
 
-  BOOST_CHECK( j.is_object()) ;
+  ASSERT_TRUE( j.is_object()) ;
 }
 
-BOOST_AUTO_TEST_CASE( JSON7 )
+TEST( JSON, Object2StringException )
 {
   json j = "{}"_json ;
-  BOOST_CHECK_THROW ( j.get<string>() , std::exception ) ;
+  ASSERT_THROW ( j.get<string>() , std::exception ) ;
 }
 
-BOOST_AUTO_TEST_CASE( JSON8 )
+TEST( JSON, NumericLimits )
 {
   json j ;
   j = std::numeric_limits<int32_t>::max() ;
-  BOOST_CHECK(j.get<int32_t>() == std::numeric_limits<int32_t>::max()) ;
+  ASSERT_EQ(j.get<int32_t>(), std::numeric_limits<int32_t>::max()) ;
 
   j = 1ll + (int64_t)std::numeric_limits<int32_t>::max() ;
-  BOOST_CHECK(j.get<int64_t>() == 1ll + (int64_t)std::numeric_limits<int32_t>::max()) ;
-  BOOST_CHECK(j.get<int32_t>() != 1ll + (int64_t)std::numeric_limits<int32_t>::max()) ;
+  ASSERT_EQ(j.get<int64_t>(), 1ll + (int64_t)std::numeric_limits<int32_t>::max()) ;
+  ASSERT_NE(j.get<int32_t>(), 1ll + (int64_t)std::numeric_limits<int32_t>::max()) ;
 }

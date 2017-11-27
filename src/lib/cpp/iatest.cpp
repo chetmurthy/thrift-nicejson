@@ -1,5 +1,4 @@
-#define BOOST_TEST_MODULE JSONTest
-#include <boost/test/included/unit_test.hpp>
+#include "gtest/gtest.h"
 #include <boost/smart_ptr.hpp>
 
 #include "TNiceJSONProtocol.h"
@@ -12,20 +11,20 @@ using std::map;
 using std::list;
 using std::set;
 
-BOOST_AUTO_TEST_CASE( JSON1 )
+TEST( JSON, Null )
 {
   json j = parse_via_transport("{}") ;
-  BOOST_CHECK( j.empty() );
-  BOOST_CHECK( !j.is_null() );
-  BOOST_CHECK( j.is_object() );
+  ASSERT_TRUE( j.empty() );
+  ASSERT_FALSE( j.is_null() );
+  ASSERT_TRUE( j.is_object() );
 }
 
-BOOST_AUTO_TEST_CASE( JSON2 )
+TEST( JSON, BrokenText )
 {
-  BOOST_CHECK_THROW( parse_via_transport("{") , apache::thrift::transport::TTransportException ) ;
+  ASSERT_THROW( parse_via_transport("{") , apache::thrift::transport::TTransportException ) ;
 }
 
-BOOST_AUTO_TEST_CASE( JSON5 )
+TEST( JSON, Object )
 {
   std::string s = R"foo(
 { "a": 10,
@@ -36,5 +35,5 @@ BOOST_AUTO_TEST_CASE( JSON5 )
   json j = parse_via_transport(s) ;
 
   json j2 = { { "a", 10 }, { "b", "bar" } } ;
-  BOOST_CHECK( j == j2) ;
+  ASSERT_EQ( j, j2) ;
 }

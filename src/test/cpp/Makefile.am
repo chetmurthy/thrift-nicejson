@@ -69,18 +69,18 @@ check_PROGRAMS = test1 test2 test3
 
 test1_SOURCES = test1.cpp $(BUILT_SOURCES)
 test1_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test1_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-test1_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+test1_LDADD = ../../gtest/libgtestmain.a  ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) -L../../gtest -lgtest -lpthread
+test1_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 
 test2_SOURCES = test2.cpp $(GENCPP_test)
 test2_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test2_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD)
-test2_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+test2_LDADD = ../../gtest/libgtestmain.a ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) -L../../gtest -lgtest -lpthread
+test2_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 
 test3_SOURCES = test3.cpp $(BUILT_SOURCES)
 test3_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
-test3_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD)
-test3_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+test3_LDADD = ../../gtest/libgtestmain.a ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD) -L../../gtest -lgtest -lpthread
+test3_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0
 
 TESTS= test1 test2 test3
 
