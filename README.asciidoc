@@ -76,7 +76,7 @@ and Ocaml)] are available.  The TL;DR (if all prereqs are already installed) is
 == Tutorial and FAQ
 
 A Tutorial for using this library can be found
-link:docs/tutorial.asciidoc[here], and A FAQ can be found
+link:docs/tutorial.asciidoc[here], and a FAQ can be found
 link:docs/faq.asciidoc[here].
 
 [[why-does-thrift-need-nice-json-serialization]]
