@@ -59,7 +59,7 @@ nonstandard location, e.g. `$HOME/tmp/thrift-nicejson` via
 ....
 
 The adapted Thrift Tutorial example, as well as tests, for C\++, Python, and Ocaml, can be found in
-`src/{examples,tests}/{cpp,python,ocaml}`.  In particular, `src/test/cpp`
+`src/{examples,test}/{cpp,python,ocaml}`.  In particular, `src/test/cpp`
 demonstrates most of the capabilities of the library.  All the tests
 can be automatically built and run with `make check`.
 
