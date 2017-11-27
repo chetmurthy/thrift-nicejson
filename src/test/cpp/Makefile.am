@@ -122,3 +122,4 @@ $(GENJSON_tutorial):  $(TUTORIAL_THRIFT)
 
 $(GENJSON_plugin): $(PLUGIN_THRIFT)
 	$(THRIFT) -r -gen json $(PLUGIN_THRIFT)
+

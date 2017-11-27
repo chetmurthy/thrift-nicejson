@@ -21663,7 +21663,7 @@ _ACEOF
 
 # Checks for library functions.
 
-ac_config_files="$ac_config_files Makefile src/lib/cpp/Makefile src/lib/py/Makefile src/lib/ocaml/Makefile src/plugins/cpp/Makefile src/plugins/ocaml/Makefile src/test/cpp/Makefile src/test/py/Makefile src/test/ocaml/Makefile src/examples/cpp/Makefile src/examples/py/Makefile src/examples/ocaml/Makefile src/tools/cpp/Makefile"
+ac_config_files="$ac_config_files Makefile src/gtest/Makefile src/lib/cpp/Makefile src/lib/py/Makefile src/lib/ocaml/Makefile src/plugins/cpp/Makefile src/plugins/ocaml/Makefile src/test/cpp/Makefile src/test/py/Makefile src/test/ocaml/Makefile src/examples/cpp/Makefile src/examples/py/Makefile src/examples/ocaml/Makefile src/tools/cpp/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -22795,6 +22795,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "src/gtest/Makefile") CONFIG_FILES="$CONFIG_FILES src/gtest/Makefile" ;;
     "src/lib/cpp/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/cpp/Makefile" ;;
     "src/lib/py/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/py/Makefile" ;;
     "src/lib/ocaml/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/ocaml/Makefile" ;;

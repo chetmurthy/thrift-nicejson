@@ -360,3 +360,98 @@ BOOST_AUTO_TEST_CASE( NiceJSON_HTTP )
   server.stop();
   thread.join() ;
 }
+
+class TBlockableBufferedTransport : public TBufferedTransport {
+ public:
+  TBlockableBufferedTransport(boost::shared_ptr<TTransport> transport, uint32_t sz)
+    : TBufferedTransport(transport, sz),
+    blocked_(false) {
+  }
+
+  TBlockableBufferedTransport(boost::shared_ptr<TTransport> transport)
+    : TBufferedTransport(transport),
+    blocked_(false) {
+  }
+
+  uint32_t write_buffer_length() {
+    uint32_t have_bytes = static_cast<uint32_t>(wBase_ - wBuf_.get());
+    return have_bytes ;
+  }
+
+  void block() {
+    blocked_ = true ;
+    cerr << "block flushing\n" ;
+ }
+  void unblock() {
+    blocked_ = false ;
+    cerr << "unblock flushing, buffer is\n<<" << std::string((char *)wBuf_.get(), write_buffer_length()) << ">>\n" ;
+ }
+
+  void flush() override {
+    if (blocked_) {
+      cerr << "flush was blocked\n" ;
+      return ;
+    }
+    TBufferedTransport::flush() ;
+  }
+
+  bool blocked_ ;
+} ;
+
+BOOST_AUTO_TEST_CASE( JSON_BufferedHTTP )
+{
+  auto ss =     boost::make_shared<TServerSocket>(0) ;
+  TThreadedServer server(
+    boost::make_shared<thrift_test::S2ProcessorFactory>(boost::make_shared<S2CloneFactory>()),
+    ss, //port
+    boost::make_shared<THttpServerTransportFactory>(),
+    boost::make_shared<TJSONProtocolFactory>());
+
+  boost::shared_ptr<TServerReadyEventHandler> pEventHandler(new TServerReadyEventHandler) ;
+  server.setServerEventHandler(pEventHandler);
+
+  cerr << "Starting the server...\n";
+  RPC0ThreadClass t(server) ;
+  boost::thread thread(&RPC0ThreadClass::Run, &t);
+
+  {
+    Synchronized sync(*(pEventHandler.get()));
+    while (!pEventHandler->isListening()) {
+      pEventHandler->wait();
+    }
+  }
+
+  int port = ss->getPort() ;
+  cerr << "port " << port << endl ;
+
+  {
+    boost::shared_ptr<TTransport> socket(new TSocket("localhost", port));
+    boost::shared_ptr<TBlockableBufferedTransport> blockable_transport(new TBlockableBufferedTransport(socket));
+    boost::shared_ptr<TTransport> transport(new THttpClient(blockable_transport, "localhost", "/service"));
+    boost::shared_ptr<TProtocol> protocol(new TJSONProtocol(transport));
+    thrift_test::S2Client client(protocol);
+
+
+    transport->open();
+    client.ping();
+    blockable_transport->block() ;
+    uint32_t size0 = blockable_transport->write_buffer_length() ;
+    client.send_hoo() ;
+    uint32_t size1 = blockable_transport->write_buffer_length() ;
+    client.send_hoo() ;
+    uint32_t size2 = blockable_transport->write_buffer_length() ;
+    BOOST_CHECK((size1 - size0) == (size2 - size1)) ;
+    blockable_transport->unblock() ;
+    client.send_ping();
+    blockable_transport->flush() ;
+    try {
+    client.recv_ping();
+    } catch (TTransportException e) {
+      BOOST_ERROR( "we should not get a transport exception -- this means we failed: " + std::string(e.what()) ) ;
+    }
+    transport->close();
+  }
+  server.stop();
+  thread.join() ;
+  cerr << "finished.\n";
+}

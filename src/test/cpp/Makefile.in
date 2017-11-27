@@ -714,6 +714,15 @@ test3_SOURCES = test3.cpp $(BUILT_SOURCES)
 test3_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
 test3_LDADD = ../../lib/cpp/libnicejson.a $(thrift_LIBS) $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD)
 test3_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS)
+GTEST_DIR = /usr/src/gtest
+test4_SOURCES = test4.cpp $(GENCPP_test)
+test4_LDFLAGS = -Wl,-rpath -Wl,$(thrift_LIBDIR)
+test4_LDADD = ../../gtest/libgtest.a $(thrift_LIBS) -lglog -lgflags $(BOOST_FILESYSTEM_LDADD) $(BOOST_SYSTEM_LDADD) $(BOOST_THREAD_LDADD)
+test4_CXXFLAGS = -I../../lib/cpp $(thrift_CFLAGS) $(AM_CXXFLAGS) \
+		-isystem $(GTEST_DIR)/include \
+		-g -Wall -Wextra -pthread \
+		 -DGTEST_HAS_TR1_TUPLE=0 -DGTEST_USE_OWN_TR1_TUPLE=0 
+
 THRIFT = $(thrift_EXEC_PREFIX)/bin/thrift
 PLUGIN_THRIFT = $(THRIFT_SRC_ROOT)/compiler/cpp/src/thrift/plugin/plugin.thrift
 TUTORIAL_THRIFT = $(THRIFT_SRC_ROOT)/tutorial/tutorial.thrift

@@ -110,6 +110,7 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
+                 src/gtest/Makefile
                  src/lib/cpp/Makefile
                  src/lib/py/Makefile
                  src/lib/ocaml/Makefile
