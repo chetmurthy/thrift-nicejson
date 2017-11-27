@@ -58,9 +58,8 @@ nonstandard location, e.g. `$HOME/tmp/thrift-nicejson` via
 % ./configure <other-args> --prefix=$HOME/tmp/thrift-nicejson
 ....
 
-The adapted Thrift C\++ Tutorial example can be found in
-`src/examples/cpp` and tests in C++, Python, and Ocaml can be found in
-`src/test/{cpp,python,ocaml}`. In particular, `src/test/cpp`
+The adapted Thrift Tutorial example, as well as tests, for C\++, Python, and Ocaml, can be found in
+`src/{examples,tests}/{cpp,python,ocaml}`.  In particular, `src/test/cpp`
 demonstrates most of the capabilities of the library.  All the tests
 can be automatically built and run with `make check`.
 
