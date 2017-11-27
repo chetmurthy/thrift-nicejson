@@ -670,6 +670,7 @@ PYTHON_PREFIX
 PYTHON_VERSION
 PYTHON
 PY_PREFIX
+GTEST_DIR
 THRIFT_SRC_ROOT
 BOOST_THREAD_LDADD
 BOOST_SYSTEM_LDADD
@@ -831,6 +832,7 @@ with_boost_filesystem
 with_boost_thread
 with_boost_program_options
 with_thrift_srcdir
+with_googletest_dir
 with_python
 with_ocaml
 '
@@ -1535,6 +1537,8 @@ Optional Packages:
                           --with-boost-program-options=boost_program_options-gcc-mt-1_33_1
   --with-thrift-srcdir    Directory to the (required) out-of-tree Thrift
                           source
+  --with-googletest-dir   Directory to the (required) out-of-tree googletest
+                          dir (containing src/gtest_main.cc)
   --with-python           build the Python library [default=no]
   --with-ocaml            build the Ocaml library [default=no]
 
@@ -19875,6 +19879,19 @@ fi
 
 THRIFT_SRC_ROOT=$withval
 
+
+
+# Check whether --with-googletest-dir was given.
+if test "${with_googletest_dir+set}" = set; then :
+  withval=$with_googletest_dir;
+else
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "MUST specify out-of-tree googletest directory
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+
+GTEST_DIR=$withval
 
 
 

@@ -42,6 +42,11 @@ AC_ARG_WITH([thrift-srcdir],
     [AC_MSG_FAILURE([MUST specify out-of-tree Thrift source directory])])
 AC_SUBST([THRIFT_SRC_ROOT],[$withval])
 
+AC_ARG_WITH([googletest-dir],
+  [AS_HELP_STRING([--with-googletest-dir],
+    [Directory to the (required) out-of-tree googletest dir (containing src/gtest_main.cc)])],,
+    [AC_MSG_FAILURE([MUST specify out-of-tree googletest directory])])
+AC_SUBST([GTEST_DIR],[$withval])
 
 AC_ARG_VAR([PY_PREFIX], [Prefix for installing Python modules.
                          (Normal --prefix is ignored for Python because

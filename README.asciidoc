@@ -32,18 +32,21 @@ other Thrift languages, e.g. currently Python and Ocaml.
 [[installation]]
 == Installation
 
-This library requires a relatively recent Thrift installation (version
-0.10.0 or newer) and _also_ a Thrift source-tree (for access to a few
-files from the compiler). I've only tested the build against source that
-matches the binary Thrift installation, but perhaps it'll work if
-there's a mismatch.
+This library requires:
+
+* a relatively recent Thrift installation (version 0.10.0 or newer) 
+* a Thrift source-tree (for access to a few files from the compiler)
+* a googletest source or install-tree (for C++ unit-tests)
+
+I've only tested the build against Thrift source that matches the binary
+Thrift installation, but perhaps it'll work if there's a mismatch.
 
 Build/install is straightforward, and is fully autotool-ized.  By
 default, only C++ support is built, but Python and Ocaml can be
 enabled easily (once prereqs have been installed):
 
 ....
-% ./configure --with-thrift-srcdir=<thrift-source-dir-here>
+% ./configure --with-thrift-srcdir=<thrift-source-dir-here> --with-googletest-dir=<path-to-gtetdir-here>
 % make all check
 % make install
 ....
@@ -52,7 +55,7 @@ Of course, if you wish to install, it's probably wise to pick a
 nonstandard location, e.g. `$HOME/tmp/thrift-nicejson` via
 
 ....
-% ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here>
+% ./configure <other-args> --prefix=$HOME/tmp/thrift-nicejson
 ....
 
 The adapted Thrift C\++ Tutorial example can be found in
@@ -66,8 +69,7 @@ link:docs/building-other-languages.asciidoc[other languages (Python
 and Ocaml)] are available.  The TL;DR (if all prereqs are already installed) is
 
 ....
-% ./configure --prefix=$HOME/tmp/thrift-nicejson --with-thrift-srcdir=<thrift-source-dir-here> \
-  	      --with-python=yes --with-ocaml=yes
+% ./configure <other-args> --with-python=yes --with-ocaml=yes
 ....
 
 

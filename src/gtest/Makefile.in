@@ -258,6 +258,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+GTEST_DIR = @GTEST_DIR@
 HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -389,12 +390,7 @@ thrift_LIBS = @thrift_LIBS@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-GTEST_DIR = /usr/src/gtest
-AM_CPPFLAGS = -isystem $(GTEST_DIR)/include
 AM_CXXFLAGS = -g -Wall -Wextra -pthread
-GTESTHEADERS = /usr/include/gtest/*.h \
-                /usr/include/gtest/internal/*.h
-
 BUILT_SOURCES = gtest-all.cc gtest_main.cc
 CLEANFILES = $(BUILT_SOURCES)
 lib_LIBRARIES = libgtest.a libgtestmain.a

@@ -1,8 +1,4 @@
-GTEST_DIR = /usr/src/gtest
-AM_CPPFLAGS = -isystem $(GTEST_DIR)/include
 AM_CXXFLAGS = -g -Wall -Wextra -pthread
-GTESTHEADERS = /usr/include/gtest/*.h \
-                /usr/include/gtest/internal/*.h
 
 BUILT_SOURCES = gtest-all.cc gtest_main.cc
 CLEANFILES = $(BUILT_SOURCES)
