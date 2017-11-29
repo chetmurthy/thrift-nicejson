@@ -1,2 +1,2 @@
-./dump-binary-serialized
-./thrift-gen-newtypelib
+dump-binary-serialized
+thrift-gen-newtypelib
