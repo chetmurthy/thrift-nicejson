@@ -16,6 +16,7 @@ LIB_SUBDIRS +=  src/lib/ocaml
 # PLUGIN_SUBDIRS +=  src/plugins/ocaml
 TEST_SUBDIRS +=  src/test/ocaml
 EXAMPLES_SUBDIRS += src/examples/ocaml
+TOOLS_SUBDIRS += src/tools/ocaml
 endif
 
 SUBDIRS = src/gtest $(LIB_SUBDIRS) $(PLUGIN_SUBDIRS) $(TEST_SUBDIRS) $(EXAMPLES_SUBDIRS) $(TOOLS_SUBDIRS)

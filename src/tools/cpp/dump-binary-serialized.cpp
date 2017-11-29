@@ -63,7 +63,7 @@ main(int ac, char **av) {
 	  string bytes = file_contents(*ii) ;
 	  cout << boost::format{"[%d bytes]\n"} % bytes.size() ;
 	  json rv = nj->marshal_from_binary(type, (uint8_t*)bytes.data(), bytes.size(), permissive) ;
-	  cout << rv.dump() << endl ;
+	  cout << rv.dump(2) << endl ;
 	}
 
     }

@@ -127,5 +127,6 @@ AC_CONFIG_FILES([Makefile
                  src/examples/cpp/Makefile
                  src/examples/py/Makefile
                  src/examples/ocaml/Makefile
-		 src/tools/cpp/Makefile])
+		 src/tools/cpp/Makefile
+		 src/tools/ocaml/Makefile])
 AC_OUTPUT
