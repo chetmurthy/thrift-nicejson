@@ -1,5 +1,5 @@
 OCAMLCFLAGS = -thread -I ../../lib/ocaml -I . -I ./gen-ocaml
-PACKAGES = -package result,threads,thrift,yojson,cmdliner,core_kernel,pcre
+PACKAGES = -package result,threads,thrift,yojson,cmdliner,core_kernel,pcre,ppx_deriving_yojson,ppx_sexp_conv
 RESULT = ocaml_nicejson
 
 bin_PROGRAMS = dump-binary-serialized thrift-gen-newtypelib
