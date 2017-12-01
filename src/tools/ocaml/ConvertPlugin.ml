@@ -107,6 +107,7 @@ let conv (pt : PT.t_list) = {
   cpp_name = pt#get_cpp_name ;
   elem_type = pt#grab_elem_type ;
 }
+let support v = [v.elem_type]
 end
 
 module TSet = struct
@@ -120,6 +121,7 @@ let conv pt = {
   cpp_name = pt#get_cpp_name ;
   elem_type = pt#grab_elem_type ;
 }
+let support v = [v.elem_type]
 end
   
 module TMap = struct
@@ -135,6 +137,7 @@ let conv pt = {
   key_type = pt#grab_key_type ;
   val_type = pt#grab_val_type ;
 }
+let support v = [v.key_type; v.val_type]
 end
 
 module TTypedef = struct  
@@ -150,6 +153,7 @@ let conv pt = {
   symbolic = pt#grab_symbolic ;
   forward = pt#grab_forward ;
 }
+let support v = [v.type_]
 end
   
 module TEnumValue = struct
@@ -189,6 +193,9 @@ type t =
   | Enum_val of t_type_id [@@deriving sexp, yojson]
 
 let rec conv (pt : PT.t_const_value) =
+  if pt#get_identifier_val <> None &&
+    pt#get_enum_val <> None then
+    failwith "arrgh, we got a live one" ;
   if pt#get_map_val <> None then
     Map_val (conv_map conv conv pt#grab_map_val)
   else if pt#get_list_val <> None then

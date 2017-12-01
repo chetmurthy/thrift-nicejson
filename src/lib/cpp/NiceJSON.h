@@ -66,6 +66,24 @@ std::string ThriftBinaryString(const ThriftStruct& ts) {
   return std::string((char*)buf, (unsigned int)size);
 }
 
+template <typename ThriftStruct>
+std::string ThriftBinaryFramedString(const ThriftStruct& ts) {
+  using namespace apache::thrift::transport;
+  using namespace apache::thrift::protocol;
+  TMemoryBuffer* buffer = new TMemoryBuffer;
+  boost::shared_ptr<TTransport> trans(buffer);
+  boost::shared_ptr<TTransport> framed(new TFramedTransport(trans)) ;
+  TBinaryProtocol protocol(framed);
+
+  ts.write(&protocol);
+  framed->flush() ;
+
+  uint8_t* buf;
+  uint32_t size;
+  buffer->getBuffer(&buf, &size);
+  return std::string((char*)buf, (unsigned int)size);
+}
+
 }
 }
 

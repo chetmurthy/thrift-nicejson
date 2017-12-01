@@ -75,6 +75,8 @@ void gen_typelib(const apache::thrift::plugin::GeneratorInput& input) {
 		       out_path % typelib_ns % name) ;
   string binary_dest = str(boost::format{"%s/gen-typelib/%s.%s.binary_typelib"} %
 		       out_path % typelib_ns % name) ;
+  string binary_framed_dest = str(boost::format{"%s/gen-typelib/%s.%s.binary_framed_typelib"} %
+		       out_path % typelib_ns % name) ;
 
   if (!exists(destdir)) create_directory(destdir) ;
   {
@@ -96,6 +98,16 @@ void gen_typelib(const apache::thrift::plugin::GeneratorInput& input) {
     }
 
     out << ThriftBinaryString(input) ;
+  }
+  {
+    ofstream out ;
+    out.open(binary_framed_dest, ios::out | ios::trunc) ;
+    if (out.fail()) {
+      std::cerr << "Cannot open file " << binary_framed_dest << " for write" << std::endl ;
+      exit(-1) ;
+    }
+
+    out << ThriftBinaryFramedString(input) ;
   }
 }
 
