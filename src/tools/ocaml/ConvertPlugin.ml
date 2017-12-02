@@ -189,14 +189,17 @@ type t =
   | String_val of string 
   | Integer_val of int64 
   | Double_val of float 
-  | Identifier_val of string 
-  | Enum_val of t_type_id [@@deriving sexp, yojson]
+  | Const_identifier_val of string * t_type_id [@@deriving sexp, yojson]
 
 let rec conv (pt : PT.t_const_value) =
   if pt#get_identifier_val <> None &&
     pt#get_enum_val <> None then
-    failwith "arrgh, we got a live one" ;
-  if pt#get_map_val <> None then
+    Const_identifier_val (pt#grab_identifier_val, pt#grab_enum_val)
+  else if pt#get_identifier_val <> None then
+    failwith "t_const_value: identifier without enum -- internal error"
+  else if pt#get_enum_val <> None then
+    failwith "t_const_value: enum without identifier -- internal error"
+  else if pt#get_map_val <> None then
     Map_val (conv_map conv conv pt#grab_map_val)
   else if pt#get_list_val <> None then
     List_val(List.map conv pt#grab_list_val)
@@ -206,10 +209,6 @@ let rec conv (pt : PT.t_const_value) =
     Integer_val pt#grab_integer_val
   else if pt#get_double_val <> None then
     Double_val pt#grab_double_val
-  else if pt#get_identifier_val <> None then
-    Identifier_val pt#grab_identifier_val
-  else if pt#get_enum_val <> None then
-    Enum_val pt#grab_enum_val
   else assert false
 end
 

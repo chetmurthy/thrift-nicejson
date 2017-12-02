@@ -37,7 +37,8 @@ let read_typelib ~framed fname =
 let gen_f framed fname =
   let gi = read_typelib ~framed:framed fname in
   let gi' = ConvertPlugin.GeneratorInput.conv gi in
-  Yojson.Safe.pretty_to_channel stdout (ConvertPlugin.GeneratorInput.to_yojson gi')
+  Yojson.Safe.pretty_to_channel stdout (ConvertPlugin.GeneratorInput.to_yojson gi') ;
+  output_string stdout "\n" 
 
 let version = "0.001"
 let opts_sect = "OPTIONS"
