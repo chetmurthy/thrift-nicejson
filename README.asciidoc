@@ -140,7 +140,7 @@ as-is, b/c as far as I'm concerned, I'm happy to cede ownership of this
 code to Apache, with the following exceptions:
 
 * The file "json.hpp" was copied with permission from
-https://github.com/nlohmann/json[JSON for Modern C++] created by Neils
+https://github.com/nlohmann/json[JSON for Modern C++] created by Niels
 Lohmann, and he continues to own it. He licenses that file under the
 MIT license (included in the source). This thing is a bloody lovely
 marvel.  * And of course, there are a bunch of GNU files, owned by
